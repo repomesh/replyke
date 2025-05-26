@@ -92,6 +92,8 @@ function SocialCommentSection({
               display: "flex",
               paddingLeft: "24px",
               paddingRight: "24px",
+              paddingTop: "12px",
+              paddingBottom: "12px",
               alignItems: "center",
               gap: "4px",
             }}
