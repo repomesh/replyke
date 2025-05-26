@@ -85,33 +85,37 @@ function SocialCommentSection({
 
   return (
     <CommentSectionProvider>
-      {(header || sortOptions) && (
-        <div
-          style={{
-            display: "flex",
-            paddingLeft: "24px",
-            paddingRight: "24px",
-            alignItems: "center",
-            gap: "4px",
-          }}
-        >
-          <div style={{ flex: 1 }}>{header}</div>
-          {sortOptions !== null && renderSortButtons()}
+      <div style={{ height: "100%", flex: 1 }}>
+        <div style={{ padding: 12 }}>
+          {(header || sortOptions) && (
+            <div
+              style={{
+                display: "flex",
+                paddingLeft: "24px",
+                paddingRight: "24px",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <div style={{ flex: 1 }}>{header}</div>
+              {sortOptions !== null && renderSortButtons()}
+            </div>
+          )}
+
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              backgroundColor: "white",
+            }}
+          >
+            <CommentsFeed />
+          </div>
         </div>
-      )}
 
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          backgroundColor: "white",
-        }}
-      >
-        <CommentsFeed />
-      </div>
-
-      <div style={{ borderTop: "1px solid #e5e7eb" }}>
-        {isVisible && <NewCommentForm withEmojis={withEmojis} />}
+        <div style={{ borderTop: "1px solid #e5e7eb" }}>
+          {isVisible && <NewCommentForm withEmojis={withEmojis} />}
+        </div>
       </div>
     </CommentSectionProvider>
   );
