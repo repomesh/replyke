@@ -35,6 +35,8 @@ export type AuthUser = Pick<
   | "name"
   | "username"
   | "avatar"
+  | "bio"
+  | "birthdate"
   | "metadata"
   | "reputation"
   | "isVerified"
