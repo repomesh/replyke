@@ -20,6 +20,7 @@ import {
   useFetchEntityByForeignId,
   useFetchEntityByShortId,
 } from "../entities";
+import { isUUID } from "../../utils/isUUID";
 
 export interface UseCommentSectionDataProps {
   entity?: Entity;
@@ -285,6 +286,7 @@ function useCommentSectionData(
 
   const handleDeleteComment = useCallback(
     async ({ commentId }: { commentId: string }) => {
+      if (!isUUID(commentId)) return;
       try {
         removeCommentFromTree(commentId);
         await deleteComment({ commentId });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Comment  } from "../../interfaces/models/Comment";
+import { Comment } from "../../interfaces/models/Comment";
 import { handleError } from "../../utils/handleError";
 import useCommentSection from "./useCommentSection";
 import useGroupReplies from "./useGroupReplies";
@@ -26,9 +26,9 @@ function useReplies({
   useEffect(() => {
     const loadReplies = async () => {
       if (!commentId) {
-        console.warn(
-          "The 'fetch comments' operation was invoked without a valid comment ID and has been aborted."
-        );
+        // console.warn(
+        //   "The 'fetch comments' operation was invoked without a valid comment ID and has been aborted."
+        // );
         return;
       }
 

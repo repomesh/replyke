@@ -38,9 +38,9 @@ function useProfileCommentsData(
 
   const resetComments = useCallback(async () => {
     if (!userId) {
-      console.warn(
-        "The 'fetch comments' operation was invoked without a valid user and has been aborted."
-      );
+      // console.warn(
+      //   "The 'fetch comments' operation was invoked without a valid user and has been aborted."
+      // );
       return;
     }
 

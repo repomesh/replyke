@@ -86,9 +86,9 @@ function useEntityComments(
 
   const resetComments = useCallback(async () => {
     if (!entityId) {
-      console.warn(
-        "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
-      );
+      // console.warn(
+      //   "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
+      // );
       return;
     }
     try {
@@ -138,9 +138,9 @@ function useEntityComments(
   useEffect(() => {
     const loadMoreComments = async () => {
       if (!entityId) {
-        console.warn(
-          "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
-        );
+        // console.warn(
+        //   "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
+        // );
         return;
       }
 

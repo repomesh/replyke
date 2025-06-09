@@ -21,8 +21,8 @@ function CommentMenuModalOwner() {
       "Are you sure you want to delete this comment?"
     );
     if (userConfirmed && optionsComment) {
-      await deleteComment?.({ commentId: optionsComment.id });
       closeCommentOptionsModalOwner?.();
+      await deleteComment?.({ commentId: optionsComment.id });
     } else {
       closeCommentOptionsModalOwner?.();
     }
