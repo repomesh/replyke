@@ -80,11 +80,6 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
   });
 
   const handleCreateComment = useCallback(async () => {
-    if (!user) {
-      callbacks?.loginRequiredCallback?.();
-      return;
-    }
-
     const textArea = textAreaRef.current;
     if (!textArea) throw new Error("Can not find textarea");
 
@@ -110,11 +105,6 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
       altText: string | undefined;
       aspectRatio: number;
     }) => {
-      if (!user) {
-        callbacks?.loginRequiredCallback?.();
-        return;
-      }
-
       const textArea = textAreaRef.current;
       if (!textArea) throw new Error("Can not find textarea");
 

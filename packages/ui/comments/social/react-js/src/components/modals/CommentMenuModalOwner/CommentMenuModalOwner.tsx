@@ -1,5 +1,10 @@
 import { useCommentSection } from "@replyke/react-js";
-import { Modal, resetButton, resetDiv, resetUl} from "@replyke/ui-core-react-js";
+import {
+  Modal,
+  resetButton,
+  resetDiv,
+  resetUl,
+} from "@replyke/ui-core-react-js";
 import useModalManager from "../../../hooks/useModalManager";
 
 function CommentMenuModalOwner() {
@@ -11,12 +16,12 @@ function CommentMenuModalOwner() {
 
   const { deleteComment } = useCommentSection();
 
-  const handleDeleteComment = () => {
+  const handleDeleteComment = async () => {
     const userConfirmed = window.confirm(
       "Are you sure you want to delete this comment?"
     );
     if (userConfirmed && optionsComment) {
-      deleteComment?.({ commentId: optionsComment.id });
+      await deleteComment?.({ commentId: optionsComment.id });
       closeCommentOptionsModalOwner?.();
     } else {
       closeCommentOptionsModalOwner?.();

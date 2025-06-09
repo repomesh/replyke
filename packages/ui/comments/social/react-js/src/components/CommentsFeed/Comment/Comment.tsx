@@ -264,6 +264,9 @@ const Comment = React.memo(
                         ? openCommentOptionsModalOwner?.(comment)
                         : openCommentOptionsModal?.(comment)
                     }
+                    style={{
+                      cursor: "pointer",
+                    }}
                   >
                     <EllipsisIcon />
                   </button>

@@ -15,6 +15,7 @@ import useUser from "../users/useUser";
 import { Entity } from "../../interfaces/models/Entity";
 
 import {
+  useEntity,
   useFetchEntity,
   useFetchEntityByForeignId,
   useFetchEntityByShortId,
@@ -92,6 +93,7 @@ function useCommentSectionData(
     highlightedCommentId,
   } = props;
 
+  const { setEntity: setContextEntity } = useEntity();
   const [entity, setEntity] = useState<Entity | undefined>(entityProp);
 
   const { user } = useUser();
@@ -181,7 +183,8 @@ function useCommentSectionData(
       }
 
       if (!user) {
-        throw new Error("No user is authenticated");
+        callbacks?.loginRequiredCallback?.();
+        return;
       }
 
       if (callbacks?.usernameRequiredCallback && !user.username) {
@@ -189,8 +192,9 @@ function useCommentSectionData(
         return;
       }
 
-      if (!gif && (!content || content.length === 1)) {
-        throw new Error("Comment is too short");
+      if (!gif && (!content || content.length <= 1)) {
+        callbacks?.commentTooShortCallback();
+        return;
       }
 
       submittingComment.current = true;
@@ -212,15 +216,15 @@ function useCommentSectionData(
       const TEMP_ID = Math.random().toString(36).substring(2, 7);
 
       const tempNewComment: Comment = {
-        projectId: "TEMP_PROJECT_ID",
+        id: TEMP_ID,
         foreignId: null,
+        projectId: "TEMP_PROJECT_ID",
+        userId: user.id,
+        parentId: repliedToComment?.id || null,
         entityId: entity.id,
         content: content ?? null,
         gif: gif ?? null,
         mentions: filteredMentions,
-        parentId: repliedToComment?.id || null,
-        id: TEMP_ID,
-        userId: user.id,
         user: {
           ...user,
           bio: null,
@@ -237,12 +241,12 @@ function useCommentSectionData(
         repliesCount: 0,
       };
 
-      addCommentsToTree([tempNewComment], true);
       setRepliedToComment(null);
       setShowReplyBanner(false);
       setPushMention(null);
 
       try {
+        addCommentsToTree([tempNewComment], true);
         const newCommentData = await createComment({
           entityId: entity.id,
           parentCommentId: repliedToComment?.id,
@@ -255,6 +259,10 @@ function useCommentSectionData(
           removeCommentFromTree(TEMP_ID);
           addCommentsToTree([newCommentData], true);
         }
+        setContextEntity?.((prevEntity) => {
+          if (!prevEntity) return prevEntity;
+          return { ...prevEntity, repliesCount: prevEntity.repliesCount + 1 };
+        });
       } catch (err: unknown) {
         // TODO: currently we remove the temp comment from the tree but don't offer the user any option to retry. It's as if they've never sent anything and all they typed is gone. We need to add a flag for comment in the tree that says t failed so we can give he user a try again button
         removeCommentFromTree(TEMP_ID);
@@ -280,6 +288,10 @@ function useCommentSectionData(
       try {
         removeCommentFromTree(commentId);
         await deleteComment({ commentId });
+        setContextEntity?.((prevEntity) => {
+          if (!prevEntity) return prevEntity;
+          return { ...prevEntity, repliesCount: prevEntity.repliesCount - 1 };
+        });
       } catch (err) {
         handleError(err, "Failed to delete comment");
       }

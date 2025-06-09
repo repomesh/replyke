@@ -97,10 +97,6 @@ const NewCommentForm = forwardRef<
   });
 
   const handleCreateComment = useCallback(async () => {
-    if (!user) {
-      callbacks?.loginRequiredCallback?.();
-      return;
-    }
     const tempContent = content;
 
     try {
@@ -123,11 +119,6 @@ const NewCommentForm = forwardRef<
       altText: string | undefined;
       aspectRatio: number;
     }) => {
-      if (!user) {
-        callbacks?.loginRequiredCallback?.();
-        return;
-      }
-
       setContent("");
       resetMentions();
       setIsGiphyVisible(false);
