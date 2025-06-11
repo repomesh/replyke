@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useEffect, useMemo } from "react";
 import { useCommentSection } from "@replyke/react-js";
 import LoadedComments from "./LoadedComments";
 import FetchingCommentsSkeletons from "./FetchingCommentsSkeletons";
@@ -22,12 +22,17 @@ const CommentsFeed = React.memo(
       return combinedComments;
     }, [comments, newComments, highlightedComment]);
 
+    useEffect(() => {
+      console.log({ loading, mergedComments, highlightedComment });
+    }, [loading, mergedComments, highlightedComment]);
+
     const showLoadedComments = mergedComments.length > 0 || highlightedComment;
+
     const showFetchingSkeletons =
       loading && mergedComments.length === 0 && !highlightedComment;
 
     // If fetching is done and no comments;
-    // Also, because we filter the highlghted comment when it is showing, then we need to make sure this isn't the case here, and show no comments when actually there is one comment - the highlighted one
+    // Also, because we filter the highlighted comment when it is showing, then we need to make sure this isn't the case here, and show no comments when actually there is one comment - the highlighted one
     const showNoComments =
       !loading && mergedComments.length === 0 && !highlightedComment;
 

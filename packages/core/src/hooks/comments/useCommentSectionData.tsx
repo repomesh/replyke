@@ -102,8 +102,8 @@ function useCommentSectionData(
     entityCommentsTree,
     comments,
     newComments,
-    loading: loadingState, // we use the state to trigger renders
-    hasMore: hasMoreState,
+    loading,
+    hasMore,
     sortBy,
     setSortBy,
     loadMore,
@@ -372,19 +372,30 @@ function useCommentSectionData(
       try {
         let fetchedEntity: Entity | null = null;
         if (entityId) {
+          console.log("trying to fetch based on entity id");
+
           fetchedEntity = await fetchEntity({
             entityId,
           });
         } else if (foreignId) {
+          console.log("trying to fetch based on entity id", {
+            foreignId,
+            createIfNotFound,
+          });
+
           fetchedEntity = await fetchEntityByForeignId({
             foreignId,
             createIfNotFound,
           });
         } else if (shortId) {
+          console.log("trying to fetch based on entity id");
+
           fetchedEntity = await fetchEntityByShortId({
             shortId,
           });
         }
+        console.log({ fetchedEntity });
+
         if (fetchedEntity) setEntity(fetchedEntity);
       } catch (err) {
         handleError(err, "Fetching entity failed");
@@ -412,8 +423,8 @@ function useCommentSectionData(
     newComments,
     highlightedComment,
 
-    loading: loadingState, // we use the state to trigger renders
-    hasMore: hasMoreState,
+    loading,
+    hasMore,
     submittingComment: submittingCommentState,
 
     loadMore,

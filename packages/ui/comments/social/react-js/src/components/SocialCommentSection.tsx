@@ -4,7 +4,7 @@ import {
   useSocialStyle,
   PartialSocialStyleConfig,
 } from "@replyke/comments-social-core";
-import { Entity, useEntity } from "@replyke/react-js";
+import { Entity } from "@replyke/react-js";
 import useSocialComments from "../hooks/useSocialComments";
 
 function SocialCommentSection({
