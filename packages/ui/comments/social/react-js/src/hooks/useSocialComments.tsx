@@ -26,7 +26,7 @@ function useSocialComments({
   limit,
   highlightedCommentId,
 }: {
-  entity?: Entity;
+  entity?: Entity | undefined | null;
   entityId?: string | undefined | null;
   foreignId?: string | undefined | null;
   shortId?: string | undefined | null;

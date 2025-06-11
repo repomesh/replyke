@@ -23,7 +23,7 @@ import {
 import { isUUID } from "../../utils/isUUID";
 
 export interface UseCommentSectionDataProps {
-  entity?: Entity;
+  entity?: Entity | undefined | null;
   entityId?: string | undefined | null;
   foreignId?: string | undefined | null;
   shortId?: string | undefined | null;
@@ -94,10 +94,8 @@ function useCommentSectionData(
     highlightedCommentId,
   } = props;
 
-  const { entity: entityContext, setEntity: setContextEntity } = useEntity();
-  const [entity, setEntity] = useState<Entity | null | undefined>(
-    entityProp ?? entityContext
-  );
+  const { setEntity: setContextEntity } = useEntity();
+  const [entity, setEntity] = useState<Entity | null | undefined>(entityProp);
 
   const { user } = useUser();
   const {
