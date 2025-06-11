@@ -94,8 +94,10 @@ function useCommentSectionData(
     highlightedCommentId,
   } = props;
 
-  const { setEntity: setContextEntity } = useEntity();
-  const [entity, setEntity] = useState<Entity | undefined>(entityProp);
+  const { entity: entityContext, setEntity: setContextEntity } = useEntity();
+  const [entity, setEntity] = useState<Entity | null | undefined>(
+    entityProp ?? entityContext
+  );
 
   const { user } = useUser();
   const {
@@ -357,7 +359,12 @@ function useCommentSectionData(
 
   useEffect(() => {
     const handleFetchEntity = async () => {
-      console.log("We go these values:", { entityId, foreignId, shortId });
+      console.log("We got these values:", {
+        entity,
+        entityId,
+        foreignId,
+        shortId,
+      });
       if (!foreignId && !entityId && !shortId) return;
 
       if (entity && entityId && entity.id === entityId) return;
