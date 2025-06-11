@@ -127,10 +127,6 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
     if (!textArea) throw new Error("Can't find textarea");
 
     // if (pushMention.id === previousPushMention?.id) return;
-    // console.log({
-    //   "pushMention.id": pushMention.id,
-    //   "previousPushMention?.id": previousPushMention?.id,
-    // });
 
     if (!pushMention.username) {
       (

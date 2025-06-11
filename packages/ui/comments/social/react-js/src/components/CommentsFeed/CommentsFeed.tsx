@@ -22,10 +22,6 @@ const CommentsFeed = React.memo(
       return combinedComments;
     }, [comments, newComments, highlightedComment]);
 
-    useEffect(() => {
-      console.log({ loading, mergedComments, highlightedComment });
-    }, [loading, mergedComments, highlightedComment]);
-
     const showLoadedComments = mergedComments.length > 0 || highlightedComment;
 
     const showFetchingSkeletons =

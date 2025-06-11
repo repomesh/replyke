@@ -138,9 +138,7 @@ function useCommentSectionData(
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
 
   // const handleSetPushMention = (user: User | null) => {
-  //   console.log("handleSetPushMention called");
   //   if(!user?.username)
-  //   console.log("handleSetPushMention is valid");
 
   //   setPushMention((prevMention) => {
   //     if (JSON.stringify(prevMention) === JSON.stringify(user)) {
@@ -357,12 +355,6 @@ function useCommentSectionData(
 
   useEffect(() => {
     const handleFetchEntity = async () => {
-      console.log("We got these values:", {
-        entity,
-        entityId,
-        foreignId,
-        shortId,
-      });
       if (!foreignId && !entityId && !shortId) return;
 
       if (entity && entityId && entity.id === entityId) return;
@@ -371,8 +363,6 @@ function useCommentSectionData(
 
       const uniqueKey = `${entityId ?? ""}-${foreignId ?? ""}-${shortId ?? ""}`;
 
-      console.log({ uniqueKey });
-
       if (fetchedStatus.current[uniqueKey]) return;
 
       fetchedStatus.current[uniqueKey] = true;
@@ -380,29 +370,19 @@ function useCommentSectionData(
       try {
         let fetchedEntity: Entity | null = null;
         if (entityId) {
-          console.log("trying to fetch based on entity id");
-
           fetchedEntity = await fetchEntity({
             entityId,
           });
         } else if (foreignId) {
-          console.log("trying to fetch based on entity id", {
-            foreignId,
-            createIfNotFound,
-          });
-
           fetchedEntity = await fetchEntityByForeignId({
             foreignId,
             createIfNotFound,
           });
         } else if (shortId) {
-          console.log("trying to fetch based on entity id");
-
           fetchedEntity = await fetchEntityByShortId({
             shortId,
           });
         }
-        console.log({ fetchedEntity });
 
         if (fetchedEntity) setEntity(fetchedEntity);
       } catch (err) {
