@@ -357,6 +357,7 @@ function useCommentSectionData(
 
   useEffect(() => {
     const handleFetchEntity = async () => {
+      console.log("We go these values:", { entityId, foreignId, shortId });
       if (!foreignId && !entityId && !shortId) return;
 
       if (entity && entityId && entity.id === entityId) return;
@@ -364,6 +365,8 @@ function useCommentSectionData(
       if (entity && shortId && entity.shortId === shortId) return;
 
       const uniqueKey = `${entityId ?? ""}-${foreignId ?? ""}-${shortId ?? ""}`;
+
+      console.log({ uniqueKey });
 
       if (fetchedStatus.current[uniqueKey]) return;
 
