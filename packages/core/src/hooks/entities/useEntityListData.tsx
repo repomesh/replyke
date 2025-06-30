@@ -38,6 +38,8 @@ export interface UseEntityListDataProps {
 
 export interface UseEntityListDataValues {
   entities: Entity[];
+  setEntities: React.Dispatch<React.SetStateAction<Entity[]>>;
+
   infusedEntities: (Entity & Record<string, any>)[];
 
   loading: boolean;
@@ -406,6 +408,7 @@ function useEntityListData({
 
   return {
     entities,
+    setEntities,
     infusedEntities,
 
     loading: loadingState,

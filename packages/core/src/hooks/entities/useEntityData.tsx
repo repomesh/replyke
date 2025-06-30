@@ -10,6 +10,7 @@ import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
 import useIncrementEntityViews from "./useIncrementEntityViews";
 import useUser from "../users/useUser";
+import useEntityList from "./useEntityList";
 
 export interface UseEntityDataProps {
   entity?: Entity;
@@ -42,6 +43,7 @@ function useEntityData({
   createIfNotFound,
 }: UseEntityDataProps): UseEntityDataValues {
   const { user } = useUser();
+  const { setEntities } = useEntityList();
   const [entity, setEntity] = useState<Entity | undefined | null>(entityProp);
 
   const entityViewsIncremented = useRef<boolean>(false);
@@ -113,6 +115,9 @@ function useEntityData({
     try {
       await deleteEntity({ entityId: entity.id });
       setEntity(undefined);
+      setEntities?.((prevEntities) =>
+        prevEntities.filter((e) => e.id !== entity.id)
+      );
     } catch (err) {
       handleError(err, "Failed to delete entity");
     }
