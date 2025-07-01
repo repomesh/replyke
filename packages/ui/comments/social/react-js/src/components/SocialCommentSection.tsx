@@ -7,6 +7,19 @@ import {
 import { Entity } from "@replyke/react-js";
 import useSocialComments from "../hooks/useSocialComments";
 
+type ButtonStyle = {
+  backgroundColor: string;
+  padding: string;
+  borderRadius: string;
+  color: string;
+  fontSize: string;
+};
+
+type ButtonStyles = {
+  active?: ButtonStyle;
+  inactive?: ButtonStyle;
+};
+
 function SocialCommentSection({
   entity,
   entityId,
@@ -24,7 +37,9 @@ function SocialCommentSection({
   foreignId?: string | undefined | null;
   shortId?: string | undefined | null;
   callbacks?: SocialStyleCallbacks;
-  styleConfig?: Partial<PartialSocialStyleConfig>;
+  styleConfig?: Partial<
+    PartialSocialStyleConfig & { sortByStyleConfig: ButtonStyles }
+  >;
   isVisible?: boolean;
   sortOptions?: Array<"top" | "new" | "old"> | null;
   header?: React.ReactNode;
@@ -49,12 +64,14 @@ function SocialCommentSection({
       borderRadius: "6px",
       color: "white",
       fontSize: "12px",
+      ...(styleConfigProp?.sortByStyleConfig?.active ?? {}),
     },
     inactive: {
       backgroundColor: "#e5e7eb",
       padding: "4px 8px",
       borderRadius: "6px",
       fontSize: "12px",
+      ...(styleConfigProp?.sortByStyleConfig?.inactive ?? {}),
     },
   };
 

@@ -26,6 +26,7 @@ type ButtonStyles = {
   textActive?: ButtonStyleText;
   textInactive?: ButtonStyleText;
 };
+
 function SocialCommentSection({
   entity,
   entityId,
