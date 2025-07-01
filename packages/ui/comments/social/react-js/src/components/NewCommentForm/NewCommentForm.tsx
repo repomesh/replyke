@@ -48,6 +48,7 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
     authorAvatarSize,
     placeholderText,
     textareaTextSize,
+    textareaBackgroundColor,
     postButtonText,
     postButtonFontSize,
     postButtonFontColor,
@@ -55,7 +56,7 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
   } = styleConfig!.newCommentFormProps;
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [content, setContent] = useState(""); // We've managed evrything via the ref, but we need this to know if we render a post button or a show gifs button
+  const [content, setContent] = useState(""); // We've managed everything via the ref, but we need this to know if we render a post button or a show gifs button
 
   const { cursorPosition, isSelectionActive } = useTextareaCursorIndicator({
     textAreaRef,
@@ -249,6 +250,7 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
                 ...resetTextInput,
                 width: "100%",
                 fontSize: textareaTextSize,
+                backgroundColor: textareaBackgroundColor,
               }}
             />
             {content.length === 0 && giphyApiKey ? (

@@ -44,6 +44,7 @@ export const socialBaseStyle: SocialStyleConfig = {
     authorAvatarSize: 32,
     placeholderText: "Add a comment...",
     textareaTextSize: 14,
+    textareaBackgroundColor: "#fff",
     postButtonText: "Post",
     postButtonFontSize: 14,
     postButtonFontWeight: 600,

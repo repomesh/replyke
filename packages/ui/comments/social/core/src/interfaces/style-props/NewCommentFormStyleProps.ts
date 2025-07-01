@@ -10,6 +10,7 @@ export type NewCommentFormStyleProps = {
   authorAvatarSize: number;         // Size of the user’s avatar.
   placeholderText: string;          // Placeholder text for the input.
   textareaTextSize: number;         // Font size of the textarea text.
+  textareaBackgroundColor: string;  // Background color of the textarea.
   postButtonText: string;           // Text on the post button.
   postButtonFontSize: number;       // Font size for the post button text.
   postButtonFontWeight: FontWeight; // Font weight for the post button text.

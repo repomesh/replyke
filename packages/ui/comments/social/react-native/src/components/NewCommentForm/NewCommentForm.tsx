@@ -64,6 +64,7 @@ const NewCommentForm = forwardRef<
     authorAvatarSize,
     placeholderText,
     textareaTextSize,
+    textareaBackgroundColor,
     postButtonText,
     postButtonFontSize,
     postButtonFontColor,
@@ -274,6 +275,7 @@ const NewCommentForm = forwardRef<
                 flex: 1,
                 marginHorizontal: 8,
                 fontSize: textareaTextSize,
+                backgroundColor: textareaBackgroundColor,
               }}
             />
 
