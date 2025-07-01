@@ -8,6 +8,24 @@ import {
 import { Entity } from "@replyke/core";
 import useSocialComments from "../hooks/useSocialComments";
 
+type ButtonStyleContainer = {
+  backgroundColor?: string;
+  paddingVertical?: number;
+  paddingHorizontal?: number;
+  borderRadius?: number;
+};
+
+type ButtonStyleText = {
+  color?: string;
+  fontSize?: number;
+};
+
+type ButtonStyles = {
+  active?: ButtonStyleContainer;
+  inactive?: ButtonStyleContainer;
+  textActive?: ButtonStyleText;
+  textInactive?: ButtonStyleText;
+};
 function SocialCommentSection({
   entity,
   entityId,
@@ -25,7 +43,9 @@ function SocialCommentSection({
   foreignId?: string | undefined | null;
   shortId?: string | undefined | null;
   callbacks?: SocialStyleCallbacks;
-  styleConfig?: Partial<PartialSocialStyleConfig>;
+  styleConfig?: Partial<
+    PartialSocialStyleConfig & { sortByStyleConfig: ButtonStyles }
+  >;
   isVisible?: boolean;
   sortOptions?: Array<"top" | "new" | "old"> | null;
   header?: React.ReactNode;
@@ -43,26 +63,30 @@ function SocialCommentSection({
       callbacks,
     });
 
-  const buttonStyles = {
+  const buttonStyles: ButtonStyles = {
     active: {
       backgroundColor: "black",
       paddingVertical: 4,
       paddingHorizontal: 8,
       borderRadius: 6,
+      ...(styleConfigProp?.sortByStyleConfig?.active ?? {}),
     },
     inactive: {
       backgroundColor: "#e5e7eb",
       paddingVertical: 4,
       paddingHorizontal: 8,
       borderRadius: 6,
+      ...(styleConfigProp?.sortByStyleConfig?.inactive ?? {}),
     },
     textActive: {
       color: "white",
       fontSize: 12,
+      ...(styleConfigProp?.sortByStyleConfig?.textActive ?? {}),
     },
     textInactive: {
       color: "black",
       fontSize: 12,
+      ...(styleConfigProp?.sortByStyleConfig?.textInactive ?? {}),
     },
   };
 

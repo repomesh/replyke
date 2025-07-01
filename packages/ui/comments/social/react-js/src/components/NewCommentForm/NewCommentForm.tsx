@@ -49,6 +49,7 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
     placeholderText,
     textareaTextSize,
     textareaBackgroundColor,
+    textareaTextColor,
     postButtonText,
     postButtonFontSize,
     postButtonFontColor,
@@ -250,6 +251,7 @@ function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
                 ...resetTextInput,
                 width: "100%",
                 fontSize: textareaTextSize,
+                color: textareaTextColor,
                 backgroundColor: textareaBackgroundColor,
               }}
             />
