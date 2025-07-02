@@ -59,7 +59,7 @@ const useMentions = ({
 
   const handleMentionClick = (user: User) => {
     const mentionRegex = new RegExp(`@${mentionTrigger}(\\s|$)`);
-    setContent(content.replace(mentionRegex, `@${user.username}`));
+    setContent(content.replace(mentionRegex, `@${user.username} `));
 
     addMention(user);
 
