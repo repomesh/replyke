@@ -67,6 +67,7 @@ export interface UseCommentSectionDataValues {
   handleShallowReply: (comment: Comment) => void;
 
   createComment: (props: {
+    parentId?: string;
     content?: string;
     gif?: GifData;
     mentions: Mention[];
@@ -249,7 +250,7 @@ function useCommentSectionData(
         addCommentsToTree([tempNewComment], true);
         const newCommentData = await createComment({
           entityId: entity.id,
-          parentCommentId: repliedToComment?.id,
+          parentCommentId: parentId ?? repliedToComment?.id ?? null,
           content,
           gif,
           mentions: filteredMentions,
