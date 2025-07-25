@@ -168,11 +168,12 @@ function useCommentSectionData(
 
   const handleCreateComment = useCallback(
     async (props: {
+      parentId?: string;
       content?: string;
       gif?: GifData;
       mentions?: Mention[];
     }) => {
-      const { content, gif, mentions } = props;
+      const { parentId, content, gif, mentions } = props;
 
       if (submittingComment.current) return;
 
@@ -219,7 +220,7 @@ function useCommentSectionData(
         foreignId: null,
         projectId: "TEMP_PROJECT_ID",
         userId: user.id,
-        parentId: repliedToComment?.id || null,
+        parentId: parentId ?? repliedToComment?.id ?? null,
         entityId: entity.id,
         content: content ?? null,
         gif: gif ?? null,
