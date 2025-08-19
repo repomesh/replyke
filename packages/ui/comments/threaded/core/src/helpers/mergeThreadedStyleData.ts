@@ -1,27 +1,27 @@
 import { safeMergeStyleProps } from "@replyke/ui-core";
-import { socialBaseStyle } from "../social-base-style";
+import { threadedBaseStyle } from "../threaded-base-style";
 import { CommentStyleProps } from "../interfaces/style-props/CommentStyleProps";
 import { CommentFeedStyleProps } from "../interfaces/style-props/CommentFeedStyleProps";
 import { NewCommentFormStyleProps } from "../interfaces/style-props/NewCommentFormStyleProps";
-import { SocialStyleConfig } from "../interfaces/style-props/SocialStyleConfig";
+import { ThreadedStyleConfig } from "../interfaces/style-props/ThreadedStyleConfig";
 
-export function mergeSocialStyleData(
+export function mergeThreadedStyleData(
   commentFeedProps?: Partial<CommentFeedStyleProps>,
   commentProps?: Partial<CommentStyleProps>,
   newCommentFormProps?: Partial<NewCommentFormStyleProps>
-): SocialStyleConfig {
+): ThreadedStyleConfig {
   const mergedStyle = {
-    type: socialBaseStyle.type,
+    type: threadedBaseStyle.type,
     commentFeedProps: safeMergeStyleProps(
-      socialBaseStyle.commentFeedProps,
+      threadedBaseStyle.commentFeedProps,
       commentFeedProps
     ),
     commentProps: safeMergeStyleProps(
-      socialBaseStyle.commentProps,
+      threadedBaseStyle.commentProps,
       commentProps
     ),
     newCommentFormProps: safeMergeStyleProps(
-      socialBaseStyle.newCommentFormProps,
+      threadedBaseStyle.newCommentFormProps,
       newCommentFormProps
     ),
   };

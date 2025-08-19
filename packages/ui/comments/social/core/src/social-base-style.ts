@@ -1,6 +1,7 @@
 import { SocialStyleConfig } from "./interfaces/style-props/SocialStyleConfig";
 
 export const socialBaseStyle: SocialStyleConfig = {
+  type: "social",
   commentFeedProps: {
     backgroundColor: "#fff",
     commentsGap: 8,
