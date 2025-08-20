@@ -1,37 +1,95 @@
 "use client";
 
-import React, { useState } from "react";
-import { useCommentSection, useUser } from "@replyke/react-js";
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import { useCommentSection, useUser, useMentions } from "@replyke/react-js";
+import { useTextareaCursorIndicator } from "@replyke/ui-core-react-js";
+import { MentionSuggestions } from "./MentionSuggestions";
 
 function NewCommentForm() {
   const { user } = useUser();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createComment, callbacks } = useCommentSection();
 
   const hasContent = content.trim().length > 0;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!hasContent || isSubmitting) return;
+  const { cursorPosition, isSelectionActive } = useTextareaCursorIndicator({
+    textAreaRef,
+  });
+
+  const {
+    isMentionActive,
+    loading,
+    mentionSuggestions,
+    handleMentionClick,
+    mentions,
+    addMention,
+    resetMentions,
+  } = useMentions({
+    content: textAreaRef.current?.value || "",
+    setContent: (value: string) => {
+      if (textAreaRef.current) {
+        textAreaRef.current.value = value;
+        setContent(value);
+      }
+    },
+    focus: () => textAreaRef.current?.focus(),
+    cursorPosition,
+    isSelectionActive,
+  });
+
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    const textArea = textAreaRef.current;
+    if (!textArea || !hasContent || isSubmitting) return;
 
     if (!user) {
       callbacks?.loginRequiredCallback();
       return;
     }
+
+    const tempContent = textArea.value.trim();
     setIsSubmitting(true);
+    
     try {
-      await createComment?.({ content: content.trim(), mentions: [] });
+      await createComment?.({ content: tempContent, mentions });
+      textArea.value = "";
       setContent("");
+      resetMentions();
     } catch (error) {
       console.error("Error creating comment:", error);
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [hasContent, isSubmitting, user, createComment, mentions, resetMentions, callbacks]);
+
+  // Add keyboard event handler for Enter key
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "Enter" && !event.ctrlKey && !event.shiftKey) {
+        event.preventDefault();
+        handleSubmit();
+      }
+    };
+
+    const textArea = textAreaRef.current;
+    textArea?.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      textArea?.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSubmit]);
 
   return (
     <form onSubmit={handleSubmit} style={{ position: "relative" }}>
+      <MentionSuggestions
+        isMentionActive={isMentionActive}
+        isLoadingMentions={loading}
+        mentionSuggestions={mentionSuggestions}
+        handleMentionClick={handleMentionClick}
+      />
       <div
         style={{
           display: "flex",
@@ -59,7 +117,7 @@ function NewCommentForm() {
         }}
       >
         <textarea
-          value={content}
+          ref={textAreaRef}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Add your reply..."
           style={{
