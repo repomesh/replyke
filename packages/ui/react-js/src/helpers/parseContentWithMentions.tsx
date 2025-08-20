@@ -44,7 +44,7 @@ export const parseContentWithMentions = (
       if (matchedMention) {
         parsedContent.push(
           <span
-            style={{ color: "#1e40af" }}
+            style={{ color: "#1e40af", cursor: "pointer" }}
             onClick={() => {
               if (matchedMention.id === currentUserId) {
                 currentUserClickCallback?.();

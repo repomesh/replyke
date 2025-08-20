@@ -3,6 +3,7 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { useCommentSection, useUser, useMentions } from "@replyke/react-js";
 import { useTextareaCursorIndicator } from "@replyke/ui-core-react-js";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import { MentionSuggestions } from "./MentionSuggestions";
 
 function NewCommentForm() {
@@ -11,6 +12,19 @@ function NewCommentForm() {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createComment, callbacks } = useCommentSection();
+  
+  const { styleConfig } = useThreadedStyleConfig();
+  const {
+    backgroundColor,
+    itemsGap,
+    verticalPadding,
+    paddingLeft,
+    paddingRight,
+    placeholderText,
+    textareaTextSize,
+    textareaTextColor,
+    textareaBackgroundColor,
+  } = styleConfig!.newCommentFormProps;
 
   const hasContent = content.trim().length > 0;
 
@@ -94,14 +108,14 @@ function NewCommentForm() {
         style={{
           display: "flex",
           alignItems: "flex-end",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: backgroundColor,
           borderRadius: "16px",
           border: `1px solid ${hasContent ? "#BFDBFE" : "#E5E7EB"}`,
           boxShadow: hasContent
             ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
             : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
           transition: "all 300ms ease-in-out",
-          padding: "8px",
+          padding: `${verticalPadding}px`,
         }}
         onMouseEnter={(e) => {
           if (!hasContent) {
@@ -119,13 +133,13 @@ function NewCommentForm() {
         <textarea
           ref={textAreaRef}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Add your reply..."
+          placeholder={placeholderText}
           style={{
             flex: 1,
-            padding: "8px",
-            backgroundColor: "transparent",
-            color: "#111827",
-            fontSize: "12px",
+            padding: `${verticalPadding}px`,
+            backgroundColor: textareaBackgroundColor,
+            color: textareaTextColor,
+            fontSize: `${textareaTextSize}px`,
             lineHeight: "1.625",
             outline: "none",
             resize: "none",
@@ -138,7 +152,7 @@ function NewCommentForm() {
           disabled={!hasContent || isSubmitting}
           style={{
             flexShrink: 0,
-            padding: "8px",
+            padding: `${verticalPadding}px`,
             borderRadius: "50%",
             backgroundColor:
               hasContent && !isSubmitting ? "#2563EB" : "#E5E7EB",
@@ -175,8 +189,8 @@ function NewCommentForm() {
         >
           <svg
             style={{
-              height: "12px",
-              width: "12px",
+              height: `${textareaTextSize}px`,
+              width: `${textareaTextSize}px`,
               transition: "transform 200ms ease-in-out",
               transform: hasContent ? "scale(1)" : "scale(1)",
             }}

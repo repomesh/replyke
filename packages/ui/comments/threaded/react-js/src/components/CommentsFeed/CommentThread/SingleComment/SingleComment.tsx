@@ -8,6 +8,7 @@ import {
   parseContentWithMentions,
   UserAvatar,
 } from "@replyke/ui-core-react-js";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import VoteButtons from "../VoteButtons";
 import ActionMenu from "../ActionMenu";
 import NewReplyForm from "../NewReplyForm";
@@ -38,6 +39,21 @@ function SingleComment({
   const { callbacks } = useCommentSection();
   const [comment, setComment] = useState(commentFromSection);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  
+  const { styleConfig } = useThreadedStyleConfig();
+  const {
+    authorAvatarSize,
+    authorFontSize,
+    authorFontWeight,
+    authorFontColor,
+    fromNowFontSize,
+    fromNowFontColor,
+    commentBodyFontSize,
+    commentBodyFontColor,
+    horizontalItemsGap,
+    verticalItemsGap,
+    threadingLineColor,
+  } = styleConfig!.commentProps;
 
   const maxDepth = 6; // Limit visual nesting depth
   const actualDepth = Math.min(depth, maxDepth);
@@ -60,7 +76,7 @@ function SingleComment({
 
       <div
         style={{
-          padding: "8px 0",
+          padding: `${verticalItemsGap}px 0`,
           borderRadius: "6px",
           transition: "colors 150ms ease-in-out",
         }}
@@ -70,13 +86,13 @@ function SingleComment({
           <div
             style={{
               flexShrink: 0,
-              marginRight: "12px",
+              marginRight: `${horizontalItemsGap}px`,
               position: "relative",
-              marginTop: "4px",
+              marginTop: `${verticalItemsGap / 2}px`,
             }}
           >
             <div style={{ position: "relative", zIndex: 10 }}>
-              <UserAvatar user={comment.user} borderRadius={24} size={24} />
+              <UserAvatar user={comment.user} borderRadius={authorAvatarSize} size={authorAvatarSize} />
             </div>
             {/* Vertical line extending down from this comment's avatar when it has replies */}
             {hasReplies && !isCollapsed && (
@@ -86,7 +102,7 @@ function SingleComment({
                   left: "50%",
                   top: "20px",
                   width: "1px",
-                  backgroundColor: "#D1D5DB",
+                  backgroundColor: threadingLineColor,
                   zIndex: 0,
                   height: "calc(100% + 10px)",
                 }}
@@ -101,19 +117,19 @@ function SingleComment({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                marginBottom: "4px",
+                marginBottom: `${verticalItemsGap / 2}px`,
               }}
             >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  fontSize: "12px",
-                  color: "#6B7280",
+                  gap: `${verticalItemsGap}px`,
+                  fontSize: `${fromNowFontSize}px`,
+                  color: fromNowFontColor,
                 }}
               >
-                <span style={{ fontWeight: "500", color: "#374151" }}>
+                <span style={{ fontWeight: authorFontWeight, color: authorFontColor }}>
                   {comment.user?.name || "Anonymous"}
                 </span>
                 <span>•</span>
@@ -138,9 +154,9 @@ function SingleComment({
                 {comment.content && (
                   <p
                     style={{
-                      fontSize: "12px",
-                      color: "#1F2937",
-                      marginBottom: "12px",
+                      fontSize: `${commentBodyFontSize}px`,
+                      color: commentBodyFontColor,
+                      marginBottom: `${horizontalItemsGap}px`,
                       lineHeight: "1.625",
                     }}
                   >

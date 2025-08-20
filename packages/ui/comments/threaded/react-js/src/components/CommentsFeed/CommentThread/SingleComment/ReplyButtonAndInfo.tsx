@@ -1,4 +1,5 @@
 import React from "react";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 
 function ReplyButtonAndInfo({
   hasReplies,
@@ -9,20 +10,28 @@ function ReplyButtonAndInfo({
   replyCount: number;
   setShowReplyForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { styleConfig } = useThreadedStyleConfig();
+  const {
+    replyButtonFontSize,
+    replyButtonFontWeight,
+    replyButtonFontColor,
+    actionsItemGap,
+    fromNowFontColor,
+  } = styleConfig!.commentProps;
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "16px",
-        fontSize: "12px",
+        gap: `${actionsItemGap}px`,
+        fontSize: `${replyButtonFontSize}px`,
       }}
     >
       <button
         onClick={() => setShowReplyForm((prev) => !prev)}
         style={{
-          color: "#6B7280",
-          fontWeight: "500",
+          color: replyButtonFontColor,
+          fontWeight: replyButtonFontWeight,
           padding: "4px 8px",
           borderRadius: "4px",
           marginLeft: "-8px",
@@ -43,7 +52,7 @@ function ReplyButtonAndInfo({
         Reply
       </button>
       {hasReplies && (
-        <span style={{ color: "#9CA3AF" }}>
+        <span style={{ color: fromNowFontColor }}>
           {replyCount} {replyCount === 1 ? "reply" : "replies"}
         </span>
       )}

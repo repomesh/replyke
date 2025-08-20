@@ -1,9 +1,6 @@
-import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import { resetDiv, CommentSkeleton } from "@replyke/ui-core-react-js";
 
 function FetchingCommentsSkeletons() {
-  const { styleConfig } = useThreadedStyleConfig();
-  const {} = styleConfig!.commentFeedProps;
 
   return (
     <div

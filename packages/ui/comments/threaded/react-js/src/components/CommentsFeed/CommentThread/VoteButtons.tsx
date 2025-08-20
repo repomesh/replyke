@@ -4,6 +4,7 @@ import {
   Comment as CommentType,
   useCommentVotes,
 } from "@replyke/react-js";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 
 interface VoteButtonsProps {
   comment: CommentType;
@@ -18,6 +19,22 @@ function VoteButtons({
 }: VoteButtonsProps) {
   const { user } = useUser();
   const { callbacks } = useCommentSection();
+  
+  const { styleConfig } = useThreadedStyleConfig();
+  const {
+    voteIconSize,
+    upvoteColor,
+    upvoteHoverColor,
+    downvoteColor,
+    downvoteHoverColor,
+    voteContainerBackground,
+    neutralVoteColor,
+    scoreTextSize,
+    scoreTextWeight,
+    scoreTextColor,
+    positiveScoreColor,
+    negativeScoreColor,
+  } = styleConfig!.commentProps;
 
   const {
     upvoteComment,
@@ -60,9 +77,9 @@ function VoteButtons({
 
   const iconSize =
     size === "small"
-      ? { width: "12px", height: "12px" }
-      : { width: "16px", height: "16px" };
-  const textSize = size === "small" ? "12px" : "14px";
+      ? { width: `${voteIconSize}px`, height: `${voteIconSize}px` }
+      : { width: `${voteIconSize + 4}px`, height: `${voteIconSize + 4}px` };
+  const textSize = size === "small" ? `${scoreTextSize}px` : `${scoreTextSize + 2}px`;
   const padding = size === "small" ? "4px 8px" : "6px 12px";
 
   return (
@@ -70,7 +87,7 @@ function VoteButtons({
       style={{
         display: "inline-flex",
         alignItems: "center",
-        backgroundColor: "#F3F4F6",
+        backgroundColor: voteContainerBackground,
         borderRadius: "9999px",
         padding: padding,
         gap: "4px",
@@ -93,20 +110,20 @@ function VoteButtons({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: userVote === "up" ? "#F97316" : "transparent",
-          color: userVote === "up" ? "#FFFFFF" : "#6B7280",
+          backgroundColor: userVote === "up" ? upvoteColor : "transparent",
+          color: userVote === "up" ? "#FFFFFF" : neutralVoteColor,
           border: "none",
           cursor: "pointer",
         }}
         onMouseEnter={(e) => {
           if (userVote !== "up") {
-            e.currentTarget.style.color = "#F97316";
-            e.currentTarget.style.backgroundColor = "#FFF7ED";
+            e.currentTarget.style.color = upvoteColor;
+            e.currentTarget.style.backgroundColor = upvoteHoverColor;
           }
         }}
         onMouseLeave={(e) => {
           if (userVote !== "up") {
-            e.currentTarget.style.color = "#6B7280";
+            e.currentTarget.style.color = neutralVoteColor;
             e.currentTarget.style.backgroundColor = "transparent";
           }
         }}
@@ -130,12 +147,12 @@ function VoteButtons({
       {/* Score */}
       <span
         style={{
-          fontWeight: "500",
+          fontWeight: scoreTextWeight,
           fontSize: textSize,
           minWidth: "20px",
           textAlign: "center",
           color:
-            netScore > 0 ? "#EA580C" : netScore < 0 ? "#2563EB" : "#374151",
+            netScore > 0 ? positiveScoreColor : netScore < 0 ? negativeScoreColor : scoreTextColor,
         }}
       >
         {netScore}
@@ -158,20 +175,20 @@ function VoteButtons({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: userVote === "down" ? "#3B82F6" : "transparent",
-          color: userVote === "down" ? "#FFFFFF" : "#6B7280",
+          backgroundColor: userVote === "down" ? downvoteColor : "transparent",
+          color: userVote === "down" ? "#FFFFFF" : neutralVoteColor,
           border: "none",
           cursor: "pointer",
         }}
         onMouseEnter={(e) => {
           if (userVote !== "down") {
-            e.currentTarget.style.color = "#3B82F6";
-            e.currentTarget.style.backgroundColor = "#EFF6FF";
+            e.currentTarget.style.color = downvoteColor;
+            e.currentTarget.style.backgroundColor = downvoteHoverColor;
           }
         }}
         onMouseLeave={(e) => {
           if (userVote !== "down") {
-            e.currentTarget.style.color = "#6B7280";
+            e.currentTarget.style.color = neutralVoteColor;
             e.currentTarget.style.backgroundColor = "transparent";
           }
         }}

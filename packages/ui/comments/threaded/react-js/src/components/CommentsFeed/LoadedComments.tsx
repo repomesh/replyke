@@ -1,12 +1,10 @@
 import { Comment as CommentType, useCommentSection } from "@replyke/react-js";
-import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import { resetDiv } from "@replyke/ui-core-react-js";
 
 import { CommentThread } from "./CommentThread";
 
 function LoadedComments({ data }: { data: CommentType[] }) {
   const { highlightedComment } = useCommentSection();
-  const { styleConfig } = useThreadedStyleConfig();
 
   return (
     <div

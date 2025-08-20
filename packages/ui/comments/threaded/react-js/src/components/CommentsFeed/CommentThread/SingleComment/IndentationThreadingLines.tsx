@@ -1,6 +1,9 @@
 import React from "react";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 
 function IndentationThreadingLines({ isLastReply }: { isLastReply: boolean }) {
+  const { styleConfig } = useThreadedStyleConfig();
+  const { threadingLineColor } = styleConfig!.commentProps;
   return (
     <>
       {/* Vertical line from parent thread continuing down - only if not the last reply */}
@@ -9,7 +12,7 @@ function IndentationThreadingLines({ isLastReply }: { isLastReply: boolean }) {
           style={{
             position: "absolute",
             width: "1px",
-            backgroundColor: "#D1D5DB",
+            backgroundColor: threadingLineColor,
             zIndex: 0,
             left: "-12px",
             top: "0px",
@@ -25,7 +28,7 @@ function IndentationThreadingLines({ isLastReply }: { isLastReply: boolean }) {
           top: "-8px",
           width: "1px",
           height: "18px",
-          backgroundColor: "#D1D5DB",
+          backgroundColor: threadingLineColor,
           zIndex: 0,
           left: "-12px",
         }}
@@ -38,8 +41,8 @@ function IndentationThreadingLines({ isLastReply }: { isLastReply: boolean }) {
           top: "10px",
           width: "12px",
           height: "16px",
-          borderLeft: "1.5px solid #D1D5DB",
-          borderBottom: "1.5px solid #D1D5DB",
+          borderLeft: `1.5px solid ${threadingLineColor}`,
+          borderBottom: `1.5px solid ${threadingLineColor}`,
           borderTop: "1.5px solid transparent",
           borderRight: "1.5px solid transparent",
           borderBottomLeftRadius: "12px",

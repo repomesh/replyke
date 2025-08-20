@@ -4,6 +4,7 @@ import {
   useUser,
   Comment as CommentType,
 } from "@replyke/react-js";
+import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 
 function NewReplyForm({
   comment,
@@ -18,6 +19,16 @@ function NewReplyForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { createComment, callbacks } = useCommentSection();
+  
+  const { styleConfig } = useThreadedStyleConfig();
+  const {
+    backgroundColor,
+    verticalPadding,
+    placeholderText,
+    textareaTextSize,
+    textareaTextColor,
+    textareaBackgroundColor,
+  } = styleConfig!.newCommentFormProps;
 
   const handleReply = async () => {
     if (!replyContent.trim() || isSubmitting) return;
@@ -60,12 +71,12 @@ function NewReplyForm({
   }, [isSubmitting]);
 
   return (
-    <div style={{ marginTop: "8px" }}>
+    <div style={{ marginTop: `${verticalPadding}px` }}>
       <div
         style={{
           display: "flex",
           alignItems: "flex-end",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: backgroundColor,
           borderRadius: "16px",
           border: `1px solid ${
             replyContent.trim().length > 0 ? "#BFDBFE" : "#E5E7EB"
@@ -75,7 +86,7 @@ function NewReplyForm({
               ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
               : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
           transition: "all 300ms ease-in-out",
-          padding: "6px",
+          padding: `${verticalPadding - 2}px`,
         }}
         onMouseEnter={(e) => {
           if (replyContent.trim().length === 0) {
@@ -93,13 +104,13 @@ function NewReplyForm({
         <textarea
           value={replyContent}
           onChange={(e) => setReplyContent(e.target.value)}
-          placeholder="Write a reply..."
+          placeholder={placeholderText}
           style={{
             flex: 1,
-            padding: "6px 8px",
-            backgroundColor: "transparent",
-            color: "#111827",
-            fontSize: "12px",
+            padding: `${verticalPadding - 2}px ${verticalPadding}px`,
+            backgroundColor: textareaBackgroundColor,
+            color: textareaTextColor,
+            fontSize: `${textareaTextSize}px`,
             lineHeight: "1.625",
             outline: "none",
             resize: "none",
@@ -118,7 +129,7 @@ function NewReplyForm({
             onClick={handleCancelReply}
             style={{
               padding: "4px 8px",
-              fontSize: "12px",
+              fontSize: `${textareaTextSize}px`,
               color: "#4B5563",
               borderRadius: "4px",
               transition: "colors 150ms ease-in-out",
@@ -143,7 +154,7 @@ function NewReplyForm({
             disabled={!replyContent.trim() || isSubmitting}
             style={{
               flexShrink: 0,
-              padding: "6px",
+              padding: `${verticalPadding - 2}px`,
               borderRadius: "50%",
               backgroundColor:
                 replyContent.trim().length > 0 && !isSubmitting
@@ -201,8 +212,8 @@ function NewReplyForm({
             ) : (
               <svg
                 style={{
-                  height: "12px",
-                  width: "12px",
+                  height: `${textareaTextSize}px`,
+                  width: `${textareaTextSize}px`,
                   transition: "transform 200ms ease-in-out",
                   transform: "scale(1)",
                 }}

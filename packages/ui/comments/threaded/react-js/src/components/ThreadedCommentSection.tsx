@@ -3,6 +3,7 @@ import {
   ThreadedStyleCallbacks,
   useThreadedStyle,
   PartialThreadedStyleConfig,
+  useThreadedStyleConfig,
 } from "@replyke/comments-threaded-core";
 import { Entity } from "@replyke/react-js";
 import useThreadedComments from "../hooks/useThreadedComments";
@@ -70,6 +71,10 @@ function ThreadedCommentSection({
   isVisible = true,
 }: ThreadedCommentSectionProps) {
   const styleConfig = useThreadedStyle(styleConfigProp);
+  const { styleConfig: resolvedStyleConfig } = useThreadedStyleConfig();
+  
+  const { backgroundColor } = resolvedStyleConfig!.commentFeedProps;
+  const { verticalPadding } = resolvedStyleConfig!.newCommentFormProps;
 
   const { CommentSectionProvider } = useThreadedComments({
     entity,
@@ -87,15 +92,15 @@ function ThreadedCommentSection({
           style={{
             flex: 1,
             overflowY: "auto",
-            backgroundColor: "white",
-            paddingTop: "8px",
-            paddingBottom: "8px",
+            backgroundColor: backgroundColor,
+            paddingTop: `${verticalPadding}px`,
+            paddingBottom: `${verticalPadding}px`,
           }}
         >
           <CommentsFeed />
         </div>
 
-        <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px" }}>
+        <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: `${verticalPadding}px` }}>
           {isVisible && <NewCommentForm />}
         </div>
       </div>
