@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { Comment as CommentType } from "@replyke/react-js";
-import { UserAvatar } from "@replyke/ui-core-react-js";
+import {
+  Comment as CommentType,
+  useCommentSection,
+  useUser,
+} from "@replyke/react-js";
+import {
+  parseContentWithMentions,
+  UserAvatar,
+} from "@replyke/ui-core-react-js";
 import VoteButtons from "../VoteButtons";
 import ActionMenu from "../ActionMenu";
 import NewReplyForm from "../NewReplyForm";
@@ -27,6 +34,8 @@ function SingleComment({
   isLastReply = false,
   onToggleCollapse,
 }: SingleCommentProps) {
+  const { user } = useUser();
+  const { callbacks } = useCommentSection();
   const [comment, setComment] = useState(commentFromSection);
   const [showReplyForm, setShowReplyForm] = useState(false);
 
@@ -126,16 +135,24 @@ function SingleComment({
 
             {!isCollapsed && (
               <>
-                <p
-                  style={{
-                    fontSize: "12px",
-                    color: "#1F2937",
-                    marginBottom: "12px",
-                    lineHeight: "1.625",
-                  }}
-                >
-                  {comment.content}
-                </p>
+                {comment.content && (
+                  <p
+                    style={{
+                      fontSize: "12px",
+                      color: "#1F2937",
+                      marginBottom: "12px",
+                      lineHeight: "1.625",
+                    }}
+                  >
+                    {parseContentWithMentions(
+                      comment.content,
+                      comment.mentions,
+                      user?.id,
+                      callbacks?.currentUserClickCallback,
+                      callbacks?.otherUserClickCallback
+                    )}
+                  </p>
+                )}
 
                 <div
                   style={{
