@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { useCommentSection } from "@replyke/react-js";
 import LoadedComments from "./LoadedComments";
 import FetchingCommentsSkeletons from "./FetchingCommentsSkeletons";

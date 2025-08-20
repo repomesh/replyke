@@ -4,7 +4,7 @@ import {
   useCommentSection,
   useReplies,
 } from "@replyke/react-js";
-import SingleComment from "./SingleComment";
+import { SingleComment } from "./SingleComment";
 import CommentReplies from "./CommentReplies";
 
 export interface CommentThreadProps {

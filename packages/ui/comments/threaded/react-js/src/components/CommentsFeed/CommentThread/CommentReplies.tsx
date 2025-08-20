@@ -33,14 +33,16 @@ function CommentReplies({
   }
 
   return (
-    <div style={{ marginTop: "8px" }}>
-      {loading && (
+    <div
+    // style={{ marginTop: "8px" }}
+    >
+      {/* {loading && (
         <div
           style={{ fontSize: "12px", color: "#6B7280", marginBottom: "8px" }}
         >
           Loading replies...
         </div>
-      )}
+      )} */}
 
       {visibleReplies.map((reply: CommentType, index: number) => (
         <CommentThreadComponent
