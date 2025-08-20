@@ -1,4 +1,3 @@
-import React from "react";
 import { User } from "@replyke/react-js";
 import { UserAvatar, UserMentionSkeleton } from "@replyke/ui-core-react-js";
 

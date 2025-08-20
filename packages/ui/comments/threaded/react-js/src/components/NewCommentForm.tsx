@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { useCommentSection, useUser, useMentions } from "@replyke/react-js";
 import { useTextareaCursorIndicator } from "@replyke/ui-core-react-js";

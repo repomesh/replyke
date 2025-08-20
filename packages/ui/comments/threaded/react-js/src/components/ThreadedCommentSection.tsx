@@ -61,6 +61,38 @@ const arePropsEqual = (
   return true;
 };
 
+function ThreadedCommentSectionInner({ isVisible }: { isVisible: boolean }) {
+  const { styleConfig: resolvedStyleConfig } = useThreadedStyleConfig();
+
+  const { backgroundColor } = resolvedStyleConfig!.commentFeedProps;
+  const { verticalPadding } = resolvedStyleConfig!.newCommentFormProps;
+
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          backgroundColor: backgroundColor,
+          paddingTop: `${verticalPadding}px`,
+          paddingBottom: `${verticalPadding}px`,
+        }}
+      >
+        <CommentsFeed />
+      </div>
+
+      <div
+        style={{
+          borderTop: "1px solid #e5e7eb",
+          paddingTop: `${verticalPadding}px`,
+        }}
+      >
+        {isVisible && <NewCommentForm />}
+      </div>
+    </div>
+  );
+}
+
 function ThreadedCommentSection({
   entity,
   entityId,
@@ -71,10 +103,6 @@ function ThreadedCommentSection({
   isVisible = true,
 }: ThreadedCommentSectionProps) {
   const styleConfig = useThreadedStyle(styleConfigProp);
-  const { styleConfig: resolvedStyleConfig } = useThreadedStyleConfig();
-  
-  const { backgroundColor } = resolvedStyleConfig!.commentFeedProps;
-  const { verticalPadding } = resolvedStyleConfig!.newCommentFormProps;
 
   const { CommentSectionProvider } = useThreadedComments({
     entity,
@@ -87,23 +115,7 @@ function ThreadedCommentSection({
 
   return (
     <CommentSectionProvider>
-      <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            backgroundColor: backgroundColor,
-            paddingTop: `${verticalPadding}px`,
-            paddingBottom: `${verticalPadding}px`,
-          }}
-        >
-          <CommentsFeed />
-        </div>
-
-        <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: `${verticalPadding}px` }}>
-          {isVisible && <NewCommentForm />}
-        </div>
-      </div>
+      <ThreadedCommentSectionInner isVisible={isVisible} />
     </CommentSectionProvider>
   );
 }

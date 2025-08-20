@@ -28,10 +28,10 @@ function deepEqual(obj1: any, obj2: any): boolean {
   return true;
 }
 
-export interface UseSocialStyleProps extends PartialThreadedStyleConfig {}
+export interface UseThreadedStyleProps extends PartialThreadedStyleConfig {}
 
-function useSocialStyle(props?: Partial<UseSocialStyleProps>) {
-  const prevPropsRef = useRef<Partial<UseSocialStyleProps> | null>(null);
+function useThreadedStyle(props?: Partial<UseThreadedStyleProps>) {
+  const prevPropsRef = useRef<Partial<UseThreadedStyleProps> | null>(null);
   
   // Use deep comparison to determine if props have actually changed
   const stableProps = useMemo(() => {
@@ -60,4 +60,4 @@ function useSocialStyle(props?: Partial<UseSocialStyleProps>) {
   return styleConfig;
 }
 
-export default useSocialStyle;
+export default useThreadedStyle;
