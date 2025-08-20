@@ -1,10 +1,10 @@
 {
-  "name": "@replyke/comments-social-react-native",
+  "name": "@replyke/comments-thread-react-js",
   "version": "5.0.19",
   "private": false,
   "license": "Apache-2.0",
   "author": "Replyke, maintained by Yanay Tsabary",
-  "description": "Replyke: Add a modern comment section to your React Native apps: replies, likes, mentions, highlighted comments, GIFs, built-in authorization, reports & moderation.",
+  "description": "Replyke: Add a modern comment section to your React apps: replies, likes, mentions, highlighted comments, GIFs, built-in authorization, reports & moderation.",
   "keywords": [
     "replyke",
     "social",
@@ -14,8 +14,7 @@
     "reporting",
     "upvotes",
     "downvotes",
-    "react-native",
-    "expo",
+    "react",
     "typescript"
   ],
   "bugs": {
@@ -38,17 +37,23 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
-    "@replyke/comments-social-core": "workspace:*",
-    "@replyke/ui-core-react-native": "workspace:*"
+    "@replyke/comments-threaded-core": "workspace:*",
+    "@replyke/ui-core-react-js": "workspace:*"
   },
   "devDependencies": {
-    "@gorhom/bottom-sheet": "^5.0.6",
-    "@replyke/core": "workspace:*",
-    "react-native-gesture-handler": "^2.22.1"
+    "@replyke/react-js": "workspace:*",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4"
   },
   "peerDependencies": {
-    "@gorhom/bottom-sheet": "^5",
-    "react-native-gesture-handler": "^2"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
