@@ -21,10 +21,15 @@ interface ThreadedCommentSectionProps {
 }
 
 // Custom comparison function to prevent unnecessary re-renders
-const arePropsEqual = (prevProps: ThreadedCommentSectionProps, nextProps: ThreadedCommentSectionProps): boolean => {
+const arePropsEqual = (
+  prevProps: ThreadedCommentSectionProps,
+  nextProps: ThreadedCommentSectionProps
+): boolean => {
   // Add development warnings for unnecessary prop changes
-  warnPropChanges('ThreadedCommentSection', prevProps, nextProps, [
-    'entity', 'callbacks', 'styleConfig'
+  warnPropChanges("ThreadedCommentSection", prevProps, nextProps, [
+    "entity",
+    "callbacks",
+    "styleConfig",
   ]);
 
   // Compare primitive values
@@ -83,12 +88,14 @@ function ThreadedCommentSection({
             flex: 1,
             overflowY: "auto",
             backgroundColor: "white",
+            paddingTop: "8px",
+            paddingBottom: "8px",
           }}
         >
           <CommentsFeed />
         </div>
 
-        <div style={{ borderTop: "1px solid #e5e7eb" }}>
+        <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px" }}>
           {isVisible && <NewCommentForm />}
         </div>
       </div>
