@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode } from "react";
+import React, { createContext, ReactNode, useMemo } from "react";
 import { ThreadedStyleConfig } from "../interfaces/style-props/ThreadedStyleConfig";
 
 export interface ThreadedStyleConfigContextProps {
@@ -18,8 +18,12 @@ export const ThreadedStyleConfigProvider: React.FC<
 > = ({ styleConfig, children }: ThreadedStyleConfigContextProps) => {
   if (!styleConfig) throw new Error("Missing style config");
 
+  const contextValue = useMemo(() => ({ 
+    styleConfig 
+  }), [styleConfig]);
+
   return (
-    <ThreadedStyleConfigContext.Provider value={{ styleConfig }}>
+    <ThreadedStyleConfigContext.Provider value={contextValue}>
       {children}
     </ThreadedStyleConfigContext.Provider>
   );

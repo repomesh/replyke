@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useMemo, useCallback } from "react";
 import { Comment as CommentType } from "@replyke/react-js";
 
 type ModalManagerContext = {
@@ -41,25 +41,25 @@ export const ModalManagerProvider = ({
   //     null
   //   );
 
-  const openCommentOptionsModal = (newComment?: CommentType) => {
+  const openCommentOptionsModal = useCallback((newComment?: CommentType) => {
     if (newComment) setOptionsComment(newComment);
     setIsCommentOptionsModalOpen(true);
-  };
+  }, []);
 
-  const closeCommentOptionsModal = () => {
+  const closeCommentOptionsModal = useCallback(() => {
     setIsCommentOptionsModalOpen(false);
     setOptionsComment(null);
-  };
+  }, []);
 
-  const openCommentOptionsModalOwner = (newComment?: CommentType) => {
+  const openCommentOptionsModalOwner = useCallback((newComment?: CommentType) => {
     if (newComment) setOptionsComment(newComment);
     setIsCommentOptionsModalOwnerOpen(true);
-  };
+  }, []);
 
-  const closeCommentOptionsModalOwner = () => {
+  const closeCommentOptionsModalOwner = useCallback(() => {
     setIsCommentOptionsModalOwnerOpen(false);
     setOptionsComment(null);
-  };
+  }, []);
 
   //   const openReportCommentModal = (newComment?: CommentType) => {
   //     if (newComment) setOptionsComment(newComment);
@@ -70,25 +70,33 @@ export const ModalManagerProvider = ({
   //     reportCommentModalRef.current?.close();
   //   };
 
+  const contextValue = useMemo(() => ({
+    isCommentOptionsModalOpen,
+    isCommentOptionsModalOwnerOpen,
+
+    openCommentOptionsModal,
+    closeCommentOptionsModal,
+    openCommentOptionsModalOwner,
+    closeCommentOptionsModalOwner,
+    // openReportCommentModal,
+    // closeReportCommentModal,
+
+    optionsComment,
+    setOptionsComment,
+    // reportedComment,
+    // setReportedComment,
+  }), [
+    isCommentOptionsModalOpen,
+    isCommentOptionsModalOwnerOpen,
+    openCommentOptionsModal,
+    closeCommentOptionsModal,
+    openCommentOptionsModalOwner,
+    closeCommentOptionsModalOwner,
+    optionsComment,
+  ]);
+
   return (
-    <ModalManagerContext.Provider
-      value={{
-        isCommentOptionsModalOpen,
-        isCommentOptionsModalOwnerOpen,
-
-        openCommentOptionsModal,
-        closeCommentOptionsModal,
-        openCommentOptionsModalOwner,
-        closeCommentOptionsModalOwner,
-        // openReportCommentModal,
-        // closeReportCommentModal,
-
-        optionsComment,
-        setOptionsComment,
-        // reportedComment,
-        // setReportedComment,
-      }}
-    >
+    <ModalManagerContext.Provider value={contextValue}>
       {children}
     </ModalManagerContext.Provider>
   );

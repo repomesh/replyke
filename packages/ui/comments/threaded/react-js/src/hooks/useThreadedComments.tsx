@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import {
   CommentsSortByOptions,
   CommentSectionProvider,
@@ -37,8 +37,8 @@ function useThreadedComments({
   limit?: number;
   highlightedCommentId?: string | null;
 }) {
-  return {
-    CommentSectionProvider: ({ children }: { children: ReactNode }) => (
+  const MemoizedCommentSectionProvider = useMemo(() => {
+    return ({ children }: { children: ReactNode }) => (
       <CommentSectionProvider
         entity={entity}
         entityId={entityId}
@@ -60,10 +60,25 @@ function useThreadedComments({
           </ModalManagerProvider>
         </ThreadedStyleConfigProvider>
       </CommentSectionProvider>
-    ),
+    );
+  }, [
+    entity,
+    entityId,
+    foreignId,
+    shortId,
+    createIfNotFound,
+    styleConfig,
+    callbacks,
+    defaultSortBy,
+    limit,
+    highlightedCommentId
+  ]);
+
+  return useMemo(() => ({
+    CommentSectionProvider: MemoizedCommentSectionProvider,
     CommentsFeed,
     NewCommentForm,
-  };
+  }), [MemoizedCommentSectionProvider]);
 }
 
 export default useThreadedComments;
