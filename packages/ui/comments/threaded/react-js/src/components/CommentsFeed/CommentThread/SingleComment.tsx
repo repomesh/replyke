@@ -4,6 +4,7 @@ import { UserAvatar } from "@replyke/ui-core-react-js";
 import VoteButtons from "./VoteButtons";
 import ActionMenu from "./ActionMenu";
 import NewReplyForm from "./NewReplyForm";
+import useModalManager from "../../../hooks/useModalManager";
 
 interface SingleCommentProps {
   comment: CommentType;
@@ -190,12 +191,7 @@ function SingleComment({
                   </button>
                 )}
               </div>
-              <ActionMenu
-                comment={comment}
-                onDelete={() => {
-                  deleteComment?.({ commentId: comment.id });
-                }}
-              />
+              <ActionMenu comment={comment} />
             </div>
 
             {!isCollapsed && (

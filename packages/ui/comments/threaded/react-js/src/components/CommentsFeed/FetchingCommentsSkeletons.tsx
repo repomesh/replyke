@@ -9,9 +9,8 @@ function FetchingCommentsSkeletons() {
     <div
       style={{
         ...resetDiv,
-        display: "flex",
-        flexDirection: "column",
-        // gap: commentsGap,
+        display: "grid",
+        gap: "8px",
         // backgroundColor,
         paddingBottom: 24,
         paddingRight: 16,

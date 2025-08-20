@@ -8,7 +8,7 @@ import useThreadedComments from "../hooks/useThreadedComments";
 import { CommentsFeed } from "./CommentsFeed";
 import { NewCommentForm } from "./NewCommentForm";
 
-function SocialCommentSection({
+function ThreadedCommentSection({
   entity,
   entityId,
   foreignId,
@@ -57,4 +57,4 @@ function SocialCommentSection({
   );
 }
 
-export default SocialCommentSection;
+export default ThreadedCommentSection;
