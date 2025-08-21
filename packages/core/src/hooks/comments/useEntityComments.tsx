@@ -36,6 +36,14 @@ function useEntityComments(
 
   const fetchManyComments = useFetchManyComments();
 
+  // Log entityId changes
+  useEffect(() => {
+    console.log('[useEntityComments] EntityId changed:', {
+      entityId,
+      hasEntityId: !!entityId
+    });
+  }, [entityId]);
+
   const loading = useRef(true);
   const [loadingState, setLoadingState] = useState(true); // required to trigger rerenders
 
@@ -85,12 +93,14 @@ function useEntityComments(
   );
 
   const resetComments = useCallback(async () => {
+    console.log('[useEntityComments] resetComments called with entityId:', entityId);
+    
     if (!entityId) {
-      // console.warn(
-      //   "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
-      // );
+      console.log('[useEntityComments] No entityId provided, aborting resetComments');
       return;
     }
+    
+    console.log('[useEntityComments] Starting resetComments fetch for entityId:', entityId);
     try {
       loading.current = true;
       setLoadingState(true);
@@ -101,23 +111,41 @@ function useEntityComments(
       setEntityCommentsTree({});
       setPage(1);
 
+      console.log('[useEntityComments] Calling fetchManyComments with:', {
+        entityId,
+        page: 1,
+        sortBy,
+        limit
+      });
+      
       const newComments = await fetchManyComments({
         entityId,
         page: 1,
         sortBy,
         limit,
       });
+      
+      console.log('[useEntityComments] fetchManyComments returned:', {
+        commentsCount: newComments?.length || 0,
+        hasComments: !!newComments
+      });
 
       if (newComments) {
+        console.log('[useEntityComments] Adding comments to tree:', newComments.length);
         addCommentsToTree(newComments);
         if (newComments.length < limit) {
+          console.log('[useEntityComments] No more comments available (received less than limit)');
           hasMore.current = false;
           setHasMoreState(false);
         }
+      } else {
+        console.log('[useEntityComments] No comments returned from fetch');
       }
     } catch (err) {
+      console.error('[useEntityComments] resetComments failed:', err);
       handleError(err, "Failed to reset entity comments:");
     } finally {
+      console.log('[useEntityComments] resetComments completed, setting loading to false');
       loading.current = false;
       setLoadingState(false);
     }
@@ -131,16 +159,17 @@ function useEntityComments(
   };
 
   useEffect(() => {
+    console.log('[useEntityComments] useEffect triggered, calling resetComments');
     resetComments();
   }, [resetComments]);
 
   // useEffect to get a new batch of comments
   useEffect(() => {
     const loadMoreComments = async () => {
+      console.log('[useEntityComments] loadMoreComments called for page:', page);
+      
       if (!entityId) {
-        // console.warn(
-        //   "The 'fetch comments' operation was invoked without a valid entity ID and has been aborted."
-        // );
+        console.log('[useEntityComments] No entityId for loadMoreComments, aborting');
         return;
       }
 
@@ -172,7 +201,14 @@ function useEntityComments(
 
     // We only load more if th page changed
     if (page > 1 && hasMore.current && !loading.current) {
+      console.log('[useEntityComments] Loading more comments for page:', page);
       loadMoreComments();
+    } else {
+      console.log('[useEntityComments] Skipping loadMoreComments:', {
+        page,
+        hasMore: hasMore.current,
+        loading: loading.current
+      });
     }
   }, [page]);
 
