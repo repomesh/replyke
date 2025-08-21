@@ -18,7 +18,7 @@ export type {
   ThreadedStyleConfig,
   PartialThreadedStyleConfig,
 } from "./interfaces/style-props/ThreadedStyleConfig";
-export type { UseSocialStyleProps } from "./hooks/useThreadedStyle";
+export type { UseThreadedStyleProps } from "./hooks/useThreadedStyle";
 
 // Threaded section - other
 export { threadedBaseStyle } from "./threaded-base-style";

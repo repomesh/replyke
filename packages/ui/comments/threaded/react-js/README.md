@@ -1,12 +1,12 @@
-# Replyke Social Comment Section (React)
+# Replyke Threaded Comment Section (React)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)
-![Version](https://img.shields.io/npm/v/@replyke/comments-social-react-js)
+![Version](https://img.shields.io/npm/v/@replyke/comments-threaded-react-js)
 
 ## Overview
 
-The **Replyke Social Comment Section** for React is a modern, fully featured comment system designed to integrate seamlessly into web applications. It provides a feature-rich, interactive commenting experience similar to those found in leading social networks, allowing for user engagement, moderation, and customization.
+The **Replyke Threaded Comment Section** for React is a modern, fully featured comment system designed to integrate seamlessly into web applications. It provides a feature-rich, interactive commenting experience similar to those found in leading social networks, allowing for user engagement, moderation, and customization.
 
 ![Demo](https://raw.githubusercontent.com/replyke/ui-kit/main/assets/comment_section.gif)
 
@@ -25,7 +25,7 @@ The **Replyke Social Comment Section** for React is a modern, fully featured com
 Install the package via NPM:
 
 ```sh
-npm install @replyke/comments-social-react-js
+npm install @replyke/comments-threaded-react-js
 ```
 
 ## Requirements
