@@ -1,6 +1,14 @@
 function NoCommentsPlaceHolder() {
   return (
-    <div>
+    <div
+      style={{
+        padding: 16,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
       <p
         style={{
           textAlign: "center",

@@ -95,20 +95,14 @@ function useCommentSectionData(
     highlightedCommentId,
   } = props;
 
-  const { setEntity: setContextEntity } = useEntity();
-  const [entity, setEntity] = useState<Entity | null | undefined>(entityProp);
+  const { entity: entityFromContext, setEntity: setContextEntity } =
+    useEntity();
+  const [entity, setEntity] = useState<Entity | null | undefined>(
+    entityProp ?? entityFromContext
+  );
 
   const { user } = useUser();
 
-  // Log entity state changes
-  useEffect(() => {
-    console.log('[useCommentSectionData] Entity state changed:', {
-      entityId: entity?.id,
-      foreignId: entity?.foreignId,
-      shortId: entity?.shortId,
-      hasEntity: !!entity
-    });
-  }, [entity]);
   const {
     entityCommentsTree,
     comments,
@@ -367,39 +361,29 @@ function useCommentSectionData(
 
   useEffect(() => {
     const handleFetchEntity = async () => {
-      console.log('[useCommentSectionData] handleFetchEntity called:', {
-        foreignId,
-        entityId,
-        shortId,
-        currentEntity: entity?.id
-      });
-      
       if (!foreignId && !entityId && !shortId) {
-        console.log('[useCommentSectionData] No entity identifiers provided, skipping fetch');
+        console.log(
+          "[useCommentSectionData] No entity identifiers provided, skipping fetch"
+        );
         return;
       }
 
       if (entity && entityId && entity.id === entityId) {
-        console.log('[useCommentSectionData] Entity already matches entityId, skipping fetch');
         return;
       }
       if (entity && foreignId && entity.foreignId === foreignId) {
-        console.log('[useCommentSectionData] Entity already matches foreignId, skipping fetch');
         return;
       }
       if (entity && shortId && entity.shortId === shortId) {
-        console.log('[useCommentSectionData] Entity already matches shortId, skipping fetch');
         return;
       }
 
       const uniqueKey = `${entityId ?? ""}-${foreignId ?? ""}-${shortId ?? ""}`;
 
       if (fetchedStatus.current[uniqueKey]) {
-        console.log('[useCommentSectionData] Entity already fetched for key:', uniqueKey);
         return;
       }
 
-      console.log('[useCommentSectionData] Starting entity fetch for key:', uniqueKey);
       fetchedStatus.current[uniqueKey] = true;
 
       try {
@@ -420,17 +404,10 @@ function useCommentSectionData(
         }
 
         if (fetchedEntity) {
-          console.log('[useCommentSectionData] Entity fetched successfully:', {
-            entityId: fetchedEntity.id,
-            foreignId: fetchedEntity.foreignId,
-            shortId: fetchedEntity.shortId
-          });
+ 
           setEntity(fetchedEntity);
-        } else {
-          console.log('[useCommentSectionData] Entity fetch returned null');
         }
       } catch (err) {
-        console.error('[useCommentSectionData] Entity fetch failed:', err);
         handleError(err, "Fetching entity failed");
       }
     };
