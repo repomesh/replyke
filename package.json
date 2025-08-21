@@ -1,6 +1,6 @@
 {
   "name": "@replyke/monorepo",
-  "version": "5.0.19",
+  "version": "5.1.1",
   "license": "Apache-2.0",
   "author": "Replyke, maintained by Yanay Tsabary",
   "description": "Replyke: Build interactive apps with social features like comments, votes, feeds, user lists, notifications, and more.",
@@ -28,9 +28,9 @@
   },
   "private": false,
   "scripts": {
-    "publish-prod": "pnpm --filter @replyke/core --filter @replyke/expo --filter @replyke/react-js --filter @replyke/react-native --filter @replyke/ui-core --filter @replyke/ui-core-react-js --filter @replyke/ui-core-react-native --filter @replyke/comments-social-core --filter @replyke/comments-social-react-js --filter @replyke/comments-social-react-native --filter @replyke/comments-threaded publish",
-    "publish-beta": "pnpm --filter @replyke/core --filter @replyke/expo --filter @replyke/react-js --filter @replyke/react-native --filter @replyke/ui-core --filter @replyke/ui-core-react-js --filter @replyke/ui-core-react-native --filter @replyke/comments-social-core --filter @replyke/comments-social-react-js --filter @replyke/comments-social-react-native --filter @replyke/comments-threaded publish --tag beta",
-    "build-all": "pnpm --filter @replyke/core run build && pnpm --filter @replyke/react-js run build && pnpm --filter @replyke/react-native run build && pnpm --filter @replyke/expo run build && pnpm --filter @replyke/ui-core run build && pnpm --filter @replyke/ui-core-react-js run build && pnpm --filter @replyke/ui-core-react-native run build && pnpm --filter @replyke/comments-social-core run build && pnpm --filter @replyke/comments-social-react-js run build && pnpm --filter @replyke/comments-social-react-native run build && pnpm --filter @replyke/comments-threaded run build"
+    "publish-prod": "pnpm --filter @replyke/core --filter @replyke/expo --filter @replyke/react-js --filter @replyke/react-native --filter @replyke/ui-core --filter @replyke/ui-core-react-js --filter @replyke/ui-core-react-native --filter @replyke/comments-social-core --filter @replyke/comments-social-react-js --filter @replyke/comments-social-react-native --filter @replyke/comments-threaded-core --filter @replyke/comments-threaded-react-js publish",
+    "publish-beta": "pnpm --filter @replyke/core --filter @replyke/expo --filter @replyke/react-js --filter @replyke/react-native --filter @replyke/ui-core --filter @replyke/ui-core-react-js --filter @replyke/ui-core-react-native --filter @replyke/comments-social-core --filter @replyke/comments-social-react-js --filter @replyke/comments-social-react-native --filter @replyke/comments-threaded-core --filter @replyke/comments-threaded-react-js publish --tag beta",
+    "build-all": "pnpm --filter @replyke/core run build && pnpm --filter @replyke/react-js run build && pnpm --filter @replyke/react-native run build && pnpm --filter @replyke/expo run build && pnpm --filter @replyke/ui-core run build && pnpm --filter @replyke/ui-core-react-js run build && pnpm --filter @replyke/ui-core-react-native run build && pnpm --filter @replyke/comments-social-core run build && pnpm --filter @replyke/comments-social-react-js run build && pnpm --filter @replyke/comments-social-react-native run build && pnpm --filter @replyke/comments-threaded-core && pnpm --filter @replyke/comments-threaded-react-js run build"
   },
   "devDependencies": {
     "@types/node": "^20.14.5",
