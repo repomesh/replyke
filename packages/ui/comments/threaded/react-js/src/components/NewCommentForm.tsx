@@ -1,14 +1,19 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import { useCommentSection, useUser, useMentions } from "@replyke/react-js";
-import { useTextareaCursorIndicator } from "@replyke/ui-core-react-js";
+import { useCommentSection, useUser, useMentions, useProject, handleError } from "@replyke/react-js";
+import { useTextareaCursorIndicator, GiphyContainer } from "@replyke/ui-core-react-js";
 import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import { MentionSuggestions } from "./MentionSuggestions";
 
 function NewCommentForm() {
   const { user } = useUser();
+  const { project } = useProject();
+  const giphyApiKey = project?.integrations.find((int) => int.name === "giphy")
+    ?.data.apiKey;
+  
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGiphyVisible, setIsGiphyVisible] = useState(false);
   const { createComment, callbacks } = useCommentSection();
   
   const { styleConfig } = useThreadedStyleConfig();
@@ -22,6 +27,10 @@ function NewCommentForm() {
     textareaTextSize,
     textareaTextColor,
     textareaBackgroundColor,
+    postButtonText,
+    postButtonFontSize,
+    postButtonFontWeight,
+    postButtonFontColor,
   } = styleConfig!.newCommentFormProps;
 
   const hasContent = content.trim().length > 0;
@@ -77,6 +86,32 @@ function NewCommentForm() {
     }
   }, [hasContent, isSubmitting, user, createComment, mentions, resetMentions, callbacks]);
 
+  const handleCreateGif = useCallback(
+    async (gif: {
+      id: string;
+      url: string;
+      gifUrl: string;
+      gifPreviewUrl: string;
+      altText: string | undefined;
+      aspectRatio: number;
+    }) => {
+      const textArea = textAreaRef.current;
+      if (!textArea) throw new Error("Can not find textarea");
+
+      textArea.value = "";
+      setContent("");
+      resetMentions();
+      setIsGiphyVisible(false);
+
+      try {
+        await createComment!({ gif, mentions });
+      } catch (err) {
+        handleError(err, "Creating comment failed: ");
+      }
+    },
+    [createComment, mentions, resetMentions]
+  );
+
   // Add keyboard event handler for Enter key
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
@@ -95,7 +130,16 @@ function NewCommentForm() {
   }, [handleSubmit]);
 
   return (
-    <form onSubmit={handleSubmit} style={{ position: "relative" }}>
+    <>
+      {giphyApiKey ? (
+        <GiphyContainer
+          giphyApiKey={giphyApiKey}
+          onClickBack={() => setIsGiphyVisible(false)}
+          onSelectGif={(selected) => handleCreateGif(selected)}
+          visible={isGiphyVisible}
+        />
+      ) : null}
+      <form onSubmit={handleSubmit} style={{ position: "relative" }}>
       <MentionSuggestions
         isMentionActive={isMentionActive}
         isLoadingMentions={loading}
@@ -145,77 +189,99 @@ function NewCommentForm() {
           }}
           rows={2}
         />
-        <button
-          type="submit"
-          disabled={!hasContent || isSubmitting}
-          style={{
-            flexShrink: 0,
-            padding: `${verticalPadding}px`,
-            borderRadius: "50%",
-            backgroundColor:
-              hasContent && !isSubmitting ? "#2563EB" : "#E5E7EB",
-            color: hasContent && !isSubmitting ? "#FFFFFF" : "#9CA3AF",
-            boxShadow:
-              "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-            transition: "all 200ms ease-in-out",
-            border: "none",
-            cursor: !hasContent || isSubmitting ? "not-allowed" : "pointer",
-            outline: "none",
-          }}
-          onMouseEnter={(e) => {
-            if (hasContent && !isSubmitting) {
-              e.currentTarget.style.backgroundColor = "#1D4ED8";
-              e.currentTarget.style.boxShadow =
-                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (hasContent && !isSubmitting) {
-              e.currentTarget.style.backgroundColor = "#2563EB";
-              e.currentTarget.style.boxShadow =
-                "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
-            }
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.outline = "2px solid #3B82F6";
-            e.currentTarget.style.outlineOffset = "2px";
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.outline = "none";
-            e.currentTarget.style.outlineOffset = "0";
-          }}
-        >
-          <svg
+        {!hasContent && giphyApiKey ? (
+          <button
+            type="button"
+            onClick={() => setIsGiphyVisible(true)}
+            disabled={isSubmitting}
             style={{
-              height: `${textareaTextSize}px`,
-              width: `${textareaTextSize}px`,
-              transition: "transform 200ms ease-in-out",
-              transform: hasContent ? "scale(1)" : "scale(1)",
+              flexShrink: 0,
+              padding: `${verticalPadding}px`,
+              border: "none",
+              outline: "none",
+              fontWeight: postButtonFontWeight,
+              fontSize: postButtonFontSize,
+              color: postButtonFontColor,
+              cursor: "pointer",
+              backgroundColor: "transparent",
+            }}
+          >
+            GIF
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={!hasContent || isSubmitting}
+            style={{
+              flexShrink: 0,
+              padding: `${verticalPadding}px`,
+              borderRadius: "50%",
+              backgroundColor:
+                hasContent && !isSubmitting ? "#2563EB" : "#E5E7EB",
+              color: hasContent && !isSubmitting ? "#FFFFFF" : "#9CA3AF",
+              boxShadow:
+                "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+              transition: "all 200ms ease-in-out",
+              border: "none",
+              cursor: !hasContent || isSubmitting ? "not-allowed" : "pointer",
+              outline: "none",
             }}
             onMouseEnter={(e) => {
-              if (hasContent) {
-                e.currentTarget.style.transform = "scale(1.1)";
+              if (hasContent && !isSubmitting) {
+                e.currentTarget.style.backgroundColor = "#1D4ED8";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
               }
             }}
             onMouseLeave={(e) => {
-              if (hasContent) {
-                e.currentTarget.style.transform = "scale(1)";
+              if (hasContent && !isSubmitting) {
+                e.currentTarget.style.backgroundColor = "#2563EB";
+                e.currentTarget.style.boxShadow =
+                  "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
               }
             }}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            onFocus={(e) => {
+              e.currentTarget.style.outline = "2px solid #3B82F6";
+              e.currentTarget.style.outlineOffset = "2px";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.outline = "none";
+              e.currentTarget.style.outlineOffset = "0";
+            }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 10l7-7m0 0l7 7m-7-7v18"
-            />
-          </svg>
-        </button>
+            <svg
+              style={{
+                height: `${textareaTextSize}px`,
+                width: `${textareaTextSize}px`,
+                transition: "transform 200ms ease-in-out",
+                transform: hasContent ? "scale(1)" : "scale(1)",
+              }}
+              onMouseEnter={(e) => {
+                if (hasContent) {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (hasContent) {
+                  e.currentTarget.style.transform = "scale(1)";
+                }
+              }}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
+            </svg>
+          </button>
+        )}
       </div>
     </form>
+    </>
   );
 }
 

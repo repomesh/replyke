@@ -38,6 +38,7 @@ function SocialCommentSection({
   sortOptions = ["top", "new", "old"],
   header,
   withEmojis,
+  children,
 }: {
   entity?: Entity;
   entityId?: string | undefined | null;
@@ -51,6 +52,7 @@ function SocialCommentSection({
   sortOptions?: Array<"top" | "new" | "old"> | null;
   header?: React.ReactNode;
   withEmojis?: boolean;
+  children?: React.ReactNode;
 }) {
   const styleConfig = useSocialStyle(styleConfigProp);
 
@@ -144,7 +146,7 @@ function SocialCommentSection({
       )}
 
       <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <CommentsFeed />
+        <CommentsFeed>{children}</CommentsFeed>
       </ScrollView>
 
       <View

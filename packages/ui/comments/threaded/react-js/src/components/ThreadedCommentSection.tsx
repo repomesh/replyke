@@ -19,6 +19,7 @@ interface ThreadedCommentSectionProps {
   callbacks?: ThreadedStyleCallbacks;
   styleConfig?: Partial<PartialThreadedStyleConfig>;
   isVisible?: boolean;
+  children?: React.ReactNode;
 }
 
 // Custom comparison function to prevent unnecessary re-renders
@@ -61,7 +62,13 @@ const arePropsEqual = (
   return true;
 };
 
-function ThreadedCommentSectionInner({ isVisible }: { isVisible: boolean }) {
+function ThreadedCommentSectionInner({
+  isVisible,
+  children,
+}: {
+  isVisible: boolean;
+  children?: React.ReactNode;
+}) {
   const { styleConfig: resolvedStyleConfig } = useThreadedStyleConfig();
 
   const { backgroundColor } = resolvedStyleConfig!.commentFeedProps;
@@ -78,7 +85,7 @@ function ThreadedCommentSectionInner({ isVisible }: { isVisible: boolean }) {
           paddingBottom: `${verticalPadding}px`,
         }}
       >
-        <CommentsFeed />
+        <CommentsFeed>{children}</CommentsFeed>
       </div>
 
       <div
@@ -101,6 +108,7 @@ function ThreadedCommentSection({
   callbacks,
   styleConfig: styleConfigProp,
   isVisible = true,
+  children,
 }: ThreadedCommentSectionProps) {
   const styleConfig = useThreadedStyle(styleConfigProp);
 
@@ -115,7 +123,9 @@ function ThreadedCommentSection({
 
   return (
     <CommentSectionProvider>
-      <ThreadedCommentSectionInner isVisible={isVisible} />
+      <ThreadedCommentSectionInner isVisible={isVisible}>
+        {children}
+      </ThreadedCommentSectionInner>
     </CommentSectionProvider>
   );
 }

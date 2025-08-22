@@ -31,6 +31,7 @@ function SocialCommentSection({
   sortOptions = ["top", "new", "old"],
   header,
   withEmojis,
+  children,
 }: {
   entity?: Entity | undefined | null;
   entityId?: string | undefined | null;
@@ -44,6 +45,7 @@ function SocialCommentSection({
   sortOptions?: Array<"top" | "new" | "old"> | null;
   header?: React.ReactNode;
   withEmojis?: boolean;
+  children?: React.ReactNode;
 }) {
   const styleConfig = useSocialStyle(styleConfigProp);
 
@@ -127,7 +129,7 @@ function SocialCommentSection({
             backgroundColor: "white",
           }}
         >
-          <CommentsFeed />
+          <CommentsFeed>{children}</CommentsFeed>
         </div>
 
         <div style={{ borderTop: "1px solid #e5e7eb" }}>

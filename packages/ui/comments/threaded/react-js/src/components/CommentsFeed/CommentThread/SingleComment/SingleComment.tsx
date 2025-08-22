@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Comment as CommentType,
+  getUserName,
   useCommentSection,
   useUser,
 } from "@replyke/react-js";
@@ -39,7 +40,7 @@ function SingleComment({
   const { callbacks } = useCommentSection();
   const [comment, setComment] = useState(commentFromSection);
   const [showReplyForm, setShowReplyForm] = useState(false);
-  
+
   const { styleConfig } = useThreadedStyleConfig();
   const {
     authorAvatarSize,
@@ -92,7 +93,11 @@ function SingleComment({
             }}
           >
             <div style={{ position: "relative", zIndex: 10 }}>
-              <UserAvatar user={comment.user} borderRadius={authorAvatarSize} size={authorAvatarSize} />
+              <UserAvatar
+                user={comment.user}
+                borderRadius={authorAvatarSize}
+                size={authorAvatarSize}
+              />
             </div>
             {/* Vertical line extending down from this comment's avatar when it has replies */}
             {hasReplies && !isCollapsed && (
@@ -129,8 +134,14 @@ function SingleComment({
                   color: fromNowFontColor,
                 }}
               >
-                <span style={{ fontWeight: authorFontWeight, color: authorFontColor }}>
-                  {comment.user?.name || "Anonymous"}
+                <span
+                  style={{
+                    fontWeight: authorFontWeight,
+                    fontSize: authorFontSize,
+                    color: authorFontColor,
+                  }}
+                >
+                  {getUserName(comment.user)}
                 </span>
                 <span>•</span>
                 <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
@@ -168,6 +179,27 @@ function SingleComment({
                       callbacks?.otherUserClickCallback
                     )}
                   </p>
+                )}
+
+                {comment.gif && (
+                  <img
+                    src={comment.gif.gifUrl}
+                    alt={comment.gif.altText}
+                    style={{
+                      width:
+                        comment.gif.aspectRatio > 1
+                          ? 200
+                          : 200 * comment.gif.aspectRatio,
+                      height:
+                        comment.gif.aspectRatio < 1
+                          ? 200
+                          : 200 / comment.gif.aspectRatio,
+                      borderRadius: "0.25rem",
+                      overflow: "hidden",
+                      objectFit: "cover",
+                      marginBottom: `${horizontalItemsGap}px`,
+                    }}
+                  />
                 )}
 
                 <div
