@@ -74,8 +74,9 @@ const Comment = ({
 
   const handleUpvoteComment = () => {
     if (!user) {
-      callbacks?.loginRequiredCallback ||
-        (() => alert("Please login first."))();
+      (
+        callbacks?.loginRequiredCallback || (() => alert("Please login first."))
+      )();
       return;
     }
 
@@ -93,8 +94,9 @@ const Comment = ({
 
   const handleRemoveCommentUpvote = () => {
     if (!user) {
-      callbacks?.loginRequiredCallback ||
-        (() => alert("Please login first."))();
+      (
+        callbacks?.loginRequiredCallback || (() => alert("Please login first."))
+      )();
       return;
     }
 

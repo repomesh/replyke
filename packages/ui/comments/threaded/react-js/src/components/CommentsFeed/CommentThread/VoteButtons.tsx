@@ -19,7 +19,7 @@ function VoteButtons({
 }: VoteButtonsProps) {
   const { user } = useUser();
   const { callbacks } = useCommentSection();
-  
+
   const { styleConfig } = useThreadedStyleConfig();
   const {
     voteIconSize,
@@ -79,7 +79,8 @@ function VoteButtons({
     size === "small"
       ? { width: `${voteIconSize}px`, height: `${voteIconSize}px` }
       : { width: `${voteIconSize + 4}px`, height: `${voteIconSize + 4}px` };
-  const textSize = size === "small" ? `${scoreTextSize}px` : `${scoreTextSize + 2}px`;
+  const textSize =
+    size === "small" ? `${scoreTextSize}px` : `${scoreTextSize + 2}px`;
   const padding = size === "small" ? "4px 8px" : "6px 12px";
 
   return (
@@ -97,8 +98,10 @@ function VoteButtons({
       <button
         onClick={() => {
           if (!user) {
-            callbacks?.loginRequiredCallback ||
-              (() => alert("Please login first."))();
+            (
+              callbacks?.loginRequiredCallback ||
+              (() => alert("Please login first."))
+            )();
             return;
           }
           handleVote("up");
@@ -152,7 +155,11 @@ function VoteButtons({
           minWidth: "20px",
           textAlign: "center",
           color:
-            netScore > 0 ? positiveScoreColor : netScore < 0 ? negativeScoreColor : scoreTextColor,
+            netScore > 0
+              ? positiveScoreColor
+              : netScore < 0
+              ? negativeScoreColor
+              : scoreTextColor,
         }}
       >
         {netScore}
@@ -162,8 +169,10 @@ function VoteButtons({
       <button
         onClick={() => {
           if (!user) {
-            callbacks?.loginRequiredCallback ||
-              (() => alert("Please login first."))();
+            (
+              callbacks?.loginRequiredCallback ||
+              (() => alert("Please login first."))
+            )();
             return;
           }
           handleVote("down");

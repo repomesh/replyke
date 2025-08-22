@@ -362,27 +362,16 @@ function useCommentSectionData(
   useEffect(() => {
     const handleFetchEntity = async () => {
       if (!foreignId && !entityId && !shortId) {
-        console.log(
-          "[useCommentSectionData] No entity identifiers provided, skipping fetch"
-        );
         return;
       }
 
-      if (entity && entityId && entity.id === entityId) {
-        return;
-      }
-      if (entity && foreignId && entity.foreignId === foreignId) {
-        return;
-      }
-      if (entity && shortId && entity.shortId === shortId) {
-        return;
-      }
+      if (entity && entityId && entity.id === entityId) return;
+      if (entity && foreignId && entity.foreignId === foreignId) return;
+      if (entity && shortId && entity.shortId === shortId) return;
 
       const uniqueKey = `${entityId ?? ""}-${foreignId ?? ""}-${shortId ?? ""}`;
 
-      if (fetchedStatus.current[uniqueKey]) {
-        return;
-      }
+      if (fetchedStatus.current[uniqueKey]) return;
 
       fetchedStatus.current[uniqueKey] = true;
 
@@ -404,7 +393,6 @@ function useCommentSectionData(
         }
 
         if (fetchedEntity) {
- 
           setEntity(fetchedEntity);
         }
       } catch (err) {
