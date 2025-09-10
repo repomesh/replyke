@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import useProject from "../projects/useProject";
-import useUser from "../users/useUser";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../../hooks/projects/useProject";
+import { useUserRedux } from "../../../hooks/auth-redux";
 
 function useCountUnreadNotifications() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const countUnreadNotifications = useCallback(async () => {
     if (!user) {

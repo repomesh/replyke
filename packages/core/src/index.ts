@@ -8,13 +8,13 @@ export { default as getPublicFileUrl } from "./helpers/getPublicFileUrl";
 export { reportReasons } from "./constants/reportReasons";
 export type { ReportReasonKey } from "./constants/reportReasons";
 
-// Context providers
+// Context providers (Redux-powered by default)
 export {
-  ReplykeProvider,
+  ReplykeProvider, // Always includes Redux auth and notification management
+  ReplykeStoreProvider, // Advanced: standalone Redux provider
   EntityListProvider,
   EntityProvider,
   ListsProvider,
-  AppNotificationsProvider,
   CommentSectionProvider,
 } from "./context";
 
@@ -24,26 +24,21 @@ export { useProject, useProjectData } from "./hooks/projects";
 // -- crypto
 export { useSignTestingJwt } from "./hooks/crypto";
 
-// -- authentication
+// -- authentication (Redux-powered)
 export {
-  useAuth,
-  useAuthData,
-  useRequestNewAccessToken,
-  useSignUpWithEmailAndPassword,
-  useSignInWithEmailAndPassword,
-  useSignOut,
-  useChangePassword,
-  useVerifyExternalUser,
-} from "./hooks/auth";
+  useAuthRedux,
+  useUserRedux,
+  type UseAuthReduxValues,
+  type UseUserReduxValues,
+} from "./hooks/auth-redux";
 
-// -- app notifications
+// -- app notifications (Redux-powered)
 export {
-  useAppNotifications,
-  useAppNotificationsData,
-  useCountUnreadNotifications,
-  useFetchAppNotifications,
-  useMarkNotificationAsRead,
-} from "./hooks/app-notifications";
+  useAppNotificationsRedux,
+  useAppNotificationsDataRedux,
+  type UseAppNotificationsDataProps,
+  type UseAppNotificationsDataValues,
+} from "./hooks/app-notifications-redux";
 
 // -- entities
 export {
@@ -93,7 +88,6 @@ export {
 
 // -- users
 export {
-  useUser,
   useUserData,
   useFetchUser,
   useFetchUserByForeignId,

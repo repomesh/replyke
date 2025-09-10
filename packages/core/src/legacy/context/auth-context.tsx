@@ -3,7 +3,7 @@ import useAuthData, {
   UseAuthDataProps,
   UseAuthDataValues,
 } from "../hooks/auth/useAuthData";
-import { UserProvider } from "./user-context";
+import { UserProvider } from "../../context/user-context";
 
 export interface AuthContextProps extends UseAuthDataProps {
   children: React.ReactNode;

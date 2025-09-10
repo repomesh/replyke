@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { handleError, useAuth } from "@replyke/core";
+import { handleError, useAuthRedux } from "@replyke/core";
 import * as Keychain from "react-native-keychain";
 
 const REFRESH_TOKEN_KEY = "replyke-refresh-token";
 
 function TokenManager() {
-  const { refreshToken, setRefreshToken } = useAuth();
+  const { refreshToken, setRefreshToken } = useAuthRedux();
 
   // Function to store the refresh token securely
   const handleTokenStorage = async (newToken: string | null | undefined) => {

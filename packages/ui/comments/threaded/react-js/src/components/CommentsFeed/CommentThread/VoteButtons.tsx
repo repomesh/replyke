@@ -1,6 +1,6 @@
 import {
   useCommentSection,
-  useUser,
+  useUserRedux,
   Comment as CommentType,
   useCommentVotes,
 } from "@replyke/react-js";
@@ -17,7 +17,7 @@ function VoteButtons({
   setComment,
   size = "small",
 }: VoteButtonsProps) {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { callbacks } = useCommentSection();
 
   const { styleConfig } = useThreadedStyleConfig();

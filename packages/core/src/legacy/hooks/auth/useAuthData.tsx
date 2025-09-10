@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { handleError } from "../../utils/handleError";
-import { AuthUser } from "../../interfaces/models/User";
-import { isReactNative } from "../../utils/isReactNative";
+import { handleError } from "../../../utils/handleError";
+import { AuthUser } from "../../../interfaces/models/User";
+import { isReactNative } from "../../../utils/isReactNative";
 import useSignUpWithEmailAndPassword from "./useSignUpWithEmailAndPassword";
 import useSignInWithEmailAndPassword from "./useSignInWithEmailAndPassword";
 import useSignOut from "./useSignOut";

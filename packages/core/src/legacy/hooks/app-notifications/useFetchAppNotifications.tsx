@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import useProject from "../projects/useProject";
-import { UnifiedAppNotification } from "../../interfaces/models/AppNotification";
-import useUser from "../users/useUser";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../../hooks/projects/useProject";
+import { UnifiedAppNotification } from "../../../interfaces/models/AppNotification";
+import { useUserRedux } from "../../../hooks/auth-redux";
 
 function useFetchAppNotifications() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const fetchAppNotifications = useCallback(
     async ({ page, limit }: { page: number; limit: number }) => {

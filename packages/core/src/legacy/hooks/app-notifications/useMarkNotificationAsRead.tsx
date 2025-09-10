@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import useProject from "../projects/useProject";
-import { useUser } from "../users";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../../hooks/projects/useProject";
+import { useUserRedux } from "../../../hooks/auth-redux";
 
 function useMarkNotificationAsRead() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const markNotificationAsRead = useCallback(
     async (notificationId: string) => {

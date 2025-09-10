@@ -12,7 +12,7 @@ import {
   Comment as CommentType,
   useCommentVotes,
   useCommentSection,
-  useUser,
+  useUserRedux,
   getUserName,
   handleError,
 } from "@replyke/core";
@@ -37,7 +37,7 @@ const Comment = ({
   // Dynamically get the correct Image component and whether it is expo-image.
   const { ImageComponent, isExpo } = getImageComponent();
 
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { handleShallowReply, handleDeepReply, callbacks, highlightedComment } =
     useCommentSection();
   const { styleConfig } = useSocialStyleConfig();

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { handleError, useAuth } from "@replyke/core";
+import { handleError, useAuthRedux } from "@replyke/core";
 import * as SecureStore from "expo-secure-store";
 
 function TokenManager() {
-  const { refreshToken, setRefreshToken } = useAuth();
+  const { refreshToken, setRefreshToken } = useAuthRedux();
   // TODO: Should we manage the state of the refresh token here? And call the request new access token using that refresh token here?
   const handleTokenStorage = async (newToken: string | null | undefined) => {
     try {

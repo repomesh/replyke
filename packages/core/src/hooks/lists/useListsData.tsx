@@ -9,7 +9,7 @@ import useRemoveFromList from "./useRemoveFromList";
 import useFetchRootList from "./useFetchRootList";
 import useFetchSubLists from "./useFetchSubLists";
 import { handleError } from "../../utils/handleError";
-import useUser from "../users/useUser";
+import { useUserRedux } from "../auth-redux";
 
 export interface UseListsDataProps {}
 export interface UseListsDataValues {
@@ -34,7 +34,7 @@ export interface UseListsDataValues {
 }
 
 function useListsData(_: UseListsDataProps): UseListsDataValues {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const [currentList, setCurrentList] = useState<List | null>(null);
 
   const [subLists, setSubLists] = useState<List[]>([]);

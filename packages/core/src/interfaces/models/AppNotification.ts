@@ -26,7 +26,7 @@ interface BaseAppNotification {
   metadata: Record<string, any>; // Additional data specific to the notification type
   title?: string;
   content?: string;
-  createdAt: Date; // Timestamp of creation
+  createdAt: string; // ISO timestamp string
 }
 
 export interface EntityCommentNotification extends BaseAppNotification {

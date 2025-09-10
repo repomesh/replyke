@@ -9,7 +9,7 @@ import useDeleteEntity from "./useDeleteEntity";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
 import useIncrementEntityViews from "./useIncrementEntityViews";
-import useUser from "../users/useUser";
+import { useUserRedux } from "../auth-redux";
 import useEntityList from "./useEntityList";
 
 export interface UseEntityDataProps {
@@ -42,7 +42,7 @@ function useEntityData({
   entity: entityProp,
   createIfNotFound,
 }: UseEntityDataProps): UseEntityDataValues {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { setEntities } = useEntityList();
   const [entity, setEntity] = useState<Entity | undefined | null>(entityProp);
 

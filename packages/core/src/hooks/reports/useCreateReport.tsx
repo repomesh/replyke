@@ -1,12 +1,12 @@
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { ReportReasonKey } from "../../constants/reportReasons";
 import useProject from "../projects/useProject";
-import useUser from "../users/useUser";
+import { useUserRedux } from "../auth-redux";
 
 function useCreateReport() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const createReport = async ({
     targetId,

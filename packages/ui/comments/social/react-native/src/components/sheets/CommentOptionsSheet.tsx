@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Alert } from "react-native";
 import { useCallback, useMemo } from "react";
-import { useUser, useCommentSection } from "@replyke/core";
+import { useUserRedux, useCommentSection } from "@replyke/core";
 import { FlagIcon, TrashIcon } from "@replyke/ui-core-react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -20,7 +20,7 @@ const CommentOptionsSheet = () => {
     optionsComment,
   } = useSheetManager();
 
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const isOwner = optionsComment && optionsComment.userId === user?.id;
   const snapPoints = useMemo(() => ["100%"], []);
 

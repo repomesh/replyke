@@ -1,11 +1,11 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import { useCommentSection, useUser, useMentions, useProject, handleError } from "@replyke/react-js";
+import { useCommentSection, useUserRedux, useMentions, useProject, handleError } from "@replyke/react-js";
 import { useTextareaCursorIndicator, GiphyContainer } from "@replyke/ui-core-react-js";
 import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
 import { MentionSuggestions } from "./MentionSuggestions";
 
 function NewCommentForm() {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { project } = useProject();
   const giphyApiKey = project?.integrations.find((int) => int.name === "giphy")
     ?.data.apiKey;

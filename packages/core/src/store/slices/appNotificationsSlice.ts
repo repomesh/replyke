@@ -1,0 +1,162 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { UnifiedAppNotification, NotificationTemplates } from "../../interfaces/models/AppNotification";
+
+// State interface
+export interface AppNotificationsState {
+  // Core data
+  notifications: UnifiedAppNotification[];
+  unreadCount: number;
+  
+  // UI state
+  loading: boolean;
+  hasMore: boolean;
+  
+  // Pagination
+  page: number;
+  limit: number;
+  
+  // Configuration
+  notificationTemplates?: Partial<NotificationTemplates>;
+  
+  // Project context (needed for API calls)
+  currentProjectId?: string;
+}
+
+// Initial state
+const initialState: AppNotificationsState = {
+  notifications: [],
+  unreadCount: 0,
+  loading: false,
+  hasMore: true,
+  page: 1,
+  limit: 10,
+  notificationTemplates: undefined,
+  currentProjectId: undefined,
+};
+
+// Create the slice
+export const appNotificationsSlice = createSlice({
+  name: 'appNotifications',
+  initialState,
+  reducers: {
+    // Set the current project context
+    setProjectContext: (state, action: PayloadAction<string>) => {
+      state.currentProjectId = action.payload;
+    },
+
+    // Set pagination limit
+    setLimit: (state, action: PayloadAction<number>) => {
+      state.limit = action.payload;
+    },
+
+    // Set notification templates
+    setNotificationTemplates: (state, action: PayloadAction<Partial<NotificationTemplates>>) => {
+      state.notificationTemplates = action.payload;
+    },
+
+    // Reset notifications (clear all and restart pagination)
+    resetNotifications: (state) => {
+      state.notifications = [];
+      state.page = 1;
+      state.hasMore = true;
+      state.loading = false;
+    },
+
+    // Load more notifications (increment page)
+    loadMore: (state) => {
+      if (state.hasMore && !state.loading) {
+        state.page += 1;
+      }
+    },
+
+    // Set loading state
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+
+    // Add new notifications (for pagination)
+    addNotifications: (state, action: PayloadAction<{ notifications: UnifiedAppNotification[]; isFirstPage?: boolean }>) => {
+      const { notifications, isFirstPage = false } = action.payload;
+      
+      if (isFirstPage) {
+        state.notifications = notifications;
+      } else {
+        // Prevent duplicates when adding new pages
+        const existingIds = new Set(state.notifications.map(n => n.id));
+        const newNotifications = notifications.filter(n => !existingIds.has(n.id));
+        state.notifications.push(...newNotifications);
+      }
+      
+      // Update hasMore based on returned count vs limit
+      if (notifications.length < state.limit) {
+        state.hasMore = false;
+      }
+      
+      state.loading = false;
+    },
+
+    // Mark notification as read locally (optimistic update)
+    markAsReadLocally: (state, action: PayloadAction<string>) => {
+      const notificationId = action.payload;
+      const notification = state.notifications.find(n => n.id === notificationId);
+      
+      if (notification && !notification.isRead) {
+        notification.isRead = true;
+        // Decrease unread count
+        state.unreadCount = Math.max(state.unreadCount - 1, 0);
+      }
+    },
+
+    // Set unread count
+    setUnreadCount: (state, action: PayloadAction<number>) => {
+      state.unreadCount = action.payload;
+    },
+
+    // Handle errors by stopping loading
+    handleError: (state) => {
+      state.loading = false;
+    },
+  },
+});
+
+// Export actions
+export const {
+  setProjectContext,
+  setLimit,
+  setNotificationTemplates,
+  resetNotifications,
+  loadMore,
+  setLoading,
+  addNotifications,
+  markAsReadLocally,
+  setUnreadCount,
+  handleError,
+} = appNotificationsSlice.actions;
+
+// Export reducer
+export default appNotificationsSlice.reducer;
+
+// Selectors
+export const selectAppNotifications = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.notifications;
+
+export const selectUnreadCount = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.unreadCount;
+
+export const selectAppNotificationsLoading = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.loading;
+
+export const selectAppNotificationsHasMore = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.hasMore;
+
+export const selectAppNotificationsPage = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.page;
+
+export const selectAppNotificationsLimit = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.limit;
+
+export const selectNotificationTemplates = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.notificationTemplates;
+
+export const selectCurrentProjectId = (state: { appNotifications: AppNotificationsState }) => 
+  state.appNotifications.currentProjectId;

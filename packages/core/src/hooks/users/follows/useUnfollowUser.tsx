@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
-import useUser from "../useUser";
+import { useUserRedux } from "../../auth-redux";
 
 function useUnfollowUser() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const unfollowUser = useCallback(
     async (props: { userId: string }) => {

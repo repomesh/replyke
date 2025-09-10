@@ -1,12 +1,12 @@
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { useCallback, useRef, useState } from "react";
-import useUser from "../users/useUser";
+import { useUserRedux } from "../auth-redux";
 
 function useIsEntitySaved() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const [entityIsSaved, setEntityIsSaved] = useState<boolean | null>(null);
   const checkedStatus = useRef<Record<string, boolean>>({}); // Track status by entityId

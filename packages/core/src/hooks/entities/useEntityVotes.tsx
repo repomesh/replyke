@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { handleError } from "../../utils/handleError";
 import { Entity } from "../../interfaces/models/Entity";
-import useUser from "../users/useUser";
+import { useUserRedux } from "../auth-redux";
 
 // Import the API communication hooks
 import useUpvoteEntity from "./useUpvoteEntity";
@@ -13,7 +13,7 @@ function useEntityVotes(props: {
   entity: Entity | undefined | null;
   setEntity: React.Dispatch<React.SetStateAction<Entity | undefined | null>>;
 }) {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { entity, setEntity } = props;
 
   const [isUpdating, setIsUpdating] = useState(false);

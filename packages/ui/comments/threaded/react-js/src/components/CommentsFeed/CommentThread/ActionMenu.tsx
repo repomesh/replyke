@@ -1,4 +1,4 @@
-import { useUser, Comment as CommentType } from "@replyke/react-js";
+import { useUserRedux, Comment as CommentType } from "@replyke/react-js";
 import useModalManager from "../../../hooks/useModalManager";
 
 interface ActionMenuProps {
@@ -6,7 +6,7 @@ interface ActionMenuProps {
 }
 
 function ActionMenu({ comment }: ActionMenuProps) {
-  const { user } = useUser();
+  const { user } = useUserRedux();
 
   const { openCommentOptionsModal, openCommentOptionsModalOwner } =
     useModalManager();

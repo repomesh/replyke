@@ -3,7 +3,7 @@ import {
   Comment as CommentType,
   useCommentVotes,
   getUserName,
-  useUser,
+  useUserRedux,
   useCommentSection,
   handleError,
 } from "@replyke/react-js";
@@ -31,7 +31,7 @@ const Comment = React.memo(
     comment: CommentType;
     extraLeftPadding?: number;
   }) => {
-    const { user } = useUser();
+    const { user } = useUserRedux();
     const { openCommentOptionsModal, openCommentOptionsModalOwner } =
       useModalManager();
     const {

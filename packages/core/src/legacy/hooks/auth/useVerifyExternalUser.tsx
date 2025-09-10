@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import useProject from "../projects/useProject";
-import axios from "../../config/axios";
+import useProject from "../../../hooks/projects/useProject";
+import axios from "../../../config/axios";
 
 function useVerifyExternalUser() {
   const { projectId } = useProject();

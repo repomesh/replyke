@@ -4,10 +4,10 @@ import useCountUnreadNotifications from "./useCountUnreadNotifications";
 import {
   NotificationTemplates,
   UnifiedAppNotification,
-} from "../../interfaces/models/AppNotification";
+} from "../../../interfaces/models/AppNotification";
 import useMarkNotificationAsRead from "./useMarkNotificationAsRead";
-import { handleError } from "../../utils/handleError";
-import addNotificationsMessages from "../../helpers/addNotificationsMessages";
+import { handleError } from "../../../utils/handleError";
+import addNotificationsMessages from "../../../helpers/addNotificationsMessages";
 
 export interface UseAppNotificationsDataProps {
   limit?: number;

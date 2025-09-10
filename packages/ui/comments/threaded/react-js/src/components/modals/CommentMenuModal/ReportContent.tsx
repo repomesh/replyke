@@ -5,13 +5,13 @@ import {
   reportReasons,
   useCommentSection,
   useCreateReport,
-  useUser,
+  useUserRedux,
 } from "@replyke/react-js";
 import { FlagIcon } from "@replyke/ui-core-react-js";
 import useModalManager from "../../../hooks/useModalManager";
 
 function ReportContent({ resetView }: { resetView: () => void }) {
-  const { user } = useUser();
+  const { user } = useUserRedux();
   const { callbacks } = useCommentSection();
   const { optionsComment, closeCommentOptionsModal } = useModalManager();
   const { createCommentReport } = useCreateReport();

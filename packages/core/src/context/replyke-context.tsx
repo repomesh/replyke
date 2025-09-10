@@ -3,7 +3,7 @@ import useProjectData, {
   UseProjectDataProps,
   UseProjectDataValues,
 } from "../hooks/projects/useProjectData";
-import { AuthProvider } from "./auth-context";
+import { ReplykeStoreProvider } from "./replyke-store-context";
 
 export interface ReplykeContextProps extends UseProjectDataProps {
   signedToken?: string | null | undefined;
@@ -29,7 +29,9 @@ export const ReplykeProvider: React.FC<ReplykeContextProps> = ({
 
   return (
     <ReplykeContext.Provider value={data}>
-      <AuthProvider signedToken={signedToken}>{children}</AuthProvider>
+      <ReplykeStoreProvider projectId={projectId} signedToken={signedToken}>
+        {children}
+      </ReplykeStoreProvider>
     </ReplykeContext.Provider>
   );
 };
