@@ -31,6 +31,7 @@ export interface UseAppNotificationsDataValues {
   hasMore: boolean;
   loadMore: () => void;
   markNotificationAsRead: (notificationId: string) => Promise<void>;
+  markAllNotificationsAsRead: () => Promise<void>;
   resetAppNotifications: () => Promise<void>;
 }
 
@@ -72,6 +73,7 @@ function useAppNotificationsDataRedux({
   const {
     loadMore,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
     resetAppNotifications,
     fetchMoreNotifications,
     updateUnreadCount,
@@ -139,6 +141,7 @@ function useAppNotificationsDataRedux({
       hasMore,
       loadMore,
       markNotificationAsRead,
+      markAllNotificationsAsRead,
       resetAppNotifications,
     }),
     [
@@ -148,6 +151,7 @@ function useAppNotificationsDataRedux({
       hasMore,
       loadMore,
       markNotificationAsRead,
+      markAllNotificationsAsRead,
       resetAppNotifications,
     ]
   );

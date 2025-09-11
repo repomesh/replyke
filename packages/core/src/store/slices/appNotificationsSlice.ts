@@ -107,6 +107,15 @@ export const appNotificationsSlice = createSlice({
       }
     },
 
+    // Mark all notifications as read locally (optimistic update)
+    markAllAsReadLocally: (state) => {
+      state.notifications.forEach(notification => {
+        notification.isRead = true;
+      });
+      // Set unread count to 0
+      state.unreadCount = 0;
+    },
+
     // Set unread count
     setUnreadCount: (state, action: PayloadAction<number>) => {
       state.unreadCount = action.payload;
@@ -129,6 +138,7 @@ export const {
   setLoading,
   addNotifications,
   markAsReadLocally,
+  markAllAsReadLocally,
   setUnreadCount,
   handleError,
 } = appNotificationsSlice.actions;

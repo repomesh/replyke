@@ -7,6 +7,7 @@ import {
   setLoading,
   addNotifications,
   markAsReadLocally,
+  markAllAsReadLocally,
   setUnreadCount,
   selectCurrentProjectId,
   selectAppNotificationsPage,
@@ -16,6 +17,7 @@ import {
 import {
   useLazyFetchAppNotificationsQuery,
   useMarkNotificationAsReadMutation,
+  useMarkAllNotificationsAsReadMutation,
   useLazyCountUnreadNotificationsQuery,
 } from "../../store/api/appNotificationsApi";
 import { handleError } from "../../utils/handleError";
@@ -54,6 +56,7 @@ export function useAppNotificationsActionsRedux() {
   // RTK Query hooks
   const [triggerFetchNotifications] = useLazyFetchAppNotificationsQuery();
   const [markNotificationAsReadMutation] = useMarkNotificationAsReadMutation();
+  const [markAllNotificationsAsReadMutation] = useMarkAllNotificationsAsReadMutation();
   const [triggerCountUnread] = useLazyCountUnreadNotificationsQuery();
 
   // Load more action
@@ -181,9 +184,28 @@ export function useAppNotificationsActionsRedux() {
     }
   }, [dispatch, projectId, user, triggerCountUnread]);
 
+  // Mark all notifications as read action
+  const markAllNotificationsAsRead = useCallback(async () => {
+    if (!projectId || !user) {
+      throw new Error("No project ID or authenticated user available");
+    }
+
+    try {
+      // Optimistic update
+      dispatch(markAllAsReadLocally());
+      
+      // Make API call
+      await markAllNotificationsAsReadMutation({ projectId }).unwrap();
+    } catch (error) {
+      handleError(error, "Failed to mark all notifications as read:");
+      throw error;
+    }
+  }, [dispatch, projectId, user, markAllNotificationsAsReadMutation]);
+
   return {
     loadMore,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
     resetAppNotifications,
     fetchMoreNotifications, // Internal action
     updateUnreadCount, // Internal action

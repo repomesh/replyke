@@ -20,21 +20,19 @@ const replaceTemplateVariables = (
 // Centralized logic to build variable replacements
 const getReplacementVariables = (notification: any) => {
   return {
-    userName: getUserName(
+    initiatorName: getUserName(
       {
         id: notification.metadata.initiatorId,
         name: notification.metadata.initiatorName,
         username: notification.metadata.initiatorUsername,
-        avatar: notification.metadata.initiatorAvatar,
       },
       "name"
     ),
-    userUsername: getUserName(
+    initiatorUsername: getUserName(
       {
         id: notification.metadata.initiatorId,
         name: notification.metadata.initiatorName,
         username: notification.metadata.initiatorUsername,
-        avatar: notification.metadata.initiatorAvatar,
       },
       "username"
     ),
@@ -79,7 +77,7 @@ export default (
       case "entity-comment":
         ({ title, content } = configureMessage(
           notification,
-          `$userName commented on your post "$entityTitle"`,
+          `$userName commented on your post`,
           `$commentContent`,
           notificationTemplates?.entityComment
         ));
@@ -87,7 +85,7 @@ export default (
       case "comment-reply":
         ({ title, content } = configureMessage(
           notification,
-          `$userName replied to your comment on "$entityTitle"`,
+          `$userName replied to your comment`,
           `$replyContent`,
           notificationTemplates?.commentReply
         ));
@@ -103,7 +101,7 @@ export default (
       case "comment-mention":
         ({ title, content } = configureMessage(
           notification,
-          `$userName mentioned you in their comment on "$entityTitle"`,
+          `$userName mentioned you in their comment`,
           `$commentContent`,
           notificationTemplates?.commentMention
         ));
@@ -111,7 +109,7 @@ export default (
       case "entity-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your post "$entityTitle"`,
+          `$userName upvoted your post`,
           ``,
           notificationTemplates?.entityUpvote
         ));
@@ -119,7 +117,7 @@ export default (
       case "comment-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your comment on "$entityTitle"`,
+          `$userName upvoted your comment on`,
           `$commentContent`,
           notificationTemplates?.commentUpvote
         ));
