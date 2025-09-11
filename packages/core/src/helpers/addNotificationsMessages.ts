@@ -77,7 +77,7 @@ export default (
       case "entity-comment":
         ({ title, content } = configureMessage(
           notification,
-          `$userName commented on your post`,
+          `$initiatorUsername commented on your post`,
           `$commentContent`,
           notificationTemplates?.entityComment
         ));
@@ -85,7 +85,7 @@ export default (
       case "comment-reply":
         ({ title, content } = configureMessage(
           notification,
-          `$userName replied to your comment`,
+          `$initiatorUsername replied to your comment`,
           `$replyContent`,
           notificationTemplates?.commentReply
         ));
@@ -93,7 +93,7 @@ export default (
       case "entity-mention":
         ({ title, content } = configureMessage(
           notification,
-          `$userName mentioned you in their post`,
+          `$initiatorUsername mentioned you in their post`,
           `$entityTitle`,
           notificationTemplates?.entityMention
         ));
@@ -101,7 +101,7 @@ export default (
       case "comment-mention":
         ({ title, content } = configureMessage(
           notification,
-          `$userName mentioned you in their comment`,
+          `$initiatorUsername mentioned you in their comment`,
           `$commentContent`,
           notificationTemplates?.commentMention
         ));
@@ -109,7 +109,7 @@ export default (
       case "entity-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your post`,
+          `$initiatorUsername upvoted your post`,
           ``,
           notificationTemplates?.entityUpvote
         ));
@@ -117,7 +117,7 @@ export default (
       case "comment-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your comment on`,
+          `$initiatorUsername upvoted your comment`,
           `$commentContent`,
           notificationTemplates?.commentUpvote
         ));
@@ -125,7 +125,7 @@ export default (
       case "new-follow":
         ({ title, content } = configureMessage(
           notification,
-          `$userName started following you`,
+          `$initiatorUsername started following you`,
           ``,
           notificationTemplates?.newFollow
         ));

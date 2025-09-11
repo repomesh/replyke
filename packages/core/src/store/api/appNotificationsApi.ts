@@ -21,6 +21,10 @@ interface MarkAllNotificationsAsReadParams {
   projectId: string;
 }
 
+interface MarkAllNotificationsAsReadResponse {
+  markedAsRead: number;
+}
+
 // Extended API with app notifications endpoints
 export const appNotificationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -55,6 +59,15 @@ export const appNotificationsApi = baseApi.injectEndpoints({
         url: `/${projectId}/app-notifications/${notificationId}/mark-as-read`,
         method: "PATCH",
         body: {},
+        responseHandler: async (response) => {
+          // Handle text responses (like "OK" from res.sendStatus(200))
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            return response.json();
+          }
+          // For text responses, just return void since we don't need the content
+          return response.text().then(() => undefined);
+        },
       }),
       // Optimistically update the cache
       async onQueryStarted(
@@ -107,7 +120,7 @@ export const appNotificationsApi = baseApi.injectEndpoints({
 
     // Mark all notifications as read
     markAllNotificationsAsRead: builder.mutation<
-      void,
+      MarkAllNotificationsAsReadResponse,
       MarkAllNotificationsAsReadParams
     >({
       query: ({ projectId }) => ({
