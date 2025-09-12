@@ -2,6 +2,8 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { baseApi } from "./api/baseApi";
 import { appNotificationsSlice } from "./slices/appNotificationsSlice";
 import authReducer from "./slices/authSlice";
+import listsReducer from "./slices/listsSlice";
+import { userReducer } from "./slices/userSlice";
 
 // Combine all reducers
 export const rootReducer = combineReducers({
@@ -11,10 +13,11 @@ export const rootReducer = combineReducers({
   // Feature slices
   auth: authReducer,
   appNotifications: appNotificationsSlice.reducer,
+  lists: listsReducer,
+  user: userReducer,
   
   // Future slices will be added here:
   // entities: entitiesSlice.reducer,
-  // lists: listsSlice.reducer,
   // comments: commentsSlice.reducer,
 });
 

@@ -30,11 +30,11 @@ export const baseApi = createApi({
   baseQuery: createBaseQuery(),
   tagTypes: [
     'AppNotification',
+    'List',
+    'User',
     // Future tag types:
     // 'Entity',
     // 'Comment', 
-    // 'List',
-    // 'User',
   ],
   endpoints: () => ({}), // Endpoints will be injected by feature APIs
 });

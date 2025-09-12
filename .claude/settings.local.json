@@ -1,8 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm run:*)",
-      "Bash(pnpm install:*)"
+      "Bash(do sed -i 's|../../projects/|../../hooks/projects/|g; s|../../auth-redux|../../hooks/auth-redux|g' \"$file\")",
+      "Bash(sed:*)",
+      "Bash(pnpm --filter @replyke/core run build)"
     ],
     "deny": [],
     "ask": []

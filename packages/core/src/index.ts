@@ -10,11 +10,10 @@ export type { ReportReasonKey } from "./constants/reportReasons";
 
 // Context providers (Redux-powered by default)
 export {
-  ReplykeProvider, // Always includes Redux auth and notification management
+  ReplykeProvider, // Always includes Redux
   ReplykeStoreProvider, // Advanced: standalone Redux provider
   EntityListProvider,
   EntityProvider,
-  ListsProvider,
   CommentSectionProvider,
 } from "./context";
 
@@ -25,20 +24,32 @@ export { useProject, useProjectData } from "./hooks/projects";
 export { useSignTestingJwt } from "./hooks/crypto";
 
 // -- authentication (Redux-powered)
+export { useAuthRedux, type UseAuthReduxValues } from "./hooks/auth-redux";
+
+// -- (current) user (Redux-powered)
 export {
-  useAuthRedux,
   useUserRedux,
-  type UseAuthReduxValues,
+  useUserActionsRedux,
+  type UseUserReduxProps,
   type UseUserReduxValues,
-} from "./hooks/auth-redux";
+} from "./hooks/user-redux";
 
 // -- app notifications (Redux-powered)
 export {
   useAppNotificationsRedux,
-  useAppNotificationsDataRedux,
-  type UseAppNotificationsDataProps,
-  type UseAppNotificationsDataValues,
+  useAppNotificationsActionsRedux,
+  type UseAppNotificationsReduxProps,
+  type UseAppNotificationsReduxValues,
 } from "./hooks/app-notifications-redux";
+
+// -- lists (Redux-powered)
+export {
+  useListsRedux,
+  useListsActionsRedux,
+  useIsEntitySaved,
+  type UseListsReduxProps,
+  type UseListsReduxValues,
+} from "./hooks/lists-redux";
 
 // -- entities
 export {
@@ -72,23 +83,8 @@ export {
   useProfileComments,
 } from "./hooks/comments";
 
-// -- lists
-export {
-  useLists,
-  useListsData,
-  useCreateList,
-  useFetchRootList,
-  useFetchSubLists,
-  useIsEntitySaved,
-  useUpdateList,
-  useAddToList,
-  useRemoveFromList,
-  useDeleteList,
-} from "./hooks/lists";
-
 // -- users
 export {
-  useUserData,
   useFetchUser,
   useFetchUserByForeignId,
   useFetchUserFollowersCount,

@@ -12,6 +12,10 @@ import {
   setInitialized,
   resetAuth 
 } from './authSlice';
+import { 
+  setUser as setUserInUserSlice, 
+  clearUser as clearUserInUserSlice 
+} from './userSlice';
 
 // Auth service functions - calling existing API patterns directly
 const authService = {
@@ -133,6 +137,7 @@ export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
         refreshToken: result.refreshToken 
       }));
       dispatch(setUser(result.user));
+      dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
       
       return result;
     } catch (error) {
@@ -161,6 +166,7 @@ export const signInWithEmailAndPasswordThunk = createAsyncThunk(
         refreshToken: result.refreshToken 
       }));
       dispatch(setUser(result.user));
+      dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
       
       return result;
     } catch (error) {
@@ -193,6 +199,7 @@ export const signOutThunk = createAsyncThunk(
       
       // Clear auth state
       dispatch(resetAuth());
+      dispatch(clearUserInUserSlice()); // Clear user from user slice
       
       return;
     } catch (error) {
@@ -224,6 +231,7 @@ export const requestNewAccessTokenThunk = createAsyncThunk(
       // Update auth state
       dispatch(setTokens({ accessToken: result.accessToken }));
       dispatch(setUser(result.user));
+      dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
       
       return result.accessToken;
     } catch (error) {
@@ -248,6 +256,7 @@ export const verifyExternalUserThunk = createAsyncThunk(
         refreshToken: result.refreshToken 
       }));
       dispatch(setUser(result.user));
+      dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
       
       return result;
     } catch (error) {

@@ -1,10 +1,9 @@
 // Export Redux-powered app notifications hooks
 export { default as useAppNotificationsRedux } from "./useAppNotificationsRedux";
-export { default as useAppNotificationsDataRedux } from "./useAppNotificationsDataRedux";
 export { default as useAppNotificationsActionsRedux } from "./useAppNotificationsActionsRedux";
 
-// Re-export types from the original hooks for compatibility
+// Re-export types for primary hook
 export type {
-  UseAppNotificationsDataProps,
-  UseAppNotificationsDataValues,
-} from "./useAppNotificationsDataRedux";
+  UseAppNotificationsReduxProps,
+  UseAppNotificationsReduxValues,
+} from "./useAppNotificationsRedux";

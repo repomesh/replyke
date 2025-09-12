@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { AuthUser } from "../../interfaces/models/User";
-import useUpdateUser, { UpdateUserParams } from "./useUpdateUser";
-import { handleError } from "../../utils/handleError";
+import { AuthUser } from "../../../interfaces/models/User";
+import useUpdateUser, { UpdateUserParams } from "../../hooks/users/useUpdateUser";
+import { handleError } from "../../../utils/handleError";
 
 export interface UseUserDataProps {
   user: AuthUser | null;

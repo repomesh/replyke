@@ -1,38 +1,38 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { List } from "../../interfaces/models/List";
-import useProject from "../projects/useProject";
+import { List } from "../../../interfaces/models/List";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../hooks/projects/useProject";
 
-function useRemoveFromList() {
+function useUpdateList() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
-  const removeFromList = useCallback(
+  const updateList = useCallback(
     async ({
-      entityId,
       listId,
+      update,
     }: {
-      entityId: string;
       listId: string;
+      update: Partial<{ name: string }>;
     }) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
 
       const response = await axios.patch<List>(
-        `/${projectId}/lists/${listId}/remove-entity`,
+        `/${projectId}/lists/${listId}`,
         {
-          entityId,
+          update,
         },
         { withCredentials: true }
       );
 
       return response.data as List;
     },
-    [projectId, axios]
+    [axios, projectId]
   );
 
-  return removeFromList;
+  return updateList;
 }
 
-export default useRemoveFromList;
+export default useUpdateList;

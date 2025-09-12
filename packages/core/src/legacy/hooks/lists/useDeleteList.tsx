@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import useProject from "../projects/useProject";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../hooks/projects/useProject";
 
 function useDeleteList() {
   const axios = useAxiosPrivate();

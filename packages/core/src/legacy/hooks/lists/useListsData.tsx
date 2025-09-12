@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { List } from "../../interfaces/models/List";
+import { List } from "../../../interfaces/models/List";
 import useCreateList from "./useCreateList";
 import useDeleteList from "./useDeleteList";
 import useUpdateList from "./useUpdateList";
@@ -8,8 +8,8 @@ import useAddToList from "./useAddToList";
 import useRemoveFromList from "./useRemoveFromList";
 import useFetchRootList from "./useFetchRootList";
 import useFetchSubLists from "./useFetchSubLists";
-import { handleError } from "../../utils/handleError";
-import { useUserRedux } from "../auth-redux";
+import { handleError } from "../../../utils/handleError";
+import { useUserRedux } from "../../hooks/auth-redux";
 
 export interface UseListsDataProps {}
 export interface UseListsDataValues {

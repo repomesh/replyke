@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { List } from "../../interfaces/models/List";
-import useProject from "../projects/useProject";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import { List } from "../../../interfaces/models/List";
+import useProject from "../../hooks/projects/useProject";
 
 function useCreateList() {
   const axios = useAxiosPrivate();

@@ -1,6 +1,6 @@
 # Redux Migration Guide
 
-This guide explains how to migrate from Context-based state management to Redux Toolkit for app notifications in the Replyke framework.
+This guide explains how to migrate from Context-based state management to Redux Toolkit for app notifications and lists functionality in the Replyke framework.
 
 ## Overview
 
@@ -86,6 +86,141 @@ function NotificationsComponent() {
 }
 ```
 
+## Lists Management
+
+### Using Redux-powered Lists
+
+The lists system has been fully migrated to Redux. The new hooks provide identical functionality to the original context-based system.
+
+```tsx
+// Context version (legacy - no longer exported)
+import { useListsData, useLists } from '@replyke/core';
+
+function ListsComponent() {
+  const {
+    currentList,
+    subLists,
+    loading,
+    openList,
+    goBack,
+    goToRoot,
+    isEntityInList,
+    createList,
+    updateList,
+    deleteList,
+    addToList,
+    removeFromList
+  } = useListsData();
+
+  const handleCreateNewList = async () => {
+    await createList({ listName: "My New List" });
+  };
+
+  const handleAddEntity = async (entityId: string) => {
+    await addToList({ entityId });
+  };
+
+  return (
+    <div>
+      {currentList && (
+        <div>
+          <h2>{currentList.name}</h2>
+          <button onClick={goBack}>Back</button>
+          <button onClick={goToRoot}>Go to Root</button>
+        </div>
+      )}
+      
+      <div>
+        {subLists.map(list => (
+          <div key={list.id} onClick={() => openList(list)}>
+            {list.name} ({list.entityIds.length} items)
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+```tsx
+// Redux version (identical API)
+import { useListsDataRedux, useListsRedux } from '@replyke/core';
+
+function ListsComponent() {
+  const {
+    currentList,
+    subLists,
+    loading,
+    openList,
+    goBack,
+    goToRoot,
+    isEntityInList,
+    createList,
+    updateList,
+    deleteList,
+    addToList,
+    removeFromList
+  } = useListsDataRedux();
+
+  const handleCreateNewList = async () => {
+    await createList({ listName: "My New List" });
+  };
+
+  const handleAddEntity = async (entityId: string) => {
+    await addToList({ entityId });
+  };
+
+  return (
+    <div>
+      {/* Identical UI code - same functionality */}
+      {currentList && (
+        <div>
+          <h2>{currentList.name}</h2>
+          <button onClick={goBack}>Back</button>
+          <button onClick={goToRoot}>Go to Root</button>
+        </div>
+      )}
+      
+      <div>
+        {subLists.map(list => (
+          <div key={list.id} onClick={() => openList(list)}>
+            {list.name} ({list.entityIds.length} items)
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Lists Features
+
+The Redux-powered lists system includes all original functionality:
+
+**Navigation:**
+- Hierarchical list navigation with history stack
+- `openList(list)` - Navigate to a sub-list
+- `goBack()` - Return to previous list in history
+- `goToRoot()` - Jump to the root list
+
+**CRUD Operations:**
+- `createList({ listName })` - Create a new sub-list under current list
+- `updateList({ listId, update })` - Update list properties (name, etc.)
+- `deleteList({ list })` - Delete a list and handle navigation
+- `addToList({ entityId })` - Add an entity to the current list
+- `removeFromList({ entityId })` - Remove an entity from current list
+
+**State & Utilities:**
+- `currentList` - Currently active list
+- `subLists` - Sub-lists of the current list
+- `loading` - Loading state for operations
+- `isEntityInList(entityId)` - Check if entity is in current list
+
+**Caching & Performance:**
+- Smart caching of sub-lists by parent ID
+- Optimistic updates for instant UI feedback
+- Automatic cache invalidation and updates
+
 ## Architecture
 
 ### Provider Chain
@@ -168,6 +303,42 @@ Redux-powered replacement for `useAppNotifications`.
 
 Returns the same data as above but without configuration props.
 
+#### `useListsDataRedux()`
+Redux-powered replacement for `useListsData`.
+
+**Props:**
+None - automatically uses project context and user authentication.
+
+**Returns:**
+- `currentList: List | null` - Currently active list
+- `subLists: List[]` - Sub-lists of the current list  
+- `loading: boolean` - Loading state for operations
+- `openList: (list: List) => void` - Navigate to a sub-list
+- `goBack: () => void` - Return to previous list in navigation history
+- `goToRoot: () => void` - Jump back to the root list
+- `isEntityInList: (entityId: string) => boolean` - Check if entity is in current list
+- `createList: (props: { listName: string }) => Promise<void>` - Create new sub-list
+- `updateList: (props: { listId: string; update: Partial<{ name: string }> }) => Promise<void>` - Update list properties
+- `deleteList: (props: { list: List }) => Promise<void>` - Delete a list
+- `addToList: (props: { entityId: string }) => Promise<void>` - Add entity to current list
+- `removeFromList: (props: { entityId: string }) => Promise<void>` - Remove entity from current list
+
+#### `useListsRedux()`
+Redux-powered replacement for `useLists`.
+
+Returns basic lists state without CRUD operations:
+- `currentList: List | null` - Currently active list
+- `subLists: List[]` - Sub-lists of the current list
+- `loading: boolean` - Loading state
+- `openList: (list: List) => void` - Navigate to a sub-list
+- `goBack: () => void` - Return to previous list
+- `goToRoot: () => void` - Jump to root list
+
+#### `useListsActionsRedux()`
+Advanced hook providing all lists actions for complex scenarios.
+
+Returns all CRUD operations and navigation functions. Useful when you need actions without state subscriptions.
+
 ### Providers
 
 #### `ReplykeProvider`
@@ -233,6 +404,49 @@ function NotificationComponent() {
 }
 ```
 
+### 4. Lists Migration (Already Complete)
+
+**⚠️ Important**: The lists functionality has been fully migrated to Redux. The old context-based hooks are no longer exported and should be replaced:
+
+```tsx
+// ❌ Old way (no longer available)
+import { useListsData, useLists } from '@replyke/core';
+
+// ✅ New way (Redux-powered)
+import { useListsDataRedux, useListsRedux } from '@replyke/core';
+
+function ListManager() {
+  // Simply replace the hook - API is identical
+  const {
+    currentList,
+    subLists,
+    loading,
+    createList,
+    addToList,
+    // ... all other functions work the same
+  } = useListsDataRedux(); // <- Just add "Redux" suffix
+
+  // All your existing code works unchanged!
+  const handleAddToList = async (entityId: string) => {
+    await addToList({ entityId });
+  };
+
+  return (
+    <div>
+      {/* Same UI code as before */}
+    </div>
+  );
+}
+```
+
+**Migration Steps:**
+1. Find and replace `useListsData` → `useListsDataRedux`
+2. Find and replace `useLists` → `useListsRedux`  
+3. Update imports to use the new hook names
+4. Test functionality - everything should work identically
+
+**No Provider Changes Needed** - Lists work automatically with `enableRedux={true}` on `ReplykeProvider`.
+
 ## Troubleshooting
 
 ### Common Issues
@@ -266,6 +480,35 @@ const templates = useMemo(() => ({
 }), []); // ✅ Stable reference
 ```
 
+**6. "Cannot find module useListsData"**
+- Old hooks `useListsData`, `useLists` are no longer exported
+- Replace with `useListsDataRedux`, `useListsRedux` from `@replyke/core`
+- API is 100% identical - just add "Redux" suffix
+
+**7. "useListsDataRedux returns null currentList"**
+- Ensure user is authenticated (lists require user context)
+- Check Redux DevTools: `lists.currentList` should populate after login
+- Verify project ID is set correctly on `ReplykeProvider`
+- Root list is fetched automatically when user + project context is available
+
+**8. "Lists navigation not working properly"** 
+- Navigation uses internal history stack - use `goBack()` not browser back
+- Check Redux DevTools: `lists.listHistory` should show navigation stack
+- `openList()` pushes to history, `goBack()` pops from history
+- `goToRoot()` clears history and jumps to first item
+
+**9. "Sub-lists not loading"**
+- Sub-lists are cached by parent ID for performance
+- Check Redux DevTools: `lists.subListCache` shows cached data
+- Cache is invalidated automatically on CRUD operations
+- Loading state: `lists.loading` indicates fetch operations
+
+**10. "Entity add/remove not updating UI immediately"**
+- Uses optimistic updates for instant feedback
+- Check Redux DevTools for `List/add-entity` and `List/remove-entity` actions
+- If backend fails, changes automatically revert
+- `isEntityInList(entityId)` should update immediately
+
 ### Debug Tools
 
 **Redux DevTools:**
@@ -293,35 +536,99 @@ function DebugNotifications() {
 }
 ```
 
+**Lists State Debugging:**
+```tsx
+function DebugLists() {
+  const { 
+    currentList, 
+    subLists, 
+    loading 
+  } = useListsRedux();
+  
+  useEffect(() => {
+    console.group('Lists State');
+    console.log('Current List:', currentList?.name ?? 'None');
+    console.log('Sub-lists Count:', subLists.length);
+    console.log('Loading:', loading);
+    console.log('Sub-lists:', subLists.map(l => l.name));
+    console.groupEnd();
+  }, [currentList, subLists, loading]);
+  
+  return null;
+}
+
+// Add to your app temporarily for debugging
+function App() {
+  return (
+    <ReplykeProvider projectId="..." enableRedux>
+      <DebugLists />
+      <YourMainApp />
+    </ReplykeProvider>
+  );
+}
+```
+
+**Redux DevTools - Lists State:**
+```
+State → lists
+├── currentList: { id: "123", name: "My List", ... }
+├── subLists: [{ id: "456", name: "Sub List 1" }, ...]
+├── loading: false
+├── listHistory: [{ id: "abc", name: "Parent List" }]
+├── subListCache: {
+│   "123": [{ id: "456", name: "Sub List 1" }]
+│ }
+└── currentProjectId: "your-project-id"
+```
+
+**Common Redux Actions to Watch:**
+- `lists/setCurrentList` - Root list loaded
+- `lists/openList` - Navigated to sub-list
+- `lists/goBack` - Returned to previous list
+- `lists/setSubLists` - Sub-lists loaded for current list
+- `lists/updateCurrentList` - Entity added/removed from list
+- `api/executeQuery/pending` - API call started
+- `api/executeQuery/fulfilled` - API call succeeded
+
 ## Performance Considerations
 
 ### Redux Advantages
-- **Centralized State**: Single source of truth for notifications
+- **Centralized State**: Single source of truth for notifications and lists
 - **Optimistic Updates**: Instant UI updates with automatic rollback on failure
 - **Cache Management**: RTK Query handles caching and deduplication
 - **DevTools**: Powerful debugging and time-travel capabilities
+- **Smart Caching**: Lists sub-data is cached by parent ID for instant navigation
+- **History Management**: Lists navigation history handled in Redux state
 
 ### When to Use Redux
-- Complex notification interactions
-- Multiple components accessing notification data
-- Need for optimistic updates
+- Complex notification/lists interactions
+- Multiple components accessing the same data
+- Need for optimistic updates (especially lists CRUD operations)
 - Advanced debugging requirements
+- Cross-component state sharing
 
-### When to Keep Context
+### When to Keep Context (App Notifications Only)
 - Simple, isolated notification displays
-- Single-component usage
+- Single-component usage  
 - Legacy code that's working well
+
+**Note**: Lists have been fully migrated to Redux - context version is no longer available.
 
 ## Future Roadmap
 
-This Redux infrastructure is designed to support future migrations:
+This Redux infrastructure has been designed to support systematic migrations:
 
+**✅ Completed Migrations:**
+- **App Notifications** → `appNotificationsSlice` + RTK Query API
+- **Lists System** → `listsSlice` + RTK Query API
+- **Authentication** → `authSlice` + login/logout thunks
+
+**🚧 Future Migrations:**
 - **Entities System** → `entitiesSlice`
-- **Lists System** → `listsSlice` 
 - **Comments System** → `commentsSlice`
 - **User Management** → `usersSlice`
 
-Each will follow the same pattern: RTK Query for API calls, Redux slices for state management, and consumer-friendly hooks that hide Redux complexity.
+Each follows the same pattern: RTK Query for API calls, Redux slices for state management, and consumer-friendly hooks that hide Redux complexity while maintaining identical APIs.
 
 ## Support
 

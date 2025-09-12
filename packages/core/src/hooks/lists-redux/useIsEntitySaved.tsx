@@ -1,6 +1,6 @@
+import { useCallback, useState } from "react";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
-import { useCallback, useRef, useState } from "react";
 import { useUserRedux } from "../auth-redux";
 
 function useIsEntitySaved() {
@@ -9,17 +9,18 @@ function useIsEntitySaved() {
   const { user } = useUserRedux();
 
   const [entityIsSaved, setEntityIsSaved] = useState<boolean | null>(null);
-  const checkedStatus = useRef<Record<string, boolean>>({}); // Track status by entityId
+  // const checkedStatus = useRef<Record<string, boolean>>({}); // Track status by entityId
 
   const checkIfEntityIsSaved = useCallback(
     async (entityId: string) => {
-      if (!user || !entityId || checkedStatus.current[entityId]) return;
+      // if (!user || !entityId || checkedStatus.current[entityId]) return;
+      if (!user || !entityId) return;
 
       if (!projectId) {
         throw new Error("No projectId available.");
       }
 
-      checkedStatus.current[entityId] = true; // Mark this entityId as checked
+      // checkedStatus.current[entityId] = true; // Mark this entityId as checked
       const response = await axios.get<boolean>(
         `/${projectId}/lists/is-entity-saved`,
         {

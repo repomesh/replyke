@@ -7,7 +7,7 @@ export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   
-  // User data
+  // User data (DEPRECATED - moved to userSlice)
   user: AuthUser | null;
   
   // Loading states
