@@ -8,6 +8,6 @@ export { default as useUpdateEntity } from "./useUpdateEntity";
 export { default as useEntityVotes } from "./useEntityVotes";
 export { default as useDeleteEntity } from "./useDeleteEntity";
 
-export { default as useEntityList } from "./useEntityList";
-export { default as useEntityListData } from "./useEntityListData";
-export { default as useInfusedData } from "./useInfusedData";
+export { default as useEntityList } from "../entity-lists/useEntityList";
+export { default as useEntityListData } from "../entity-lists/useEntityListData";
+export { default as useInfusedData } from "../entity-lists/useInfusedData";

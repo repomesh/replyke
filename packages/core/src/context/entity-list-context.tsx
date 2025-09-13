@@ -2,7 +2,7 @@ import React, { createContext } from "react";
 import useEntityListData, {
   UseEntityListDataProps,
   UseEntityListDataValues,
-} from "../hooks/entities/useEntityListData";
+} from "../hooks/entity-lists/useEntityListData";
 
 export interface EntityListContextProps extends UseEntityListDataProps {
   children: React.ReactNode;

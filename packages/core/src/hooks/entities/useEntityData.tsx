@@ -6,11 +6,12 @@ import useFetchEntityByForeignId from "./useFetchEntityByForeignId";
 import useFetchEntityByShortId from "./useFetchEntityByShortId";
 import useUpdateEntity, { UpdateEntityProps } from "./useUpdateEntity";
 import useDeleteEntity from "./useDeleteEntity";
+
+import useIncrementEntityViews from "./useIncrementEntityViews";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
-import useIncrementEntityViews from "./useIncrementEntityViews";
 import { useUserRedux } from "../auth-redux";
-import useEntityList from "./useEntityList";
+import useEntityList from "../entity-lists/useEntityList";
 
 export interface UseEntityDataProps {
   entity?: Entity;
