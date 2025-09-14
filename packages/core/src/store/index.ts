@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer } from "./rootReducer";
 import { customMiddleware } from "./middleware";
 import { baseApi } from "./api/baseApi";
+import { isProduction } from "../utils/env";
 
 // Configure the Redux store
 export const store = configureStore({
@@ -46,7 +47,7 @@ export const store = configureStore({
       .concat(customMiddleware),
   
   // Enable Redux DevTools in development
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: !isProduction(),
 });
 
 // Export types

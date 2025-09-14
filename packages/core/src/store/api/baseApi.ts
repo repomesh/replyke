@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "../index";
+import { getApiBaseUrl } from "../../utils/env";
 
 // Base query that uses the current project context and auth
 const createBaseQuery = () => {
   return fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'https://api.replyke.com/api/v5',
+    baseUrl: getApiBaseUrl(),
     credentials: 'include', // Equivalent to withCredentials: true
     prepareHeaders: (headers, { getState }) => {
       // Add Content-Type header

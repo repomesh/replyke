@@ -1,4 +1,5 @@
 // Utility functions for prop comparison and stability checks
+import { isDevelopment } from "@replyke/core/utils/env";
 
 /**
  * Performs shallow equality check for objects
@@ -80,7 +81,7 @@ export function warnPropChanges(
   nextProps: Record<string, any>,
   propNames: string[]
 ): void {
-  if (process.env.NODE_ENV !== 'development') {
+  if (!isDevelopment()) {
     return;
   }
 

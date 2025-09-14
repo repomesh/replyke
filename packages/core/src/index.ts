@@ -4,6 +4,12 @@ export { keywordHelpers } from "./utils/keywordHelpers";
 export { safeMergeStyleProps } from "./helpers/safeMergeStyleProps";
 export { getUserName } from "./helpers/getUserName";
 export { default as getPublicFileUrl } from "./helpers/getPublicFileUrl";
+export {
+  isDevelopment,
+  isProduction,
+  getApiBaseUrl,
+  getEnvVar,
+} from "./utils/env";
 
 // Constants
 export { reportReasons } from "./constants/reportReasons";
@@ -11,8 +17,7 @@ export type { ReportReasonKey } from "./constants/reportReasons";
 
 // Context providers (Redux-powered by default)
 export {
-  ReplykeProvider, // Always includes Redux
-  ReplykeStoreProvider, // Advanced: standalone Redux provider
+  ReplykeProvider,
   EntityProvider,
   CommentSectionProvider,
 } from "./context";

@@ -1,5 +1,6 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { handleError } from "../utils/handleError";
+import { isDevelopment } from "../utils/env";
 
 // Error handling middleware for Redux actions
 export const errorMiddleware: Middleware = (store) => (next) => (action: any) => {
@@ -16,7 +17,7 @@ export const loggerMiddleware: Middleware = (store) => (next) => (action: any) =
   const result = next(action);
   
   // Only log failed API calls and errors in development
-  if (process.env.NODE_ENV === 'development' && action.type.includes('/rejected')) {
+  if (isDevelopment() && action.type.includes('/rejected')) {
     console.group(`❌ Redux Action Failed: ${action.type}`);
     console.log('Error:', action.payload);
     console.log('Action:', action);
@@ -29,5 +30,5 @@ export const loggerMiddleware: Middleware = (store) => (next) => (action: any) =
 // Combine all custom middleware
 export const customMiddleware = [
   errorMiddleware,
-  ...(process.env.NODE_ENV === 'development' ? [loggerMiddleware] : [])
+  ...(isDevelopment() ? [loggerMiddleware] : [])
 ];
