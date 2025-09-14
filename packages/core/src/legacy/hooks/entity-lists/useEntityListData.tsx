@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import useFetchManyEntities from "./useFetchManyEntities";
-import useInfusedData from "./useInfusedData";
-import useCreateEntity from "../entities/useCreateEntity";
-import useDeleteEntity from "../entities/useDeleteEntity";
+import useFetchManyEntities from "../../../hooks/entity-lists/useFetchManyEntities";
+import useInfusedData from "../../../hooks/entity-lists/useInfusedData";
+import useCreateEntity from "../../../hooks/entities/useCreateEntity";
+import useDeleteEntity from "../../../hooks/entities/useDeleteEntity";
 
-import { Entity } from "../../interfaces/models/Entity";
-import { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
-import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
-import { TimeFrame } from "../../interfaces/TimeFrame";
-import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
-import { TitleFilters } from "../../interfaces/entity-filters/TitleFilters";
-import { ContentFilters } from "../../interfaces/entity-filters/ContentFilters";
-import { AttachmentsFilters } from "../../interfaces/entity-filters/AttachmentsFilters";
-import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
+import { Entity } from "../../../interfaces/models/Entity";
+import { EntityListSortByOptions } from "../../../interfaces/EntityListSortByOptions";
+import { LocationFilters } from "../../../interfaces/entity-filters/LocationFilters";
+import { TimeFrame } from "../../../interfaces/TimeFrame";
+import { MetadataFilters } from "../../../interfaces/entity-filters/MetadataFilters";
+import { TitleFilters } from "../../../interfaces/entity-filters/TitleFilters";
+import { ContentFilters } from "../../../interfaces/entity-filters/ContentFilters";
+import { AttachmentsFilters } from "../../../interfaces/entity-filters/AttachmentsFilters";
+import { KeywordsFilters } from "../../../interfaces/entity-filters/KeywordsFilters";
 
-import { handleError } from "../../utils/handleError";
+import { handleError } from "../../../utils/handleError";
 
 export interface UseEntityListDataProps {
   limit?: number;
@@ -173,7 +173,7 @@ function useEntityListData({
   ) => {
     const items = Array.isArray(value) ? value : value ? [value] : [];
 
-    setKeywordsFilters((prev) => {
+    setKeywordsFilters((prev: KeywordsFilters | null) => {
       if (!prev) prev = {};
 
       switch (type) {
@@ -190,17 +190,17 @@ function useEntityListData({
           if (key === "both") {
             return {
               includes: (prev.includes || []).filter(
-                (item) => !items.includes(item)
+                (item: string) => !items.includes(item)
               ),
               doesNotInclude: (prev.doesNotInclude || []).filter(
-                (item) => !items.includes(item)
+                (item: string) => !items.includes(item)
               ),
             };
           }
 
           return {
             ...prev,
-            [key]: (prev[key] || []).filter((item) => !items.includes(item)),
+            [key]: (prev[key] || []).filter((item: string) => !items.includes(item)),
           };
         }
 

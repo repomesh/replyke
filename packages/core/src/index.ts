@@ -1,5 +1,6 @@
 // Helpers & Utilities
 export { handleError } from "./utils/handleError";
+export { keywordHelpers } from "./utils/keywordHelpers";
 export { safeMergeStyleProps } from "./helpers/safeMergeStyleProps";
 export { getUserName } from "./helpers/getUserName";
 export { default as getPublicFileUrl } from "./helpers/getPublicFileUrl";
@@ -12,7 +13,6 @@ export type { ReportReasonKey } from "./constants/reportReasons";
 export {
   ReplykeProvider, // Always includes Redux
   ReplykeStoreProvider, // Advanced: standalone Redux provider
-  EntityListProvider,
   EntityProvider,
   CommentSectionProvider,
 } from "./context";
@@ -62,10 +62,15 @@ export {
   useUpdateEntity,
   useEntityVotes,
   useDeleteEntity,
-  useEntityList,
-  useEntityListData,
   useInfusedData,
 } from "./hooks/entities";
+
+// -- entity lists (Redux-powered)
+export {
+  useEntityListRedux,
+  type UseEntityListReduxProps,
+  type UseEntityListReduxValues,
+} from "./hooks/entity-lists-redux";
 
 // -- comments
 export {

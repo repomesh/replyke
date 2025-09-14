@@ -1,7 +1,6 @@
-// Export app notifications slice
-export * from "./appNotificationsSlice";
+// Note: We don't use wildcard exports to avoid naming conflicts between slices
+// Individual slices can be imported directly where needed
 
 // Future slice exports will go here:
 // export * from "./entitiesSlice";
-// export * from "./listsSlice";
 // export * from "./commentsSlice";
