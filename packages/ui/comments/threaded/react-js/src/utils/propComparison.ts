@@ -1,5 +1,5 @@
 // Utility functions for prop comparison and stability checks
-import { isDevelopment } from "@replyke/core/utils/env";
+import { isDevelopment } from "@replyke/react-js";
 
 /**
  * Performs shallow equality check for objects
@@ -9,7 +9,7 @@ export function shallowEqual(obj1: any, obj2: any): boolean {
     return true;
   }
 
-  if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+  if (!obj1 || !obj2 || typeof obj1 !== "object" || typeof obj2 !== "object") {
     return false;
   }
 
@@ -45,7 +45,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
     return false;
   }
 
-  if (typeof obj1 !== 'object') {
+  if (typeof obj1 !== "object") {
     return obj1 === obj2;
   }
 
@@ -92,7 +92,7 @@ export function warnPropChanges(
     if (prevValue !== nextValue && !deepEqual(prevValue, nextValue)) {
       console.warn(
         `[${componentName}] Prop '${propName}' changed but has the same content. ` +
-        `Consider memoizing this prop to prevent unnecessary re-renders.`,
+          `Consider memoizing this prop to prevent unnecessary re-renders.`,
         { prevValue, nextValue }
       );
     }

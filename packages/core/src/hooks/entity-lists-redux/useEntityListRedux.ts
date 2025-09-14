@@ -18,6 +18,7 @@ import {
   selectEntityListHasMore,
   selectEntityListFilters,
   type FilterUpdatePayload,
+  type EntityListState,
 } from "../../store/slices/entityListsSlice";
 
 import useFetchManyEntities from "../entity-lists/useFetchManyEntities";
@@ -36,6 +37,30 @@ import { AttachmentsFilters } from "../../interfaces/entity-filters/AttachmentsF
 import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
 
 import { handleError } from "../../utils/handleError";
+
+// Helper function to create default entity list state (same as in slice)
+const createDefaultEntityListState = (): EntityListState => ({
+  entities: [],
+  page: 1,
+  loading: false,
+  hasMore: true,
+  error: null,
+  lastFetched: null,
+
+  // Default filters
+  limit: 10,
+  sortBy: "hot",
+  timeFrame: null,
+  sourceId: null,
+  userId: null,
+  followedOnly: false,
+  keywordsFilters: null,
+  titleFilters: null,
+  contentFilters: null,
+  attachmentsFilters: null,
+  locationFilters: null,
+  metadataFilters: null,
+});
 
 export interface UseEntityListReduxProps {
   listId: string;
@@ -58,7 +83,6 @@ export interface UseEntityListReduxValues {
   sourceId: string | null;
   userId: string | null;
   followedOnly: boolean;
-
   keywordsFilters: KeywordsFilters | null;
   titleFilters: TitleFilters | null;
   contentFilters: ContentFilters | null;
@@ -140,37 +164,88 @@ function useEntityListRedux({
     newFilters: Partial<FilterUpdatePayload['filters']>,
     options?: { resetUnspecified?: boolean; immediate?: boolean }
   ) => {
-    // Update filters in Redux state
+    // Update filters in Redux state first
     dispatch(updateFiltersAndSort({ listId, filters: newFilters, options }));
 
-    // Define the fetch logic
+    // Calculate the final filters that will be used for the fetch
+    // We need to merge current entityList state with the new filters, but use hook props as fallback
+    const defaultState = createDefaultEntityListState();
+
+    // Start with default state, but override with hook props for limit and sourceId
+    const baseFilters = {
+      ...defaultState,
+      limit: limit, // Use hook prop limit
+      sourceId: sourceId, // Use hook prop sourceId
+    };
+
+    // If entityList exists, use its values, otherwise use baseFilters
+    const currentFilters = entityList ? { ...entityList } : baseFilters;
+
+    // Apply resetUnspecified logic
+    let finalFilters = { ...currentFilters };
+    if (options?.resetUnspecified) {
+      finalFilters = {
+        ...currentFilters,
+        // Reset filter properties to defaults (but keep limit and sourceId from hook props)
+        sortBy: defaultState.sortBy,
+        timeFrame: defaultState.timeFrame,
+        userId: defaultState.userId,
+        followedOnly: defaultState.followedOnly,
+        keywordsFilters: defaultState.keywordsFilters,
+        titleFilters: defaultState.titleFilters,
+        contentFilters: defaultState.contentFilters,
+        attachmentsFilters: defaultState.attachmentsFilters,
+        locationFilters: defaultState.locationFilters,
+        metadataFilters: defaultState.metadataFilters,
+        // Preserve hook-level configs
+        limit: limit,
+        sourceId: sourceId,
+      };
+    }
+
+    // Apply new filters
+    Object.keys(newFilters).forEach((key) => {
+      if (newFilters[key as keyof typeof newFilters] !== undefined) {
+        (finalFilters as any)[key] = newFilters[key as keyof typeof newFilters];
+      }
+    });
+
+    // Define the fetch logic using the calculated final filters
     const performFetch = async () => {
-      if (!entityList) return;
+      if (!finalFilters.sortBy) return; // sortBy is required
 
       dispatch(setEntityListLoading({ listId, loading: true }));
 
       try {
+        console.log(`[EntityListRedux] Fetching entities for listId: ${listId}`, {
+          filters: finalFilters,
+          sourceId: finalFilters.sourceId,
+        });
+
         const newEntities = await fetchManyEntities({
           page: 1,
-          sortBy: entityList.sortBy,
-          timeFrame: entityList.timeFrame,
-          userId: entityList.userId,
-          sourceId: entityList.sourceId,
-          followedOnly: entityList.followedOnly,
-          limit: entityList.limit,
-          locationFilters: entityList.locationFilters,
-          keywordsFilters: entityList.keywordsFilters,
-          metadataFilters: entityList.metadataFilters,
-          titleFilters: entityList.titleFilters,
-          contentFilters: entityList.contentFilters,
-          attachmentsFilters: entityList.attachmentsFilters,
+          sortBy: finalFilters.sortBy,
+          timeFrame: finalFilters.timeFrame,
+          userId: finalFilters.userId,
+          sourceId: finalFilters.sourceId ?? null,
+          followedOnly: finalFilters.followedOnly,
+          limit: finalFilters.limit,
+          locationFilters: finalFilters.locationFilters,
+          keywordsFilters: finalFilters.keywordsFilters,
+          metadataFilters: finalFilters.metadataFilters,
+          titleFilters: finalFilters.titleFilters,
+          contentFilters: finalFilters.contentFilters,
+          attachmentsFilters: finalFilters.attachmentsFilters,
         });
+
+        console.log(`[EntityListRedux] Fetched ${newEntities?.length || 0} entities for listId: ${listId}`);
 
         if (newEntities) {
           dispatch(setEntityListEntities({ listId, entities: newEntities, append: false }));
-          dispatch(setEntityListHasMore({ listId, hasMore: newEntities.length >= entityList.limit }));
+          dispatch(setEntityListHasMore({ listId, hasMore: newEntities.length >= finalFilters.limit }));
         }
       } catch (err) {
+        console.error(`[EntityListRedux] Failed to fetch entities for listId: ${listId}`, err);
         handleError(err, "Failed to fetch entities:");
         dispatch(setEntityListError({ listId, error: "Failed to fetch entities" }));
       } finally {
@@ -179,7 +254,10 @@ function useEntityListRedux({
     };
 
     // Execute immediately if requested, otherwise debounce
-    if (options?.immediate) {
+    // For initial loads (empty filters object), make it immediate by default
+    const shouldBeImmediate = options?.immediate || Object.keys(newFilters).length === 0;
+
+    if (shouldBeImmediate) {
       performFetch();
     } else {
       // Clear existing debounce timer
@@ -256,10 +334,12 @@ function useEntityListRedux({
       dispatch(setEntityListLoading({ listId, loading: true }));
 
       try {
+        console.log(`[EntityListRedux] Loading more entities (page ${entityList.page}) for listId: ${listId}`);
+
         const newEntities = await fetchManyEntities({
           page: entityList.page,
           userId: entityList.userId,
-          sourceId: entityList.sourceId,
+          sourceId: entityList.sourceId ?? null,
           followedOnly: entityList.followedOnly,
           sortBy: entityList.sortBy,
           limit: entityList.limit,
@@ -272,11 +352,14 @@ function useEntityListRedux({
           attachmentsFilters: entityList.attachmentsFilters,
         });
 
+        console.log(`[EntityListRedux] Loaded ${newEntities?.length || 0} more entities (page ${entityList.page}) for listId: ${listId}`);
+
         if (newEntities) {
           dispatch(setEntityListEntities({ listId, entities: newEntities, append: true }));
           dispatch(setEntityListHasMore({ listId, hasMore: newEntities.length >= entityList.limit }));
         }
       } catch (err) {
+        console.error(`[EntityListRedux] Failed to load more entities for listId: ${listId}`, err);
         handleError(err, "Loading more entities failed:");
         dispatch(setEntityListError({ listId, error: "Failed to load more entities" }));
       } finally {

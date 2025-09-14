@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { Entity } from "../../interfaces/models/Entity";
 import { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
 import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
@@ -137,6 +137,15 @@ export const entityListsSlice = createSlice({
           defaultState.sourceId = sourceId;
         }
         state.lists[listId] = defaultState;
+      } else {
+        // If list exists, update hook-level configuration (limit and sourceId)
+        const existingList = state.lists[listId];
+        if (limit && existingList.limit !== limit) {
+          existingList.limit = limit;
+        }
+        if (sourceId !== undefined && existingList.sourceId !== sourceId) {
+          existingList.sourceId = sourceId;
+        }
       }
     },
 
@@ -385,37 +394,55 @@ export const {
   cleanupOldLists,
 } = entityListsSlice.actions;
 
-// Selectors
-export const selectEntityList = (state: { entityLists: EntityListsState }, listId: string): EntityListState | undefined =>
-  state.entityLists.lists[listId];
+// Base selectors
+const selectEntityListsState = (state: { entityLists: EntityListsState }) => state.entityLists;
+const selectListId = (_: any, listId: string) => listId;
 
-export const selectEntityListEntities = (state: { entityLists: EntityListsState }, listId: string): Entity[] =>
-  state.entityLists.lists[listId]?.entities || [];
+// Memoized selectors using createSelector
+export const selectEntityList = createSelector(
+  [selectEntityListsState, selectListId],
+  (entityListsState, listId): EntityListState | undefined =>
+    entityListsState.lists[listId]
+);
 
-export const selectEntityListLoading = (state: { entityLists: EntityListsState }, listId: string): boolean =>
-  state.entityLists.lists[listId]?.loading || false;
+export const selectEntityListEntities = createSelector(
+  [selectEntityList],
+  (entityList): Entity[] =>
+    entityList?.entities || []
+);
 
-export const selectEntityListHasMore = (state: { entityLists: EntityListsState }, listId: string): boolean =>
-  state.entityLists.lists[listId]?.hasMore || false;
+export const selectEntityListLoading = createSelector(
+  [selectEntityList],
+  (entityList): boolean =>
+    entityList?.loading || false
+);
 
-export const selectEntityListFilters = (state: { entityLists: EntityListsState }, listId: string) => {
-  const list = state.entityLists.lists[listId];
-  if (!list) return null;
+export const selectEntityListHasMore = createSelector(
+  [selectEntityList],
+  (entityList): boolean =>
+    entityList?.hasMore || false
+);
 
-  return {
-    limit: list.limit,
-    sortBy: list.sortBy,
-    timeFrame: list.timeFrame,
-    sourceId: list.sourceId,
-    userId: list.userId,
-    followedOnly: list.followedOnly,
-    keywordsFilters: list.keywordsFilters,
-    titleFilters: list.titleFilters,
-    contentFilters: list.contentFilters,
-    attachmentsFilters: list.attachmentsFilters,
-    locationFilters: list.locationFilters,
-    metadataFilters: list.metadataFilters,
-  };
-};
+export const selectEntityListFilters = createSelector(
+  [selectEntityList],
+  (entityList) => {
+    if (!entityList) return null;
+
+    return {
+      limit: entityList.limit,
+      sortBy: entityList.sortBy,
+      timeFrame: entityList.timeFrame,
+      sourceId: entityList.sourceId,
+      userId: entityList.userId,
+      followedOnly: entityList.followedOnly,
+      keywordsFilters: entityList.keywordsFilters,
+      titleFilters: entityList.titleFilters,
+      contentFilters: entityList.contentFilters,
+      attachmentsFilters: entityList.attachmentsFilters,
+      locationFilters: entityList.locationFilters,
+      metadataFilters: entityList.metadataFilters,
+    };
+  }
+);
 
 export default entityListsSlice.reducer;
