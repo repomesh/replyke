@@ -7,6 +7,8 @@ export * from "./appNotificationsApi";
 // Export lists API
 export * from "./listsApi";
 
+// Export entity lists API
+export * from "./entityListsApi";
+
 // Future API exports will go here:
-// export * from "./entitiesApi";
 // export * from "./commentsApi";

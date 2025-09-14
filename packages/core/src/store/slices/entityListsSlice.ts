@@ -67,24 +67,31 @@ const initialState: EntityListsState = {
   lists: {},
 };
 
+// Entity list filters interface - used by both Redux slice and hooks
+export interface EntityListFilters {
+  sortBy?: EntityListSortByOptions;
+  timeFrame?: TimeFrame | null;
+  userId?: string | null;
+  followedOnly?: boolean;
+  keywordsFilters?: KeywordsFilters | null;
+  titleFilters?: TitleFilters | null;
+  contentFilters?: ContentFilters | null;
+  attachmentsFilters?: AttachmentsFilters | null;
+  locationFilters?: LocationFilters | null;
+  metadataFilters?: MetadataFilters | null;
+}
+
+// Options for entity list operations
+export interface EntityListFetchOptions {
+  resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
+  immediate?: boolean; // Skip debouncing, fetch immediately (used by hooks)
+}
+
 // Filter update payload interface
 export interface FilterUpdatePayload {
   listId: string;
-  filters: Partial<{
-    sortBy: EntityListSortByOptions;
-    timeFrame: TimeFrame | null;
-    userId: string | null;
-    followedOnly: boolean;
-    keywordsFilters: KeywordsFilters | null;
-    titleFilters: TitleFilters | null;
-    contentFilters: ContentFilters | null;
-    attachmentsFilters: AttachmentsFilters | null;
-    locationFilters: LocationFilters | null;
-    metadataFilters: MetadataFilters | null;
-  }>;
-  options?: {
-    resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
-  };
+  filters: Partial<EntityListFilters>;
+  options?: EntityListFetchOptions;
 }
 
 // Initialize list payload interface
@@ -163,7 +170,8 @@ export const entityListsSlice = createSlice({
       // If resetUnspecified is true, reset to defaults first
       if (options?.resetUnspecified) {
         const defaultState = createDefaultEntityListState();
-        // Reset all filter properties to defaults (but keep limit and sourceId as hook-level config)
+        // Reset all filter properties to defaults
+        // Note: limit and sourceId are not reset here as they come from hook props
         list.sortBy = defaultState.sortBy;
         list.timeFrame = defaultState.timeFrame;
         list.userId = defaultState.userId;

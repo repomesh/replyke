@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import useFetchManyEntities from "../../../hooks/entity-lists/useFetchManyEntities";
-import useInfusedData from "../../../hooks/entity-lists/useInfusedData";
+// TODO: Replace with Redux implementation or move useFetchManyEntities to legacy
+// import useFetchManyEntities from "../../../hooks/entity-lists/useFetchManyEntities";
+import useInfusedData from "../../../hooks/entity-lists-redux/useInfusedData";
 import useCreateEntity from "../../../hooks/entities/useCreateEntity";
 import useDeleteEntity from "../../../hooks/entities/useDeleteEntity";
 
@@ -153,7 +154,10 @@ function useEntityListData({
 
   const infusedEntities = useInfusedData({ entities, infuseData });
 
-  const fetchManyEntities = useFetchManyEntities();
+  // Temporary placeholder - TODO: Move useFetchManyEntities to legacy or use Redux
+  const fetchManyEntities = async (params: any): Promise<any[]> => {
+    throw new Error("useFetchManyEntities has been moved. Please use useEntityListRedux instead.");
+  };
   const createEntity = useCreateEntity();
   const deleteEntity = useDeleteEntity();
 

@@ -244,6 +244,7 @@ function useCommentSectionData(
         deletedAt: null,
         parentDeletedAt: null,
         repliesCount: 0,
+        metadata: {},
       };
 
       setRepliedToComment(null);

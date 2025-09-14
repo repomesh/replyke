@@ -1,15 +1,15 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
-import { Entity } from "../../interfaces/models/Entity";
-import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
-import { TimeFrame } from "../../interfaces/TimeFrame";
-import useProject from "../projects/useProject";
-import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
-import { TitleFilters } from "../../interfaces/entity-filters/TitleFilters";
-import { ContentFilters } from "../../interfaces/entity-filters/ContentFilters";
-import { AttachmentsFilters } from "../../interfaces/entity-filters/AttachmentsFilters";
-import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import { EntityListSortByOptions } from "../../../interfaces/EntityListSortByOptions";
+import { Entity } from "../../../interfaces/models/Entity";
+import { LocationFilters } from "../../../interfaces/entity-filters/LocationFilters";
+import { TimeFrame } from "../../../interfaces/TimeFrame";
+import useProject from "../../../hooks/projects/useProject";
+import { MetadataFilters } from "../../../interfaces/entity-filters/MetadataFilters";
+import { TitleFilters } from "../../../interfaces/entity-filters/TitleFilters";
+import { ContentFilters } from "../../../interfaces/entity-filters/ContentFilters";
+import { AttachmentsFilters } from "../../../interfaces/entity-filters/AttachmentsFilters";
+import { KeywordsFilters } from "../../../interfaces/entity-filters/KeywordsFilters";
 
 function useFetchManyEntities() {
   const axios = useAxiosPrivate();

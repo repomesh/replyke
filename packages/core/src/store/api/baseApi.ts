@@ -33,9 +33,9 @@ export const baseApi = createApi({
     'AppNotification',
     'List',
     'User',
+    'Entity',
     // Future tag types:
-    // 'Entity',
-    // 'Comment', 
+    // 'Comment',
   ],
   endpoints: () => ({}), // Endpoints will be injected by feature APIs
 });

@@ -73,8 +73,11 @@ export {
 // -- entity lists (Redux-powered)
 export {
   useEntityListRedux,
+  useEntityListActionsRedux,
   type UseEntityListReduxProps,
   type UseEntityListReduxValues,
+  type EntityListFilters,
+  type EntityListFetchOptions,
 } from "./hooks/entity-lists-redux";
 
 // -- comments

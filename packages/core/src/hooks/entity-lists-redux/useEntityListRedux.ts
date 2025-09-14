@@ -8,23 +8,18 @@ import {
   setEntityListLoading,
   setEntityListEntities,
   incrementPage,
-  setEntityListHasMore,
-  setEntityListError,
-  addEntity,
-  removeEntity,
   selectEntityList,
   selectEntityListEntities,
   selectEntityListLoading,
   selectEntityListHasMore,
   selectEntityListFilters,
-  type FilterUpdatePayload,
   type EntityListState,
+  type EntityListFilters,
+  type EntityListFetchOptions,
 } from "../../store/slices/entityListsSlice";
 
-import useFetchManyEntities from "../entity-lists/useFetchManyEntities";
-import useInfusedData from "../entity-lists/useInfusedData";
-import useCreateEntity from "../entities/useCreateEntity";
-import useDeleteEntity from "../entities/useDeleteEntity";
+import useInfusedData from "./useInfusedData";
+import useEntityListActionsRedux from "./useEntityListActionsRedux";
 
 import { Entity } from "../../interfaces/models/Entity";
 import { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
@@ -91,24 +86,9 @@ export interface UseEntityListReduxValues {
   metadataFilters: MetadataFilters | null;
 
   fetchEntities: (
-    filters: Partial<{
-      sortBy?: EntityListSortByOptions;
-      timeFrame?: TimeFrame | null;
-      userId?: string | null;
-      followedOnly?: boolean;
-      keywordsFilters?: KeywordsFilters | null;
-      titleFilters?: TitleFilters | null;
-      contentFilters?: ContentFilters | null;
-      attachmentsFilters?: AttachmentsFilters | null;
-      locationFilters?: LocationFilters | null;
-      metadataFilters?: MetadataFilters | null;
-    }>,
-    options?: {
-      resetUnspecified?: boolean;
-      immediate?: boolean;
-    }
+    filters: Partial<EntityListFilters>,
+    options?: EntityListFetchOptions
   ) => void;
-
 
   loadMore: () => void;
   createEntity: (props: {
@@ -130,7 +110,7 @@ export interface UseEntityListReduxValues {
 function useEntityListRedux({
   listId,
   limit = 10,
-  sourceId,
+  sourceId = null,
   infuseData,
 }: UseEntityListReduxProps): UseEntityListReduxValues {
   const dispatch = useDispatch<AppDispatch>();
@@ -141,16 +121,24 @@ function useEntityListRedux({
   }, [dispatch, listId, limit, sourceId]);
 
   // Get state from Redux
-  const entityList = useSelector((state: RootState) => selectEntityList(state, listId));
-  const entities = useSelector((state: RootState) => selectEntityListEntities(state, listId));
-  const loading = useSelector((state: RootState) => selectEntityListLoading(state, listId));
-  const hasMore = useSelector((state: RootState) => selectEntityListHasMore(state, listId));
-  const filters = useSelector((state: RootState) => selectEntityListFilters(state, listId));
+  const entityList = useSelector((state: RootState) =>
+    selectEntityList(state, listId)
+  );
+  const entities = useSelector((state: RootState) =>
+    selectEntityListEntities(state, listId)
+  );
+  const loading = useSelector((state: RootState) =>
+    selectEntityListLoading(state, listId)
+  );
+  const hasMore = useSelector((state: RootState) =>
+    selectEntityListHasMore(state, listId)
+  );
+  const filters = useSelector((state: RootState) =>
+    selectEntityListFilters(state, listId)
+  );
 
-  // Get entity hooks
-  const fetchManyEntities = useFetchManyEntities();
-  const createEntityHook = useCreateEntity();
-  const deleteEntityHook = useDeleteEntity();
+  // Get entity actions hook
+  const entityActions = useEntityListActionsRedux();
 
   // Infused data
   const infusedEntities = useInfusedData({ entities, infuseData });
@@ -158,271 +146,260 @@ function useEntityListRedux({
   // Debounce timer for filter changes
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-
   // Fetch entities function (always triggers a fetch)
-  const handleFetchEntities = useCallback((
-    newFilters: Partial<FilterUpdatePayload['filters']>,
-    options?: { resetUnspecified?: boolean; immediate?: boolean }
-  ) => {
-    // Update filters in Redux state first
-    dispatch(updateFiltersAndSort({ listId, filters: newFilters, options }));
+  const handleFetchEntities = useCallback(
+    (
+      newFilters: Partial<EntityListFilters>,
+      options?: EntityListFetchOptions
+    ) => {
+      // First, ensure Redux state has current hook props BEFORE updating filters
+      dispatch(initializeList({ listId, limit, sourceId }));
 
-    // Calculate the final filters that will be used for the fetch
-    // We need to merge current entityList state with the new filters, but use hook props as fallback
-    const defaultState = createDefaultEntityListState();
+      // Then update filters in Redux state
+      dispatch(updateFiltersAndSort({ listId, filters: newFilters, options }));
 
-    // Start with default state, but override with hook props for limit and sourceId
-    const baseFilters = {
-      ...defaultState,
-      limit: limit, // Use hook prop limit
-      sourceId: sourceId, // Use hook prop sourceId
-    };
+      // Define the fetch logic
+      const performFetch = async () => {
+        // After Redux state update, get the current filter values
+        const currentEntityList = entityList || createDefaultEntityListState();
 
-    // If entityList exists, use its values, otherwise use baseFilters
-    const currentFilters = entityList ? { ...entityList } : baseFilters;
+        // Build final filters by taking current state and applying new filters
+        const finalFilters = { ...currentEntityList };
 
-    // Apply resetUnspecified logic
-    let finalFilters = { ...currentFilters };
-    if (options?.resetUnspecified) {
-      finalFilters = {
-        ...currentFilters,
-        // Reset filter properties to defaults (but keep limit and sourceId from hook props)
-        sortBy: defaultState.sortBy,
-        timeFrame: defaultState.timeFrame,
-        userId: defaultState.userId,
-        followedOnly: defaultState.followedOnly,
-        keywordsFilters: defaultState.keywordsFilters,
-        titleFilters: defaultState.titleFilters,
-        contentFilters: defaultState.contentFilters,
-        attachmentsFilters: defaultState.attachmentsFilters,
-        locationFilters: defaultState.locationFilters,
-        metadataFilters: defaultState.metadataFilters,
-        // Preserve hook-level configs
-        limit: limit,
-        sourceId: sourceId,
-      };
-    }
-
-    // Apply new filters
-    Object.keys(newFilters).forEach((key) => {
-      if (newFilters[key as keyof typeof newFilters] !== undefined) {
-        (finalFilters as any)[key] = newFilters[key as keyof typeof newFilters];
-      }
-    });
-
-    // Define the fetch logic using the calculated final filters
-    const performFetch = async () => {
-      if (!finalFilters.sortBy) return; // sortBy is required
-
-      dispatch(setEntityListLoading({ listId, loading: true }));
-
-      try {
-        console.log(`[EntityListRedux] Fetching entities for listId: ${listId}`, {
-          filters: finalFilters,
-          sourceId: finalFilters.sourceId,
-        });
-
-        const newEntities = await fetchManyEntities({
-          page: 1,
-          sortBy: finalFilters.sortBy,
-          timeFrame: finalFilters.timeFrame,
-          userId: finalFilters.userId,
-          sourceId: finalFilters.sourceId ?? null,
-          followedOnly: finalFilters.followedOnly,
-          limit: finalFilters.limit,
-          locationFilters: finalFilters.locationFilters,
-          keywordsFilters: finalFilters.keywordsFilters,
-          metadataFilters: finalFilters.metadataFilters,
-          titleFilters: finalFilters.titleFilters,
-          contentFilters: finalFilters.contentFilters,
-          attachmentsFilters: finalFilters.attachmentsFilters,
-        });
-
-        console.log(`[EntityListRedux] Fetched ${newEntities?.length || 0} entities for listId: ${listId}`);
-
-        if (newEntities) {
-          dispatch(setEntityListEntities({ listId, entities: newEntities, append: false }));
-          dispatch(setEntityListHasMore({ listId, hasMore: newEntities.length >= finalFilters.limit }));
+        // Apply resetUnspecified logic
+        if (options?.resetUnspecified) {
+          const defaultState = createDefaultEntityListState();
+          // Reset filter properties to defaults
+          finalFilters.sortBy = defaultState.sortBy;
+          finalFilters.timeFrame = defaultState.timeFrame;
+          finalFilters.userId = defaultState.userId;
+          finalFilters.followedOnly = defaultState.followedOnly;
+          finalFilters.keywordsFilters = defaultState.keywordsFilters;
+          finalFilters.titleFilters = defaultState.titleFilters;
+          finalFilters.contentFilters = defaultState.contentFilters;
+          finalFilters.attachmentsFilters = defaultState.attachmentsFilters;
+          finalFilters.locationFilters = defaultState.locationFilters;
+          finalFilters.metadataFilters = defaultState.metadataFilters;
         }
-      } catch (err) {
-        console.error(`[EntityListRedux] Failed to fetch entities for listId: ${listId}`, err);
-        handleError(err, "Failed to fetch entities:");
-        dispatch(setEntityListError({ listId, error: "Failed to fetch entities" }));
-      } finally {
-        dispatch(setEntityListLoading({ listId, loading: false }));
-      }
-    };
 
-    // Execute immediately if requested, otherwise debounce
-    // For initial loads (empty filters object), make it immediate by default
-    const shouldBeImmediate = options?.immediate || Object.keys(newFilters).length === 0;
+        // Apply new filters
+        Object.keys(newFilters).forEach((key) => {
+          if (newFilters[key as keyof typeof newFilters] !== undefined) {
+            (finalFilters as any)[key] =
+              newFilters[key as keyof typeof newFilters];
+          }
+        });
 
-    if (shouldBeImmediate) {
-      performFetch();
-    } else {
-      // Clear existing debounce timer
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
+        if (!finalFilters.sortBy) return; // sortBy is required
 
-      // Debounce the actual fetch
-      debounceTimer.current = setTimeout(() => {
+        dispatch(setEntityListLoading({ listId, loading: true }));
+
+        try {
+          await entityActions.fetchEntities(listId, {
+            page: 1,
+            // User-controlled filters from Redux state + new filters
+            sortBy: finalFilters.sortBy,
+            timeFrame: finalFilters.timeFrame,
+            userId: finalFilters.userId,
+            followedOnly: finalFilters.followedOnly,
+            locationFilters: finalFilters.locationFilters,
+            keywordsFilters: finalFilters.keywordsFilters,
+            metadataFilters: finalFilters.metadataFilters,
+            titleFilters: finalFilters.titleFilters,
+            contentFilters: finalFilters.contentFilters,
+            attachmentsFilters: finalFilters.attachmentsFilters,
+            // Configuration parameters always from hook props
+            limit: limit,
+            sourceId: sourceId ?? null,
+          });
+        } catch (err) {
+          console.error(
+            `[EntityListRedux] Failed to fetch entities for listId: ${listId}`,
+            err
+          );
+        }
+      };
+
+      // Execute immediately if requested, otherwise debounce
+      // For initial loads (empty filters object), make it immediate by default
+      const shouldBeImmediate =
+        options?.immediate || Object.keys(newFilters).length === 0;
+
+      if (shouldBeImmediate) {
         performFetch();
-      }, 800); // 800ms debounce delay
-    }
-  }, [dispatch, listId, entityList, fetchManyEntities]);
+      } else {
+        // Clear existing debounce timer
+        if (debounceTimer.current) {
+          clearTimeout(debounceTimer.current);
+        }
 
-
+        // Debounce the actual fetch
+        debounceTimer.current = setTimeout(() => {
+          performFetch();
+        }, 800); // 800ms debounce delay
+      }
+    },
+    [dispatch, listId, limit, sourceId, entityList, entityActions.fetchEntities]
+  );
 
   // Load more function
-  const loadMore = useCallback(() => {
+  const loadMore = useCallback(async () => {
     if (!entityList || loading || !hasMore) return;
 
+    const nextPage = entityList.page + 1;
     dispatch(incrementPage(listId));
-  }, [dispatch, listId, entityList, loading, hasMore]);
+
+    // Directly fetch the next page
+    try {
+      await entityActions.fetchEntities(listId, {
+        page: nextPage,
+        // User-controlled filters from Redux state
+        userId: entityList.userId,
+        followedOnly: entityList.followedOnly,
+        sortBy: entityList.sortBy,
+        timeFrame: entityList.timeFrame,
+        locationFilters: entityList.locationFilters,
+        keywordsFilters: entityList.keywordsFilters,
+        metadataFilters: entityList.metadataFilters,
+        titleFilters: entityList.titleFilters,
+        contentFilters: entityList.contentFilters,
+        attachmentsFilters: entityList.attachmentsFilters,
+        // Configuration parameters from hook props (single source of truth)
+        limit,
+        sourceId,
+      });
+    } catch (err) {
+      console.error(
+        `[EntityListRedux] Failed to load more entities for listId: ${listId}`,
+        err
+      );
+    }
+  }, [
+    dispatch,
+    listId,
+    limit,
+    sourceId,
+    entityList,
+    loading,
+    hasMore,
+    entityActions.fetchEntities,
+  ]);
 
   // Create entity function
-  const createEntity = useCallback(async ({
-    insertPosition,
-    ...restOfProps
-  }: {
-    foreignId?: string;
-    title?: string;
-    content?: string;
-    media?: any[];
-    keywords?: string[];
-    location?: {
-      latitude: number;
-      longitude: number;
-    };
-    metadata?: Record<string, any>;
-    insertPosition?: "first" | "last";
-  }) => {
-    try {
-      const newEntity = await createEntityHook({
-        ...restOfProps,
-        sourceId: entityList?.sourceId || undefined
-      });
-
-      dispatch(addEntity({
-        listId,
-        entity: newEntity,
-        insertPosition
-      }));
-
-      return newEntity;
-    } catch (err) {
-      handleError(err, "Failed to create entity");
-    }
-  }, [createEntityHook, dispatch, listId, entityList]);
-
-  // Delete entity function
-  const deleteEntity = useCallback(async ({ entityId }: { entityId: string }) => {
-    try {
-      await deleteEntityHook({ entityId });
-      dispatch(removeEntity({ listId, entityId }));
-    } catch (err) {
-      handleError(err, "Failed to delete entity");
-    }
-  }, [deleteEntityHook, dispatch, listId]);
-
-  // Load more entities when page changes
-  useEffect(() => {
-    const loadMoreEntities = async () => {
-      if (!entityList || entityList.page <= 1) return;
-
-      dispatch(setEntityListLoading({ listId, loading: true }));
-
+  const createEntity = useCallback(
+    async ({
+      insertPosition,
+      ...restOfProps
+    }: {
+      foreignId?: string;
+      title?: string;
+      content?: string;
+      media?: any[];
+      keywords?: string[];
+      location?: {
+        latitude: number;
+        longitude: number;
+      };
+      metadata?: Record<string, any>;
+      insertPosition?: "first" | "last";
+    }) => {
       try {
-        console.log(`[EntityListRedux] Loading more entities (page ${entityList.page}) for listId: ${listId}`);
-
-        const newEntities = await fetchManyEntities({
-          page: entityList.page,
-          userId: entityList.userId,
-          sourceId: entityList.sourceId ?? null,
-          followedOnly: entityList.followedOnly,
-          sortBy: entityList.sortBy,
-          limit: entityList.limit,
-          timeFrame: entityList.timeFrame,
-          locationFilters: entityList.locationFilters,
-          keywordsFilters: entityList.keywordsFilters,
-          metadataFilters: entityList.metadataFilters,
-          titleFilters: entityList.titleFilters,
-          contentFilters: entityList.contentFilters,
-          attachmentsFilters: entityList.attachmentsFilters,
+        const newEntity = await entityActions.createEntity(listId, {
+          ...restOfProps,
+          sourceId: entityList?.sourceId || undefined,
+          insertPosition,
         });
 
-        console.log(`[EntityListRedux] Loaded ${newEntities?.length || 0} more entities (page ${entityList.page}) for listId: ${listId}`);
-
-        if (newEntities) {
-          dispatch(setEntityListEntities({ listId, entities: newEntities, append: true }));
-          dispatch(setEntityListHasMore({ listId, hasMore: newEntities.length >= entityList.limit }));
-        }
+        return newEntity;
       } catch (err) {
-        console.error(`[EntityListRedux] Failed to load more entities for listId: ${listId}`, err);
-        handleError(err, "Loading more entities failed:");
-        dispatch(setEntityListError({ listId, error: "Failed to load more entities" }));
-      } finally {
-        dispatch(setEntityListLoading({ listId, loading: false }));
+        // Error handling is now done in entityActions.createEntity
+        handleError(err, "Failed to create entity");
       }
-    };
+    },
+    [entityActions.createEntity, dispatch, listId, entityList]
+  );
 
-    if (entityList?.page && entityList.page > 1) {
-      loadMoreEntities();
-    }
-  }, [dispatch, listId, entityList?.page, fetchManyEntities]);
+  // Delete entity function
+  const deleteEntity = useCallback(
+    async ({ entityId }: { entityId: string }) => {
+      try {
+        await entityActions.deleteEntity(listId, { entityId });
+      } catch (err) {
+        // Error handling is now done in entityActions.deleteEntity
+        handleError(err, "Failed to delete entity");
+      }
+    },
+    [entityActions.deleteEntity, dispatch, listId]
+  );
+
+  // Load more entities when page changes - REMOVED
+  // This useEffect was causing duplicate API calls and race conditions
+  // Load more is now handled directly in the loadMore function
 
   // fetchEntities now handles fetching directly when called
   // No automatic filter change detection needed
 
   // Legacy setEntities function for compatibility
-  const handleSetEntities = useCallback((updater: React.SetStateAction<Entity[]>) => {
-    if (typeof updater === 'function') {
-      const newEntities = updater(entities);
-      dispatch(setEntityListEntities({ listId, entities: newEntities, append: false }));
-    } else {
-      dispatch(setEntityListEntities({ listId, entities: updater, append: false }));
-    }
-  }, [dispatch, listId, entities]);
+  const handleSetEntities = useCallback(
+    (updater: React.SetStateAction<Entity[]>) => {
+      if (typeof updater === "function") {
+        const newEntities = updater(entities);
+        dispatch(
+          setEntityListEntities({
+            listId,
+            entities: newEntities,
+            append: false,
+          })
+        );
+      } else {
+        dispatch(
+          setEntityListEntities({ listId, entities: updater, append: false })
+        );
+      }
+    },
+    [dispatch, listId, entities]
+  );
 
-  return useMemo(() => ({
-    entities,
-    // setEntities: handleSetEntities,
-    infusedEntities,
+  return useMemo(
+    () => ({
+      entities,
+      // setEntities: handleSetEntities,
+      infusedEntities,
 
-    loading,
-    hasMore,
+      loading,
+      hasMore,
 
-    sortBy: filters?.sortBy || null,
-    timeFrame: filters?.timeFrame || null,
-    sourceId: filters?.sourceId || null,
-    userId: filters?.userId || null,
-    followedOnly: filters?.followedOnly || false,
+      sortBy: filters?.sortBy || null,
+      timeFrame: filters?.timeFrame || null,
+      sourceId: filters?.sourceId || null,
+      userId: filters?.userId || null,
+      followedOnly: filters?.followedOnly || false,
 
-    keywordsFilters: filters?.keywordsFilters || null,
-    titleFilters: filters?.titleFilters || null,
-    contentFilters: filters?.contentFilters || null,
-    attachmentsFilters: filters?.attachmentsFilters || null,
-    locationFilters: filters?.locationFilters || null,
-    metadataFilters: filters?.metadataFilters || null,
+      keywordsFilters: filters?.keywordsFilters || null,
+      titleFilters: filters?.titleFilters || null,
+      contentFilters: filters?.contentFilters || null,
+      attachmentsFilters: filters?.attachmentsFilters || null,
+      locationFilters: filters?.locationFilters || null,
+      metadataFilters: filters?.metadataFilters || null,
 
-    fetchEntities: handleFetchEntities,
+      fetchEntities: handleFetchEntities,
 
-    loadMore,
-    createEntity,
-    deleteEntity,
-  }), [
-    entities,
-    handleSetEntities,
-    infusedEntities,
-    loading,
-    hasMore,
-    filters,
-    handleFetchEntities,
-    loadMore,
-    createEntity,
-    deleteEntity,
-  ]);
+      loadMore,
+      createEntity,
+      deleteEntity,
+    }),
+    [
+      entities,
+      infusedEntities,
+      loading,
+      hasMore,
+      filters,
+      handleFetchEntities,
+      loadMore,
+      createEntity,
+      deleteEntity,
+    ]
+  );
 }
 
 export default useEntityListRedux;
