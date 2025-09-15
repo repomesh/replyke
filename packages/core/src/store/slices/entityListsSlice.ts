@@ -85,6 +85,7 @@ export interface EntityListFilters {
 export interface EntityListFetchOptions {
   resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
   immediate?: boolean; // Skip debouncing, fetch immediately (used by hooks)
+  clearImmediately?: boolean; // Clear entities immediately before fetch starts
 }
 
 // Filter update payload interface

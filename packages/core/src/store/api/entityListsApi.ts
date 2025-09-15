@@ -9,6 +9,38 @@ import type { ContentFilters } from "../../interfaces/entity-filters/ContentFilt
 import type { AttachmentsFilters } from "../../interfaces/entity-filters/AttachmentsFilters";
 import type { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
 
+// Helper function to serialize objects using bracket notation (like Axios does)
+const serializeObject = (obj: any, prefix = ''): Record<string, any> => {
+  const params: Record<string, any> = {};
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      const paramKey = prefix ? `${prefix}[${key}]` : key;
+
+      if (value === null || value === undefined) {
+        continue;
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          if (item !== null && item !== undefined) {
+            if (typeof item === 'object') {
+              Object.assign(params, serializeObject(item, `${paramKey}[${index}]`));
+            } else {
+              params[`${paramKey}[${index}]`] = item;
+            }
+          }
+        });
+      } else if (typeof value === 'object') {
+        Object.assign(params, serializeObject(value, paramKey));
+      } else {
+        params[paramKey] = value;
+      }
+    }
+  }
+
+  return params;
+};
+
 // Helper function to build clean query parameters
 const buildQueryParams = (params: Record<string, any>): Record<string, any> => {
   const cleanParams: Record<string, any> = {};
@@ -24,9 +56,9 @@ const buildQueryParams = (params: Record<string, any>): Record<string, any> => {
       return;
     }
 
-    // JSON serialize filter objects so they can be properly parsed by the server
+    // Serialize filter objects using bracket notation (like Axios)
     if (key.endsWith('Filters') && typeof value === 'object' && value !== null) {
-      cleanParams[key] = JSON.stringify(value);
+      Object.assign(cleanParams, serializeObject(value, key));
     } else {
       // Include all other meaningful values as-is
       cleanParams[key] = value;

@@ -158,6 +158,11 @@ function useEntityList({
       // Then update filters in Redux state
       dispatch(updateFiltersAndSort({ listId, filters: newFilters, options }));
 
+      // Clear entities immediately if requested
+      if (options?.clearImmediately) {
+        dispatch(setEntityListEntities({ listId, entities: [], append: false }));
+      }
+
       // Define the fetch logic
       const performFetch = async () => {
         // After Redux state update, get the current filter values
