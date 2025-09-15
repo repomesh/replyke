@@ -74,6 +74,11 @@ export default (
     let content: string | null | undefined;
 
     switch (notification.type) {
+      case "system":
+        title = notification.title || "System message";
+        content = notification.content || "You have a new system message";
+
+        break;
       case "entity-comment":
         ({ title, content } = configureMessage(
           notification,

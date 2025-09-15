@@ -1,4 +1,5 @@
 type AppNotificationType =
+  | "system"
   | "entity-comment"
   | "comment-reply"
   | "entity-mention"
@@ -27,6 +28,22 @@ interface BaseAppNotification {
   title?: string;
   content?: string;
   createdAt: string; // ISO timestamp string
+}
+
+// User need to sett from dashboard:
+// title
+// content
+// With button? When button does?
+
+export interface SystemNotification extends BaseAppNotification {
+  type: "system";
+  action: string;
+  metadata: {
+    buttonData: {
+      text: string;
+      url: string;
+    } | null;
+  };
 }
 
 export interface EntityCommentNotification extends BaseAppNotification {
@@ -234,6 +251,7 @@ export interface NewFollowNotification extends BaseAppNotification {
 
 // Unified Notification Type
 export type UnifiedAppNotification =
+  | SystemNotification
   | EntityCommentNotification
   | CommentReplyNotification
   | EntityMentionNotification
