@@ -9,7 +9,7 @@ import {
   useCommentSection,
   handleError,
   useMentions,
-  useUserRedux,
+  useUser,
   useProject,
 } from "@replyke/react-js";
 import { useSocialStyleConfig } from "@replyke/comments-social-core";
@@ -27,7 +27,7 @@ import ReplyBanner from "./ReplyBanner";
 import MentionSuggestions from "./MentionSuggestions";
 
 function NewCommentForm({ withEmojis }: { withEmojis?: boolean }) {
-  const { user } = useUserRedux();
+  const { user } = useUser();
   const { project } = useProject();
   const giphyApiKey = project?.integrations.find((int) => int.name === "giphy")
     ?.data.apiKey;

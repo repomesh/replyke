@@ -11,7 +11,7 @@ import useDeleteComment from "./useDeleteComment";
 import useUpdateComment from "./useUpdateComment";
 import useEntityComments from "./useEntityComments";
 import useFetchComment from "./useFetchComment";
-import { useUserRedux } from "../auth-redux";
+import { useUser } from "../user";
 import { Entity } from "../../interfaces/models/Entity";
 
 import {
@@ -101,7 +101,7 @@ function useCommentSectionData(
     entityProp ?? entityFromContext
   );
 
-  const { user } = useUserRedux();
+  const { user } = useUser();
 
   const {
     entityCommentsTree,

@@ -1,6 +1,3 @@
-// Legacy hooks moved to legacy folder
-// export { default as useUser } from "./useUser";
-// export { default as useUserData } from "./useUserData";
 export { default as useFetchUser } from "./useFetchUser";
 export { default as useFetchUserByForeignId } from "./useFetchUserByForeignId";
 export { default as useFetchUserFollowersCount } from "./useFetchUserFollowersCount";

@@ -29,32 +29,32 @@ export { useProject, useProjectData } from "./hooks/projects";
 export { useSignTestingJwt } from "./hooks/crypto";
 
 // -- authentication (Redux-powered)
-export { useAuthRedux, type UseAuthReduxValues } from "./hooks/auth-redux";
+export { useAuth, type UseAuthValues } from "./hooks/auth";
 
 // -- (current) user (Redux-powered)
 export {
-  useUserRedux,
-  useUserActionsRedux,
-  type UseUserReduxProps,
-  type UseUserReduxValues,
-} from "./hooks/user-redux";
+  useUser,
+  useUserActions,
+  type UseUserProps,
+  type UseUserValues,
+} from "./hooks/user";
 
 // -- app notifications (Redux-powered)
 export {
-  useAppNotificationsRedux,
-  useAppNotificationsActionsRedux,
-  type UseAppNotificationsReduxProps,
-  type UseAppNotificationsReduxValues,
-} from "./hooks/app-notifications-redux";
+  useAppNotifications,
+  useAppNotificationsActions,
+  type UseAppNotificationsProps,
+  type UseAppNotificationsValues,
+} from "./hooks/app-notifications";
 
 // -- lists (Redux-powered)
 export {
-  useListsRedux,
-  useListsActionsRedux,
+  useLists,
+  useListsActions,
   useIsEntitySaved,
-  type UseListsReduxProps,
-  type UseListsReduxValues,
-} from "./hooks/lists-redux";
+  type UseListsProps,
+  type UseListsValues,
+} from "./hooks/lists";
 
 // -- entities
 export {
@@ -72,13 +72,13 @@ export {
 
 // -- entity lists (Redux-powered)
 export {
-  useEntityListRedux,
-  useEntityListActionsRedux,
-  type UseEntityListReduxProps,
-  type UseEntityListReduxValues,
+  useEntityList,
+  useEntityListActions,
+  type UseEntityListProps,
+  type UseEntityListValues,
   type EntityListFilters,
   type EntityListFetchOptions,
-} from "./hooks/entity-lists-redux";
+} from "./hooks/entity-lists";
 
 // -- comments
 export {

@@ -34,7 +34,7 @@ export const userApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: { update },
       }),
-      // No complex optimistic updates needed - let useUserActionsRedux handle state updates
+      // No complex optimistic updates needed - let useUserActions handle state updates
       invalidatesTags: (result, error, { userId }) => [
         { type: 'User' as const, id: 'CURRENT' }, // Only current user now
       ],

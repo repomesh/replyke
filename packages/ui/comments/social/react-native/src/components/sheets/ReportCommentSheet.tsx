@@ -4,7 +4,7 @@ import {
   handleError,
   ReportReasonKey,
   reportReasons,
-  useUserRedux,
+  useUser,
   useCommentSection,
   useCreateReport,
 } from "@replyke/core";
@@ -18,7 +18,7 @@ import BottomSheet, {
 import useSheetManager from "../../hooks/useSheetManager";
 
 const ReportCommentSheet = () => {
-  const { user } = useUserRedux();
+  const { user } = useUser();
   const { callbacks } = useCommentSection();
   const {
     reportCommentSheetRef,

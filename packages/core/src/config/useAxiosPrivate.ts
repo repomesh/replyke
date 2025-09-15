@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { axiosPrivate } from "./axios";
-import { useAuthRedux } from "../hooks/auth-redux";
+import { useAuth } from "../hooks/auth";
 
 const useAxiosPrivate = () => {
-  const { accessToken, requestNewAccessToken } = useAuthRedux();
+  const { accessToken, requestNewAccessToken } = useAuth();
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(

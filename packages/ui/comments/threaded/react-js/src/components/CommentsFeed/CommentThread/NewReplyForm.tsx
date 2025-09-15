@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   useCommentSection,
-  useUserRedux,
+  useUser,
   Comment as CommentType,
 } from "@replyke/react-js";
 import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
@@ -13,7 +13,7 @@ function NewReplyForm({
   comment: CommentType;
   setShowReplyForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { user } = useUserRedux();
+  const { user } = useUser();
 
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

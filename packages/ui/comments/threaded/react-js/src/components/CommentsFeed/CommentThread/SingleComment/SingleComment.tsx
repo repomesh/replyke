@@ -3,7 +3,7 @@ import {
   Comment as CommentType,
   getUserName,
   useCommentSection,
-  useUserRedux,
+  useUser,
 } from "@replyke/react-js";
 import {
   parseContentWithMentions,
@@ -36,7 +36,7 @@ function SingleComment({
   isLastReply = false,
   onToggleCollapse,
 }: SingleCommentProps) {
-  const { user } = useUserRedux();
+  const { user } = useUser();
   const { callbacks } = useCommentSection();
   const [comment, setComment] = useState(commentFromSection);
   const [showReplyForm, setShowReplyForm] = useState(false);

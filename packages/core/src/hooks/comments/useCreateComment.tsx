@@ -3,13 +3,13 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { Comment, GifData } from "../../interfaces/models/Comment";
 import { Mention } from "../../interfaces/models/Mention";
-import { useUserRedux } from "../auth-redux";
+import { useUser } from "../user";
 
 // Hook for adding a comment
 function useCreateComment() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUserRedux();
+  const { user } = useUser();
 
   const createComment = useCallback(
     async (props: {

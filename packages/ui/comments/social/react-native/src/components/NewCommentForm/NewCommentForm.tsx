@@ -19,7 +19,7 @@ import {
 } from "react-native";
 import {
   handleError,
-  useUserRedux,
+  useUser,
   useCommentSection,
   useMentions,
   useProject,
@@ -42,7 +42,7 @@ const NewCommentForm = forwardRef<
   { focus: () => void },
   { withEmojis?: boolean }
 >(({ withEmojis = true }, ref) => {
-  const { user } = useUserRedux();
+  const { user } = useUser();
   const { project } = useProject();
 
   const giphyApiKey = project?.integrations.find((int) => int.name === "giphy")

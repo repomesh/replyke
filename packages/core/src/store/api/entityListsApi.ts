@@ -24,8 +24,13 @@ const buildQueryParams = (params: Record<string, any>): Record<string, any> => {
       return;
     }
 
-    // Include all other meaningful values
-    cleanParams[key] = value;
+    // JSON serialize filter objects so they can be properly parsed by the server
+    if (key.endsWith('Filters') && typeof value === 'object' && value !== null) {
+      cleanParams[key] = JSON.stringify(value);
+    } else {
+      // Include all other meaningful values as-is
+      cleanParams[key] = value;
+    }
   });
 
   return cleanParams;

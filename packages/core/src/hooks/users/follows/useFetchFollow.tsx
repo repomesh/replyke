@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
-import { useUserRedux } from "../../auth-redux";
+import { useUser } from "../../user";
 
 function useFetchFollow() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
-  const { user } = useUserRedux();
+  const { user } = useUser();
 
   const fetchFollow = useCallback(
     async (props: { userId: string }) => {

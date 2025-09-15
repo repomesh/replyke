@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { handleError } from "../../utils/handleError";
 import { Comment } from "../../interfaces/models/Comment";
-import { useUserRedux } from "../auth-redux";
+import { useUser } from "../user";
 
 // Import the communication hooks
 import useUpvoteComment from "./useUpvoteComment";
@@ -13,7 +13,7 @@ function useCommentVotes(props: {
   comment: Comment;
   setComment: React.Dispatch<React.SetStateAction<Comment>>;
 }) {
-  const { user } = useUserRedux();
+  const { user } = useUser();
   const { comment, setComment } = props;
 
   // Save the previous state in case we need to revert
