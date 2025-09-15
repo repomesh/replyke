@@ -93,12 +93,7 @@ export function useEntityListActions() {
       dispatch(setEntityListLoading({ listId, loading: true }));
 
       try {
-        console.log(`[EntityListActionsRedux] Fetching entities for listId: ${listId}`, {
-          filters: options,
-          sourceId: options.sourceId,
-        });
-
-        const result = await triggerFetchEntities({
+          const result = await triggerFetchEntities({
           projectId,
           page: options.page,
           sortBy: options.sortBy,
@@ -114,9 +109,7 @@ export function useEntityListActions() {
           contentFilters: options.contentFilters,
           attachmentsFilters: options.attachmentsFilters,
         }).unwrap();
-
-        console.log(`[EntityListActionsRedux] Fetched ${result?.length || 0} entities for listId: ${listId}`);
-
+        
         if (result) {
           const append = options.page > 1;
           dispatch(setEntityListEntities({ listId, entities: result, append }));
