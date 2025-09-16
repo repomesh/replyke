@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store";
 import {
@@ -234,26 +234,41 @@ export function useListsActions() {
     dispatch(resetLists());
   }, [dispatch]);
 
-  return {
-    // Navigation
-    openList: openListAction,
-    goBack: goBackAction,
-    goToRoot: goToRootAction,
+  return useMemo(
+    () => ({
+      // Navigation
+      openList: openListAction,
+      goBack: goBackAction,
+      goToRoot: goToRootAction,
 
-    // Data fetching
-    fetchRootList,
-    fetchSubLists,
+      // Data fetching
+      fetchRootList,
+      fetchSubLists,
 
-    // CRUD operations
-    createList,
-    updateList,
-    deleteList,
-    addToList,
-    removeFromList,
+      // CRUD operations
+      createList,
+      updateList,
+      deleteList,
+      addToList,
+      removeFromList,
 
-    // Utility
-    resetLists: resetListsAction,
-  };
+      // Utility
+      resetLists: resetListsAction,
+    }),
+    [
+      openListAction,
+      goBackAction,
+      goToRootAction,
+      fetchRootList,
+      fetchSubLists,
+      createList,
+      updateList,
+      deleteList,
+      addToList,
+      removeFromList,
+      resetListsAction,
+    ]
+  );
 }
 
 export default useListsActions;

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import type { List } from "../../interfaces/models/List";
 
 // State interface
@@ -249,26 +249,33 @@ export const selectCurrentList = (state: { lists: ListsState }): List | null => 
   return currentListId ? listsById[currentListId] || null : null;
 };
 
-export const selectSubLists = (state: { lists: ListsState }): List[] => {
-  const { currentListId, sublistsMap, listsById } = state.lists;
-  if (!currentListId || !sublistsMap[currentListId]) {
-    return [];
+export const selectSubLists = createSelector(
+  [(state: { lists: ListsState }) => state.lists.currentListId,
+   (state: { lists: ListsState }) => state.lists.sublistsMap,
+   (state: { lists: ListsState }) => state.lists.listsById],
+  (currentListId, sublistsMap, listsById): List[] => {
+    if (!currentListId || !sublistsMap[currentListId]) {
+      return [];
+    }
+
+    return sublistsMap[currentListId]
+      .map(listId => listsById[listId])
+      .filter(Boolean); // Remove any undefined entries
   }
-  
-  return sublistsMap[currentListId]
-    .map(listId => listsById[listId])
-    .filter(Boolean); // Remove any undefined entries
-};
+);
 
 export const selectListsLoading = (state: { lists: ListsState }) =>
   state.lists.loading;
 
-export const selectListHistory = (state: { lists: ListsState }): List[] => {
-  const { listHistory, listsById } = state.lists;
-  return listHistory
-    .map(listId => listsById[listId])
-    .filter(Boolean); // Remove any undefined entries
-};
+export const selectListHistory = createSelector(
+  [(state: { lists: ListsState }) => state.lists.listHistory,
+   (state: { lists: ListsState }) => state.lists.listsById],
+  (listHistory, listsById): List[] => {
+    return listHistory
+      .map(listId => listsById[listId])
+      .filter(Boolean); // Remove any undefined entries
+  }
+);
 
 // New selector for the sublists mapping
 export const selectSubListsMap = (state: { lists: ListsState }) =>
