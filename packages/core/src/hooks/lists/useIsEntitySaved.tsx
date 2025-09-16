@@ -14,7 +14,12 @@ function useIsEntitySaved() {
   const checkIfEntityIsSaved = useCallback(
     async (entityId: string) => {
       // if (!user || !entityId || checkedStatus.current[entityId]) return;
-      if (!user || !entityId) return;
+      if (!user ) {
+        throw new Error("No user autheticated.");
+      }
+      if (!entityId) {
+        throw new Error("No entity ID passed.");
+      }
 
       if (!projectId) {
         throw new Error("No projectId available.");
