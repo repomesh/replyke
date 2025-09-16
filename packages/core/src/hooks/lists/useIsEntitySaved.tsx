@@ -29,7 +29,9 @@ function useIsEntitySaved() {
         }
       );
 
-      setEntityIsSaved(response.data);
+      const isSaved = !!response.data;
+      setEntityIsSaved(isSaved);
+      return isSaved;
     },
     [user, axios, projectId]
   );
