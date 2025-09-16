@@ -38,6 +38,7 @@ function SocialCommentSection({
   sortOptions = ["top", "new", "old"],
   header,
   withEmojis,
+  highlightedCommentId,
   children,
 }: {
   entity?: Entity;
@@ -52,6 +53,7 @@ function SocialCommentSection({
   sortOptions?: Array<"top" | "new" | "old"> | null;
   header?: React.ReactNode;
   withEmojis?: boolean;
+  highlightedCommentId?: string | undefined | null;
   children?: React.ReactNode;
 }) {
   const styleConfig = useSocialStyle(styleConfigProp);
@@ -64,6 +66,7 @@ function SocialCommentSection({
       shortId,
       styleConfig,
       callbacks,
+      highlightedCommentId,
     });
 
   const buttonStyles: ButtonStyles = {

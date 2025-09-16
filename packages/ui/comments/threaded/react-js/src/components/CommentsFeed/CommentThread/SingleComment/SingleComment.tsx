@@ -37,7 +37,7 @@ function SingleComment({
   onToggleCollapse,
 }: SingleCommentProps) {
   const { user } = useUser();
-  const { callbacks } = useCommentSection();
+  const { callbacks, highlightedComment } = useCommentSection();
   const [comment, setComment] = useState(commentFromSection);
   const [showReplyForm, setShowReplyForm] = useState(false);
 
@@ -68,6 +68,10 @@ function SingleComment({
         position: "relative",
         // marginBottom: "8px",
         marginLeft: `${indentationPx}px`,
+        backgroundColor:
+          highlightedComment?.comment.id === comment.id
+            ? "#dbeafe"
+            : "transparent",
       }}
     >
       {/* Threading lines - positioned behind avatars, relative to indentation */}

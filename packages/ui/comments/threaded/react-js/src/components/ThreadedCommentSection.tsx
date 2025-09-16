@@ -19,6 +19,7 @@ interface ThreadedCommentSectionProps {
   callbacks?: ThreadedStyleCallbacks;
   styleConfig?: Partial<PartialThreadedStyleConfig>;
   isVisible?: boolean;
+  highlightedCommentId?: string | undefined | null;
   children?: React.ReactNode;
 }
 
@@ -108,6 +109,7 @@ function ThreadedCommentSection({
   callbacks,
   styleConfig: styleConfigProp,
   isVisible = true,
+  highlightedCommentId,
   children,
 }: ThreadedCommentSectionProps) {
   const styleConfig = useThreadedStyle(styleConfigProp);
@@ -119,6 +121,7 @@ function ThreadedCommentSection({
     shortId,
     styleConfig,
     callbacks,
+    highlightedCommentId,
   });
 
   return (
