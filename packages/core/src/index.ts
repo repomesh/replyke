@@ -109,6 +109,7 @@ export {
   useFetchFollow,
   useFollowUser,
   useUnfollowUser,
+  useFollowManager,
 } from "./hooks/users";
 
 // -- reports
