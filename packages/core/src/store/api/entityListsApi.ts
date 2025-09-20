@@ -46,8 +46,8 @@ const buildQueryParams = (params: Record<string, any>): Record<string, any> => {
   const cleanParams: Record<string, any> = {};
 
   Object.entries(params).forEach(([key, value]) => {
-    // Skip null, undefined values
-    if (value === null || value === undefined) {
+    // Skip undefined values, but allow null for sourceId
+    if (value === undefined || (value === null && key !== 'sourceId')) {
       return;
     }
 
@@ -98,7 +98,7 @@ interface CreateEntityParams {
     longitude: number;
   };
   metadata?: Record<string, any>;
-  sourceId?: string;
+  sourceId?: string | null;
 }
 
 interface UpdateEntityParams {

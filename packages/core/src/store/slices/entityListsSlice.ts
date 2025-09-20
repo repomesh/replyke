@@ -18,11 +18,13 @@ export interface EntityListState {
   error: string | null;
   lastFetched: number | null;
 
-  // Filter/sort state
+  // Configuration (set when fetchEntities is called)
+  sourceId: string | null;
   limit: number;
+
+  // Filter/sort state (user-controlled filters only)
   sortBy: EntityListSortByOptions;
   timeFrame: TimeFrame | null;
-  sourceId: string | null;
   userId: string | null;
   followedOnly: boolean;
   keywordsFilters: KeywordsFilters | null;
@@ -47,11 +49,13 @@ const createDefaultEntityListState = (): EntityListState => ({
   error: null,
   lastFetched: null,
 
-  // Default filters
+  // Default configuration
+  sourceId: null,
   limit: 10,
+
+  // Default filters (user-controlled only)
   sortBy: "hot",
   timeFrame: null,
-  sourceId: null,
   userId: null,
   followedOnly: false,
   keywordsFilters: null,
@@ -81,6 +85,12 @@ export interface EntityListFilters {
   metadataFilters?: MetadataFilters | null;
 }
 
+// Configuration for entity list operations
+export interface EntityListConfig {
+  sourceId?: string | null;
+  limit?: number;
+}
+
 // Options for entity list operations
 export interface EntityListFetchOptions {
   resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
@@ -92,14 +102,13 @@ export interface EntityListFetchOptions {
 export interface FilterUpdatePayload {
   listId: string;
   filters: Partial<EntityListFilters>;
+  config?: EntityListConfig;
   options?: EntityListFetchOptions;
 }
 
 // Initialize list payload interface
 export interface InitializeListPayload {
   listId: string;
-  limit?: number; // Hook-level configuration
-  sourceId?: string | null; // Hook-level configuration
 }
 
 // Keywords update payload interface
@@ -135,25 +144,9 @@ export const entityListsSlice = createSlice({
   reducers: {
     // Initialize or get existing list
     initializeList: (state, action: PayloadAction<InitializeListPayload>) => {
-      const { listId, limit, sourceId } = action.payload;
+      const { listId } = action.payload;
       if (!state.lists[listId]) {
-        const defaultState = createDefaultEntityListState();
-        if (limit) {
-          defaultState.limit = limit;
-        }
-        if (sourceId !== undefined) {
-          defaultState.sourceId = sourceId;
-        }
-        state.lists[listId] = defaultState;
-      } else {
-        // If list exists, update hook-level configuration (limit and sourceId)
-        const existingList = state.lists[listId];
-        if (limit && existingList.limit !== limit) {
-          existingList.limit = limit;
-        }
-        if (sourceId !== undefined && existingList.sourceId !== sourceId) {
-          existingList.sourceId = sourceId;
-        }
+        state.lists[listId] = createDefaultEntityListState();
       }
     },
 
@@ -172,7 +165,6 @@ export const entityListsSlice = createSlice({
       if (options?.resetUnspecified) {
         const defaultState = createDefaultEntityListState();
         // Reset all filter properties to defaults
-        // Note: limit and sourceId are not reset here as they come from hook props
         list.sortBy = defaultState.sortBy;
         list.timeFrame = defaultState.timeFrame;
         list.userId = defaultState.userId;
@@ -231,10 +223,7 @@ export const entityListsSlice = createSlice({
       list.loading = false;
       list.lastFetched = Date.now();
 
-      // Update hasMore based on returned entities length
-      if (entities.length < list.limit) {
-        list.hasMore = false;
-      }
+      // Note: hasMore is set explicitly by the caller based on limit from hook props
     },
 
     // Increment page for load more
@@ -438,10 +427,8 @@ export const selectEntityListFilters = createSelector(
     if (!entityList) return null;
 
     return {
-      limit: entityList.limit,
       sortBy: entityList.sortBy,
       timeFrame: entityList.timeFrame,
-      sourceId: entityList.sourceId,
       userId: entityList.userId,
       followedOnly: entityList.followedOnly,
       keywordsFilters: entityList.keywordsFilters,
@@ -450,6 +437,18 @@ export const selectEntityListFilters = createSelector(
       attachmentsFilters: entityList.attachmentsFilters,
       locationFilters: entityList.locationFilters,
       metadataFilters: entityList.metadataFilters,
+    };
+  }
+);
+
+export const selectEntityListConfig = createSelector(
+  [selectEntityList],
+  (entityList): { sourceId: string | null; limit: number } | null => {
+    if (!entityList) return null;
+
+    return {
+      sourceId: entityList.sourceId,
+      limit: entityList.limit,
     };
   }
 );

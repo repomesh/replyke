@@ -16,7 +16,6 @@ import {
 } from "../../store/api/entityListsApi";
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import useProject from "../projects/useProject";
-import { useUser } from "../user";
 import type { Entity } from "../../interfaces/models/Entity";
 import type { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
@@ -54,7 +53,7 @@ interface CreateEntityOptions {
     longitude: number;
   };
   metadata?: Record<string, any>;
-  sourceId?: string;
+  sourceId?: string | null;
   insertPosition?: "first" | "last";
 }
 
@@ -71,7 +70,6 @@ export function useEntityListActions() {
 
   // Get project and user context
   const { projectId } = useProject();
-  const { user } = useUser();
 
   // RTK Query hooks
   const [triggerFetchEntities] = useLazyFetchEntitiesQuery();
@@ -80,7 +78,10 @@ export function useEntityListActions() {
 
   // Fetch entities action
   const fetchEntities = useCallback(
-    async (listId: string, options: FetchEntitiesOptions): Promise<Entity[] | null> => {
+    async (
+      listId: string,
+      options: FetchEntitiesOptions
+    ): Promise<Entity[] | null> => {
       if (!projectId) {
         throw new Error("No project ID available");
       }
@@ -93,13 +94,13 @@ export function useEntityListActions() {
       dispatch(setEntityListLoading({ listId, loading: true }));
 
       try {
-          const result = await triggerFetchEntities({
+        const result = await triggerFetchEntities({
           projectId,
           page: options.page,
           sortBy: options.sortBy,
           timeFrame: options.timeFrame,
           userId: options.userId,
-          sourceId: options.sourceId ?? null,
+          sourceId: options.sourceId,
           followedOnly: options.followedOnly ?? false,
           limit: options.limit,
           locationFilters: options.locationFilters,
@@ -109,19 +110,29 @@ export function useEntityListActions() {
           contentFilters: options.contentFilters,
           attachmentsFilters: options.attachmentsFilters,
         }).unwrap();
-        
+
         if (result) {
           const append = options.page > 1;
           dispatch(setEntityListEntities({ listId, entities: result, append }));
-          dispatch(setEntityListHasMore({ listId, hasMore: result.length >= options.limit }));
+          dispatch(
+            setEntityListHasMore({
+              listId,
+              hasMore: result.length >= options.limit,
+            })
+          );
           return result;
         }
 
         return null;
       } catch (err) {
-        console.error(`[EntityListActionsRedux] Failed to fetch entities for listId: ${listId}`, err);
+        console.error(
+          `[EntityListActionsRedux] Failed to fetch entities for listId: ${listId}`,
+          err
+        );
         handleErrorUtil(err, "Failed to fetch entities:");
-        dispatch(setEntityListError({ listId, error: "Failed to fetch entities" }));
+        dispatch(
+          setEntityListError({ listId, error: "Failed to fetch entities" })
+        );
         throw err;
       } finally {
         dispatch(setEntityListLoading({ listId, loading: false }));
@@ -132,7 +143,10 @@ export function useEntityListActions() {
 
   // Create entity action
   const createEntity = useCallback(
-    async (listId: string, options: CreateEntityOptions): Promise<Entity | undefined> => {
+    async (
+      listId: string,
+      options: CreateEntityOptions
+    ): Promise<Entity | undefined> => {
       if (!projectId) {
         throw new Error("No project ID available");
       }
@@ -151,11 +165,13 @@ export function useEntityListActions() {
         }).unwrap();
 
         // Add to the list
-        dispatch(addEntity({
-          listId,
-          entity: newEntity,
-          insertPosition: options.insertPosition,
-        }));
+        dispatch(
+          addEntity({
+            listId,
+            entity: newEntity,
+            insertPosition: options.insertPosition,
+          })
+        );
 
         return newEntity;
       } catch (err) {

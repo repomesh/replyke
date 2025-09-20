@@ -13,8 +13,10 @@ import {
   selectEntityListLoading,
   selectEntityListHasMore,
   selectEntityListFilters,
+  selectEntityListConfig,
   type EntityListState,
   type EntityListFilters,
+  type EntityListConfig,
   type EntityListFetchOptions,
 } from "../../store/slices/entityListsSlice";
 
@@ -33,41 +35,14 @@ import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters
 
 import { handleError } from "../../utils/handleError";
 
-// Helper function to create default entity list state (same as in slice)
-const createDefaultEntityListState = (): EntityListState => ({
-  entities: [],
-  page: 1,
-  loading: false,
-  hasMore: true,
-  error: null,
-  lastFetched: null,
-
-  // Default filters
-  limit: 10,
-  sortBy: "hot",
-  timeFrame: null,
-  sourceId: null,
-  userId: null,
-  followedOnly: false,
-  keywordsFilters: null,
-  titleFilters: null,
-  contentFilters: null,
-  attachmentsFilters: null,
-  locationFilters: null,
-  metadataFilters: null,
-});
-
 export interface UseEntityListProps {
   listId: string;
-  limit?: number; // Default: 10
-  sourceId?: string | null; // Stable source configuration
   infuseData?: (foreignId: string) => Promise<Record<string, any> | null>;
 }
 
 export interface UseEntityListValues {
   entities: Entity[];
   // setEntities: React.Dispatch<React.SetStateAction<Entity[]>>;
-
   infusedEntities: (Entity & Record<string, any>)[];
 
   loading: boolean;
@@ -87,6 +62,7 @@ export interface UseEntityListValues {
 
   fetchEntities: (
     filters: Partial<EntityListFilters>,
+    config?: EntityListConfig,
     options?: EntityListFetchOptions
   ) => void;
 
@@ -109,16 +85,9 @@ export interface UseEntityListValues {
 
 function useEntityList({
   listId,
-  limit = 10,
-  sourceId = null,
   infuseData,
 }: UseEntityListProps): UseEntityListValues {
   const dispatch = useDispatch<AppDispatch>();
-
-  // Initialize list if it doesn't exist
-  useEffect(() => {
-    dispatch(initializeList({ listId, limit, sourceId }));
-  }, [dispatch, listId, limit, sourceId]);
 
   // Get state from Redux
   const entityList = useSelector((state: RootState) =>
@@ -136,6 +105,9 @@ function useEntityList({
   const filters = useSelector((state: RootState) =>
     selectEntityListFilters(state, listId)
   );
+  const config = useSelector((state: RootState) =>
+    selectEntityListConfig(state, listId)
+  );
 
   // Get entity actions hook
   const entityActions = useEntityListActions();
@@ -150,41 +122,66 @@ function useEntityList({
   const handleFetchEntities = useCallback(
     (
       newFilters: Partial<EntityListFilters>,
+      newConfig?: EntityListConfig,
       options?: EntityListFetchOptions
     ) => {
-      // First, ensure Redux state has current hook props BEFORE updating filters
-      dispatch(initializeList({ listId, limit, sourceId }));
+      // Apply config defaults if not provided
+      const configWithDefaults = {
+        sourceId: null,
+        limit: 10,
+        ...newConfig,
+      };
 
-      // Then update filters in Redux state
-      dispatch(updateFiltersAndSort({ listId, filters: newFilters, options }));
+      // Ensure Redux state is initialized and update filters/config
+      dispatch(initializeList({ listId }));
+      dispatch(updateFiltersAndSort({
+        listId,
+        filters: newFilters,
+        config: configWithDefaults,
+        options
+      }));
 
       // Clear entities immediately if requested
       if (options?.clearImmediately) {
-        dispatch(setEntityListEntities({ listId, entities: [], append: false }));
+        dispatch(
+          setEntityListEntities({ listId, entities: [], append: false })
+        );
       }
 
       // Define the fetch logic
       const performFetch = async () => {
-        // After Redux state update, get the current filter values
-        const currentEntityList = entityList || createDefaultEntityListState();
+        // Use the applied config (configWithDefaults is the source of truth for this fetch)
+        const currentConfig = { sourceId: configWithDefaults.sourceId, limit: configWithDefaults.limit };
 
         // Build final filters by taking current state and applying new filters
-        const finalFilters = { ...currentEntityList };
+        // Use entityList if available, otherwise get current state from Redux after our updates
+        const currentState = entityList || {
+          sortBy: "hot",
+          timeFrame: null,
+          userId: null,
+          followedOnly: false,
+          keywordsFilters: null,
+          titleFilters: null,
+          contentFilters: null,
+          attachmentsFilters: null,
+          locationFilters: null,
+          metadataFilters: null,
+        };
+        const finalFilters = { ...currentState };
 
-        // Apply resetUnspecified logic
+        // Apply resetUnspecified logic (only reset filter properties, not config)
         if (options?.resetUnspecified) {
-          const defaultState = createDefaultEntityListState();
-          // Reset filter properties to defaults
-          finalFilters.sortBy = defaultState.sortBy;
-          finalFilters.timeFrame = defaultState.timeFrame;
-          finalFilters.userId = defaultState.userId;
-          finalFilters.followedOnly = defaultState.followedOnly;
-          finalFilters.keywordsFilters = defaultState.keywordsFilters;
-          finalFilters.titleFilters = defaultState.titleFilters;
-          finalFilters.contentFilters = defaultState.contentFilters;
-          finalFilters.attachmentsFilters = defaultState.attachmentsFilters;
-          finalFilters.locationFilters = defaultState.locationFilters;
-          finalFilters.metadataFilters = defaultState.metadataFilters;
+          // Reset only filter properties to defaults, keep config and state properties as-is
+          finalFilters.sortBy = "hot";
+          finalFilters.timeFrame = null;
+          finalFilters.userId = null;
+          finalFilters.followedOnly = false;
+          finalFilters.keywordsFilters = null;
+          finalFilters.titleFilters = null;
+          finalFilters.contentFilters = null;
+          finalFilters.attachmentsFilters = null;
+          finalFilters.locationFilters = null;
+          finalFilters.metadataFilters = null;
         }
 
         // Apply new filters
@@ -213,9 +210,9 @@ function useEntityList({
             titleFilters: finalFilters.titleFilters,
             contentFilters: finalFilters.contentFilters,
             attachmentsFilters: finalFilters.attachmentsFilters,
-            // Configuration parameters always from hook props
-            limit: limit,
-            sourceId: sourceId ?? null,
+            // Configuration parameters from current config
+            limit: currentConfig.limit,
+            sourceId: currentConfig.sourceId,
           });
         } catch (err) {
           console.error(
@@ -244,12 +241,21 @@ function useEntityList({
         }, 800); // 800ms debounce delay
       }
     },
-    [dispatch, listId, limit, sourceId, entityList, entityActions.fetchEntities]
+    [dispatch, listId, entityList, config, entityActions.fetchEntities]
   );
 
   // Load more function
   const loadMore = useCallback(async () => {
     if (!entityList || loading || !hasMore) return;
+
+    // Check if fetchEntities has been called before (safeguard)
+    if (!config) {
+      console.error(
+        `[EntityListRedux] loadMore called before fetchEntities for listId: ${listId}. ` +
+        `fetchEntities must be called first to initialize configuration.`
+      );
+      return;
+    }
 
     const nextPage = entityList.page + 1;
     dispatch(incrementPage(listId));
@@ -269,9 +275,9 @@ function useEntityList({
         titleFilters: entityList.titleFilters,
         contentFilters: entityList.contentFilters,
         attachmentsFilters: entityList.attachmentsFilters,
-        // Configuration parameters from hook props (single source of truth)
-        limit,
-        sourceId,
+        // Configuration parameters from state (single source of truth)
+        limit: config.limit,
+        sourceId: config.sourceId,
       });
     } catch (err) {
       console.error(
@@ -282,8 +288,7 @@ function useEntityList({
   }, [
     dispatch,
     listId,
-    limit,
-    sourceId,
+    config,
     entityList,
     loading,
     hasMore,
@@ -311,7 +316,7 @@ function useEntityList({
       try {
         const newEntity = await entityActions.createEntity(listId, {
           ...restOfProps,
-          sourceId: entityList?.sourceId || undefined,
+          sourceId: config?.sourceId || null,
           insertPosition,
         });
 
@@ -321,7 +326,7 @@ function useEntityList({
         handleError(err, "Failed to create entity");
       }
     },
-    [entityActions.createEntity, dispatch, listId, entityList]
+    [entityActions.createEntity, dispatch, listId, config]
   );
 
   // Delete entity function
@@ -345,25 +350,27 @@ function useEntityList({
   // No automatic filter change detection needed
 
   // Legacy setEntities function for compatibility
-  const handleSetEntities = useCallback(
-    (updater: React.SetStateAction<Entity[]>) => {
-      if (typeof updater === "function") {
-        const newEntities = updater(entities);
-        dispatch(
-          setEntityListEntities({
-            listId,
-            entities: newEntities,
-            append: false,
-          })
-        );
-      } else {
-        dispatch(
-          setEntityListEntities({ listId, entities: updater, append: false })
-        );
-      }
-    },
-    [dispatch, listId, entities]
-  );
+  // const handleSetEntities = useCallback(
+  //   (updater: React.SetStateAction<Entity[]>) => {
+  //     if (typeof updater === "function") {
+  //       const newEntities = updater(entities);
+  //       dispatch(
+  //         setEntityListEntities({
+  //           listId,
+  //           entities: newEntities,
+  //           append: false,
+  //         })
+  //       );
+  //     } else {
+  //       dispatch(
+  //         setEntityListEntities({ listId, entities: updater, append: false })
+  //       );
+  //     }
+  //   },
+  //   [dispatch, listId, entities]
+  // );
+
+  // No automatic initialization - state is only created when fetchEntities is called
 
   return useMemo(
     () => ({
@@ -376,7 +383,7 @@ function useEntityList({
 
       sortBy: filters?.sortBy || null,
       timeFrame: filters?.timeFrame || null,
-      sourceId: filters?.sourceId || null,
+      sourceId: config?.sourceId || null,
       userId: filters?.userId || null,
       followedOnly: filters?.followedOnly || false,
 
@@ -399,6 +406,7 @@ function useEntityList({
       loading,
       hasMore,
       filters,
+      config,
       handleFetchEntities,
       loadMore,
       createEntity,
