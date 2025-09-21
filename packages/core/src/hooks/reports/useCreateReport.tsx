@@ -78,6 +78,8 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
   } else if (type === "entity") {
     return createEntityReport;
   }
+
+  throw new Error("Invalid report type");
 }
 
 export default useCreateReport;

@@ -20,7 +20,13 @@ function useReplies({
 
   const commentData = entityCommentsTree![commentId];
   if (!commentData) {
-    return { replies: [], newReplies: [] }; // If the commentID is not found, return an empty array
+    return {
+      replies: [],
+      newReplies: [],
+      loading: loadingState,
+      page,
+      setPage,
+    }; // If the commentID is not found, return an empty array
   }
 
   const allReplies = commentData.replies;
