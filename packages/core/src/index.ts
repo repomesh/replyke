@@ -61,13 +61,17 @@ export {
   useEntity,
   useEntityData,
   useCreateEntity,
+  useDeleteEntity,
+  useDownvoteEntity,
+  useEntityVotes,
   useFetchEntity,
   useFetchEntityByForeignId,
   useFetchEntityByShortId,
+  useIncrementEntityViews,
+  useRemoveEntityDownvote,
+  useRemoveEntityUpvote,
   useUpdateEntity,
-  useEntityVotes,
-  useDeleteEntity,
-  useInfusedData,
+  useUpvoteEntity,
 } from "./hooks/entities";
 
 // -- entity lists

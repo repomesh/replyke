@@ -4,14 +4,14 @@ import { Comment } from "../../interfaces/models/Comment";
 import useFetchManyComments from "./useFetchManyComments";
 import { handleError } from "../../utils/handleError";
 
-export interface UseProfileCommentsDataProps {
+export interface UseProfileCommentsProps {
   userId: string | undefined | null;
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
   includeEntity?: boolean;
 }
 
-export interface UseProfileCommentsDataValues {
+export interface UseProfileCommentsValues {
   comments: Comment[];
   loading: boolean;
   hasMore: boolean;
@@ -20,9 +20,9 @@ export interface UseProfileCommentsDataValues {
   loadMore: () => void;
 }
 
-function useProfileCommentsData(
-  props: UseProfileCommentsDataProps
-): UseProfileCommentsDataValues {
+function useProfileComments(
+  props: UseProfileCommentsProps
+): UseProfileCommentsValues {
   const { userId, limit = 10, defaultSortBy = "new", includeEntity } = props;
   const fetchManyComments = useFetchManyComments();
 
@@ -132,4 +132,4 @@ function useProfileCommentsData(
   };
 }
 
-export default useProfileCommentsData;
+export default useProfileComments;

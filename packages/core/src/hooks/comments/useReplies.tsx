@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Comment } from "../../interfaces/models/Comment";
 import { handleError } from "../../utils/handleError";
 import useCommentSection from "./useCommentSection";
-import useGroupReplies from "./useGroupReplies";
 import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 
@@ -14,14 +13,25 @@ function useReplies({
   sortBy: CommentsSortByOptions;
 }) {
   const fetchManyComments = useFetchManyComments();
-  const { addCommentsToTree } = useCommentSection();
+  const { addCommentsToTree, entityCommentsTree } = useCommentSection();
 
   const [page, setPage] = useState(0);
   const [loadingState, setLoadingState] = useState(false);
 
-  const { replies, newReplies } = useGroupReplies({
-    commentId,
-  });
+  const commentData = entityCommentsTree![commentId];
+  if (!commentData) {
+    return { replies: [], newReplies: [] }; // If the commentID is not found, return an empty array
+  }
+
+  const allReplies = commentData.replies;
+  const replies = Object.values(allReplies).filter((reply) => !reply.new);
+
+  const newReplies = Object.values(allReplies)
+    .filter((reply) => !!reply.new)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
   useEffect(() => {
     const loadReplies = async () => {
