@@ -28,10 +28,10 @@ export { useProject, useProjectData } from "./hooks/projects";
 // -- crypto
 export { useSignTestingJwt } from "./hooks/crypto";
 
-// -- authentication (Redux-powered)
+// -- authentication
 export { useAuth, type UseAuthValues } from "./hooks/auth";
 
-// -- (current) user (Redux-powered)
+// -- (current) user
 export {
   useUser,
   useUserActions,
@@ -39,7 +39,7 @@ export {
   type UseUserValues,
 } from "./hooks/user";
 
-// -- app notifications (Redux-powered)
+// -- app notifications
 export {
   useAppNotifications,
   useAppNotificationsActions,
@@ -47,7 +47,7 @@ export {
   type UseAppNotificationsValues,
 } from "./hooks/app-notifications";
 
-// -- lists (Redux-powered)
+// -- lists
 export {
   useLists,
   useListsActions,
@@ -70,7 +70,7 @@ export {
   useInfusedData,
 } from "./hooks/entities";
 
-// -- entity lists (Redux-powered)
+// -- entity lists
 export {
   useEntityList,
   useEntityListActions,
@@ -106,11 +106,15 @@ export {
   useFetchUserSuggestions,
   useMentions,
   useUpdateUser,
+} from "./hooks/users";
+
+// -- follows
+export {
   useFetchFollow,
   useFollowUser,
   useUnfollowUser,
   useFollowManager,
-} from "./hooks/users";
+} from "./hooks/relationships/follows";
 
 // -- reports
 export { useCreateReport } from "./hooks/reports";

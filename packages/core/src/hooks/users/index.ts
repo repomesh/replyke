@@ -6,10 +6,3 @@ export { default as useCheckUsernameAvailability } from "./useCheckUsernameAvail
 export { default as useFetchUserSuggestions } from "./useFetchUserSuggestions";
 export { default as useMentions } from "./useMentions";
 export { default as useUpdateUser } from "./useUpdateUser";
-
-export {
-  useFetchFollow,
-  useFollowUser,
-  useUnfollowUser,
-  useFollowManager,
-} from "./follows";
