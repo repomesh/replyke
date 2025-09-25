@@ -286,3 +286,9 @@ export type NotificationTemplates = {
   commentUpvote: NotificationTemplate;
   newFollow: NotificationTemplate;
 };
+
+export type PotentiallyPopulatedUnifiedAppNotification =
+  UnifiedAppNotification & {
+    title?: string;
+    content?: string;
+  };

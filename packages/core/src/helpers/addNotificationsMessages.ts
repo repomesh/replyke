@@ -1,14 +1,12 @@
 import {
   NotificationTemplate,
   NotificationTemplates,
+  PotentiallyPopulatedUnifiedAppNotification,
   UnifiedAppNotification,
 } from "../interfaces/models/AppNotification";
 import { getUserName } from "./getUserName";
 
-type PotentiallyPopulatedUnifiedAppNotification = UnifiedAppNotification & {
-  title?: string;
-  content?: string;
-};
+
 
 // Utility function to replace variables in a template
 const replaceTemplateVariables = (
