@@ -184,6 +184,16 @@ export const entityListsSlice = createSlice({
         }
       });
 
+      // Update config if provided
+      if (action.payload.config) {
+        if (action.payload.config.sourceId !== undefined) {
+          list.sourceId = action.payload.config.sourceId;
+        }
+        if (action.payload.config.limit !== undefined) {
+          list.limit = action.payload.config.limit;
+        }
+      }
+
       // Reset pagination when filters change
       list.page = 1;
       list.hasMore = true;
