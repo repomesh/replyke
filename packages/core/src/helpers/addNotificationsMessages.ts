@@ -5,6 +5,11 @@ import {
 } from "../interfaces/models/AppNotification";
 import { getUserName } from "./getUserName";
 
+type PotentiallyPopulatedUnifiedAppNotification = UnifiedAppNotification & {
+  title?: string;
+  content?: string;
+};
+
 // Utility function to replace variables in a template
 const replaceTemplateVariables = (
   template: string,
@@ -64,9 +69,9 @@ const configureMessage = (
 
 // Main notification mapping logic
 export default (
-  notifications: UnifiedAppNotification[],
+  notifications: PotentiallyPopulatedUnifiedAppNotification[],
   notificationTemplates?: Partial<NotificationTemplates>
-): UnifiedAppNotification[] => {
+): PotentiallyPopulatedUnifiedAppNotification[] => {
   return notifications.map((notification) => {
     if (notification.title) return notification;
 
@@ -75,8 +80,9 @@ export default (
 
     switch (notification.type) {
       case "system":
-        title = notification.title || "System message";
-        content = notification.content || "You have a new system message";
+        title = notification.metadata.title || "System message";
+        content =
+          notification.metadata.content || "You have a new system message";
 
         break;
       case "entity-comment":
@@ -143,6 +149,6 @@ export default (
       ...notification,
       title,
       content,
-    } as UnifiedAppNotification;
+    } as PotentiallyPopulatedUnifiedAppNotification;
   });
 };

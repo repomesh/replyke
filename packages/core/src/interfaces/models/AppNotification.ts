@@ -25,8 +25,6 @@ interface BaseAppNotification {
   type: AppNotificationType; // Type of notification
   isRead: boolean; // Read status
   metadata: Record<string, any>; // Additional data specific to the notification type
-  title?: string;
-  content?: string;
   createdAt: string; // ISO timestamp string
 }
 
@@ -39,6 +37,8 @@ export interface SystemNotification extends BaseAppNotification {
   type: "system";
   action: string;
   metadata: {
+    title?: string;
+    content?: string;
     buttonData: {
       text: string;
       url: string;
