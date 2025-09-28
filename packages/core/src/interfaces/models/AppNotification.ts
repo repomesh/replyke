@@ -6,7 +6,9 @@ type AppNotificationType =
   | "comment-mention"
   | "entity-upvote"
   | "comment-upvote"
-  | "new-follow";
+  | "new-follow"
+  | "connection-request"
+  | "connection-accepted";
 // | "followRequest"
 // | "followRequestAccepted"
 // | "friendRequest"
@@ -168,6 +170,30 @@ export interface NewFollowNotification extends BaseAppNotification {
   };
 }
 
+export interface ConnectionRequestNotification extends BaseAppNotification {
+  type: "connection-request";
+  action: "open-profile";
+  metadata: {
+    connectionId: string;
+    initiatorId: string;
+    initiatorName: string | null | undefined;
+    initiatorUsername: string | null | undefined;
+    initiatorAvatar: string | null | undefined;
+  };
+}
+
+export interface ConnectionAcceptedNotification extends BaseAppNotification {
+  type: "connection-accepted";
+  action: "open-profile";
+  metadata: {
+    connectionId: string;
+    initiatorId: string;
+    initiatorName: string | null | undefined;
+    initiatorUsername: string | null | undefined;
+    initiatorAvatar: string | null | undefined;
+  };
+}
+
 // export interface FollowRequestNotification extends BaseAppNotification {
 //   type: "followRequest";
 //   metadata: {
@@ -258,7 +284,9 @@ export type UnifiedAppNotification =
   | CommentMentionNotification
   | EntityUpvoteNotification
   | CommentUpvoteNotification
-  | NewFollowNotification;
+  | NewFollowNotification
+  | ConnectionRequestNotification
+  | ConnectionAcceptedNotification;
 // | LikeNotification
 // | ReplyNotification
 // | MentionNotification
@@ -285,6 +313,8 @@ export type NotificationTemplates = {
   entityUpvote: NotificationTemplate;
   commentUpvote: NotificationTemplate;
   newFollow: NotificationTemplate;
+  connectionRequest: NotificationTemplate;
+  connectionAccepted: NotificationTemplate;
 };
 
 export type PotentiallyPopulatedUnifiedAppNotification =

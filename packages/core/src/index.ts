@@ -120,6 +120,23 @@ export {
   useFollowManager,
 } from "./hooks/relationships/follows";
 
+// -- connections
+export {
+  useRequestConnection,
+  useAcceptConnection,
+  useDeclineConnection,
+  useRemoveConnection,
+  useFetchConnections,
+  useFetchConnectionStatus,
+  useRemoveConnectionByUserId,
+  useFetchConnectionsCount,
+  useFetchSentPendingConnections,
+  useFetchReceivedPendingConnections,
+  useFetchConnectionsByUserId,
+  useFetchConnectionsCountByUserId,
+  useConnectionManager,
+} from "./hooks/relationships/connections";
+
 // -- reports
 export { useCreateReport } from "./hooks/reports";
 
@@ -140,3 +157,18 @@ export type { Mention } from "./interfaces/models/Mention";
 export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
 export type { EntityListSortByOptions } from "./interfaces/EntityListSortByOptions";
 export type { TimeFrame } from "./interfaces/TimeFrame";
+export type {
+  Connection,
+  EstablishedConnection,
+  PendingConnection,
+  ConnectionsResponse,
+  PendingConnectionsResponse,
+  PendingConnectionListResponse,
+  ConnectionRequestParams,
+  ConnectionActionResponse,
+  ConnectionWithdrawResponse,
+  ConnectionCountResponse,
+  RemoveConnectionByUserIdResponse,
+  ConnectionStatusResponse,
+  ConnectionStatus,
+} from "./interfaces/models/Connection";

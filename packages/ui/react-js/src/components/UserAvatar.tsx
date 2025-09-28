@@ -1,5 +1,5 @@
 import { resetImg } from "../constants/reset-styles";
-import { getUserAvatar } from "../helpers/getUserAvatar";
+import { getUserAvatar } from "../helpers";
 
 interface UserProps {
   id?: string;
