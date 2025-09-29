@@ -6,7 +6,8 @@ export interface Connection {
   createdAt: string;
 }
 
-export interface EstablishedConnection extends Connection {
+export interface EstablishedConnection {
+  id: string;
   connectedUser: User;
   connectedAt: string;
   requestedAt: string;
@@ -106,4 +107,10 @@ export type ConnectionStatusResponse =
   | ConnectionStatusConnected
   | ConnectionStatusDeclined;
 
-export type ConnectionStatus = "none" | "pending-sent" | "pending-received" | "connected" | "declined-sent" | "declined-received";
+export type ConnectionStatus =
+  | "none"
+  | "pending-sent"
+  | "pending-received"
+  | "connected"
+  | "declined-sent"
+  | "declined-received";
