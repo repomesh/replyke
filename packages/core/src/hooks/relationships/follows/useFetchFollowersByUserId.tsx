@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import type { User } from "../../../interfaces/models/User";
+import axios from "../../../config/axios";
 
 export interface FollowerWithFollowInfo {
   followId: string;
@@ -28,7 +28,6 @@ export interface FetchFollowersByUserIdParams {
 }
 
 function useFetchFollowersByUserId() {
-  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchFollowersByUserId = useCallback(
@@ -48,7 +47,7 @@ function useFetchFollowersByUserId() {
 
       return response.data as FollowersResponse;
     },
-    [axios, projectId]
+    [projectId]
   );
 
   return fetchFollowersByUserId;

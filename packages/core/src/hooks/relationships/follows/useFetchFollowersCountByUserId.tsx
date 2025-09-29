@@ -1,9 +1,8 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
+import axios from "../../../config/axios";
 
 function useFetchFollowersCountByUserId() {
-  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchFollowersCountByUserId = useCallback(
@@ -22,7 +21,7 @@ function useFetchFollowersCountByUserId() {
 
       return response.data as { count: number };
     },
-    [axios, projectId]
+    [projectId]
   );
 
   return fetchFollowersCountByUserId;

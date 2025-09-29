@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { ConnectionsResponse } from "../../../interfaces/models/Connection";
+import axios from "../../../config/axios";
 
 interface FetchConnectionsByUserIdParams {
   userId: string;
@@ -10,7 +10,6 @@ interface FetchConnectionsByUserIdParams {
 }
 
 function useFetchConnectionsByUserId() {
-  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchConnectionsByUserId = useCallback(
@@ -31,12 +30,11 @@ function useFetchConnectionsByUserId() {
           page,
           limit,
         },
-        withCredentials: true,
       });
 
       return response.data as ConnectionsResponse;
     },
-    [axios, projectId]
+    [projectId]
   );
 
   return fetchConnectionsByUserId;

@@ -1,14 +1,13 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { ConnectionCountResponse } from "../../../interfaces/models/Connection";
+import axios from "../../../config/axios";
 
 interface FetchConnectionsCountByUserIdParams {
   userId: string;
 }
 
 function useFetchConnectionsCountByUserId() {
-  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchConnectionsCountByUserId = useCallback(
@@ -24,13 +23,11 @@ function useFetchConnectionsCountByUserId() {
         throw new Error("No user ID was provided");
       }
 
-      const response = await axios.get(`/users/${userId}/connections-count`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`/users/${userId}/connections-count`);
 
       return response.data as ConnectionCountResponse;
     },
-    [axios, projectId]
+    [projectId]
   );
 
   return fetchConnectionsCountByUserId;
