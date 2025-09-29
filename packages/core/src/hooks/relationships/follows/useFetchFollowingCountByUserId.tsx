@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import useAxiosPrivate from "../../config/useAxiosPrivate";
-import useProject from "../projects/useProject";
+import useAxiosPrivate from "../../../config/useAxiosPrivate";
+import useProject from "../../projects/useProject";
 
-function useFetchUserFollowingCount() {
+function useFetchFollowingCountByUserId() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
-  const fetchUserFollowingCount = useCallback(
+  const fetchFollowingCountByUserId = useCallback(
     async ({ userId }: { userId: string }) => {
       if (!userId) {
         throw new Error("No userId provided.");
@@ -25,7 +25,7 @@ function useFetchUserFollowingCount() {
     [axios, projectId]
   );
 
-  return fetchUserFollowingCount;
+  return fetchFollowingCountByUserId;
 }
 
-export default useFetchUserFollowingCount;
+export default useFetchFollowingCountByUserId;

@@ -3,12 +3,12 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 
-function useUnfollowUser() {
+function useFetchFollowStatus() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
-  const unfollowUser = useCallback(
+  const fetchFollowStatus = useCallback(
     async (props: { userId: string }) => {
       const { userId } = props;
       if (!projectId) {
@@ -24,17 +24,22 @@ function useUnfollowUser() {
       }
 
       if (userId === user.id) {
-        throw new Error("Users can't unfollow themselves");
+        throw new Error("Users don't follow themselves");
       }
 
-      await axios.delete(`/${projectId}/users/${userId}/follow`, {
+      const response = await axios.get(`/${projectId}/users/${userId}/follow`, {
         withCredentials: true,
       });
+      return response.data as {
+        isFollowing: boolean;
+        followId?: string;
+        followedAt?: string;
+      };
     },
     [axios, projectId, user]
   );
 
-  return unfollowUser;
+  return fetchFollowStatus;
 }
 
-export default useUnfollowUser;
+export default useFetchFollowStatus;

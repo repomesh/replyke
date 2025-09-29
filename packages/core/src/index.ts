@@ -104,8 +104,6 @@ export {
 export {
   useFetchUser,
   useFetchUserByForeignId,
-  useFetchUserFollowersCount,
-  useFetchUserFollowingCount,
   useCheckUsernameAvailability,
   useFetchUserSuggestions,
   useMentions,
@@ -114,10 +112,19 @@ export {
 
 // -- follows
 export {
-  useFetchFollow,
-  useFollowUser,
-  useUnfollowUser,
+  useFetchFollowStatus,
+  useFetchFollowers,
+  useFetchFollowersByUserId,
+  useFetchFollowersCount,
+  useFetchFollowersCountByUserId,
+  useFetchFollowing,
+  useFetchFollowingByUserId,
+  useFetchFollowingCount,
+  useFetchFollowingCountByUserId,
   useFollowManager,
+  useFollowUser,
+  useUnfollowByFollowId,
+  useUnfollowUserByUserId,
 } from "./hooks/relationships/follows";
 
 // -- connections

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import useFollowUser from "./useFollowUser";
-import useUnfollowUser from "./useUnfollowUser";
-import useFetchFollow from "./useFetchFollow";
+import useUnfollowUserByUserId from "./useUnfollowUserByUserId";
+import useFetchFollowStatus from "./useFetchFollowStatus";
 import useUser from "../../user/useUser";
 
 interface UseFollowToggleProps {
@@ -15,14 +15,14 @@ function useFollowManager({ userId }: UseFollowToggleProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   const followUser = useFollowUser();
-  const unfollowUser = useUnfollowUser();
-  const fetchFollow = useFetchFollow();
+  const unfollowUserByUserId = useUnfollowUserByUserId();
+  const fetchFollowStatus = useFetchFollowStatus();
 
   useEffect(() => {
     const loadFollowStatus = async () => {
       try {
         setIsLoading(true);
-        const result = await fetchFollow({ userId });
+        const result = await fetchFollowStatus({ userId });
         setIsFollowing(result.isFollowing);
       } catch (error) {
         console.error("Failed to fetch follow status:", error);
@@ -35,14 +35,14 @@ function useFollowManager({ userId }: UseFollowToggleProps) {
     if (userId && user?.id !== userId) {
       loadFollowStatus();
     }
-  }, [userId, fetchFollow]);
+  }, [userId, fetchFollowStatus]);
 
   const toggleFollow = useCallback(async () => {
     if (isFollowing === null || isLoading || user?.id === userId) return;
 
     try {
       if (isFollowing) {
-        await unfollowUser({ userId });
+        await unfollowUserByUserId({ userId });
         setIsFollowing(false);
       } else {
         await followUser({ userId });
@@ -51,7 +51,7 @@ function useFollowManager({ userId }: UseFollowToggleProps) {
     } catch (error) {
       console.error("Failed to toggle follow status:", error);
     }
-  }, [isFollowing, isLoading, userId, followUser, unfollowUser]);
+  }, [isFollowing, isLoading, userId, followUser, unfollowUserByUserId]);
 
   return {
     isFollowing,

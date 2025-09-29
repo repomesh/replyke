@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { AuthUser } from "../../interfaces/models/User";
+import useUser from "../user/useUser";
 
 export type UpdateUserParams = {
   name?: string | null;
@@ -20,17 +21,16 @@ export type UpdateUserParams = {
 function useUpdateUser() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
+  const { user } = useUser();
 
   const updateUser = useCallback(
-    async ({
-      userId,
-      update,
-    }: {
-      userId: string;
-      update: UpdateUserParams;
-    }) => {
+    async ({ update }: { update: UpdateUserParams }) => {
       if (!projectId) {
         throw new Error("No project specified");
+      }
+
+      if (!user) {
+        throw new Error("No user is logged in.");
       }
 
       if (!update || Object.keys(update).length == 0) {
@@ -38,7 +38,7 @@ function useUpdateUser() {
       }
 
       const response = await axios.patch(
-        `/${projectId}/users/${userId}`,
+        `/${projectId}/users/${user.id}`,
         {
           update,
         },

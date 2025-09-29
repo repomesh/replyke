@@ -1,7 +1,5 @@
 export { default as useFetchUser } from "./useFetchUser";
 export { default as useFetchUserByForeignId } from "./useFetchUserByForeignId";
-export { default as useFetchUserFollowersCount } from "./useFetchUserFollowersCount";
-export { default as useFetchUserFollowingCount } from "./useFetchUserFollowingCount";
 export { default as useCheckUsernameAvailability } from "./useCheckUsernameAvailability";
 export { default as useFetchUserSuggestions } from "./useFetchUserSuggestions";
 export { default as useMentions } from "./useMentions";
