@@ -6,6 +6,7 @@ import {
 } from "@replyke/comments-social-core";
 import { Entity } from "@replyke/react-js";
 import useSocialComments from "../hooks/useSocialComments";
+import { deepEqual, warnPropChanges } from "../utils/propComparison";
 
 type ButtonStyle = {
   backgroundColor: string;
@@ -18,6 +19,79 @@ type ButtonStyle = {
 type ButtonStyles = {
   active?: ButtonStyle;
   inactive?: ButtonStyle;
+};
+
+interface SocialCommentSectionProps {
+  entity?: Entity | undefined | null;
+  entityId?: string | undefined | null;
+  foreignId?: string | undefined | null;
+  shortId?: string | undefined | null;
+  callbacks?: SocialStyleCallbacks;
+  styleConfig?: Partial<
+    PartialSocialStyleConfig & { sortByStyleConfig: ButtonStyles }
+  >;
+  isVisible?: boolean;
+  sortOptions?: Array<"top" | "new" | "old"> | null;
+  header?: React.ReactNode;
+  withEmojis?: boolean;
+  highlightedCommentId?: string | undefined | null;
+  children?: React.ReactNode;
+}
+
+// Custom comparison function to prevent unnecessary re-renders
+const arePropsEqual = (
+  prevProps: SocialCommentSectionProps,
+  nextProps: SocialCommentSectionProps
+): boolean => {
+  // Add development warnings for unnecessary prop changes
+  warnPropChanges("SocialCommentSection", prevProps, nextProps, [
+    "entity",
+    "callbacks",
+    "styleConfig",
+  ]);
+
+  // Compare primitive values
+  if (
+    prevProps.entityId !== nextProps.entityId ||
+    prevProps.foreignId !== nextProps.foreignId ||
+    prevProps.shortId !== nextProps.shortId ||
+    prevProps.isVisible !== nextProps.isVisible ||
+    prevProps.withEmojis !== nextProps.withEmojis ||
+    prevProps.highlightedCommentId !== nextProps.highlightedCommentId
+  ) {
+    return false;
+  }
+
+  // Deep compare entity objects for more accurate comparison
+  if (!deepEqual(prevProps.entity, nextProps.entity)) {
+    return false;
+  }
+
+  // Deep compare callbacks and styleConfig to handle cases where
+  // parent component creates new objects with same content
+  if (!deepEqual(prevProps.callbacks, nextProps.callbacks)) {
+    return false;
+  }
+
+  if (!deepEqual(prevProps.styleConfig, nextProps.styleConfig)) {
+    return false;
+  }
+
+  // Compare sortOptions array
+  if (!deepEqual(prevProps.sortOptions, nextProps.sortOptions)) {
+    return false;
+  }
+
+  // Compare header and children (reference comparison for React nodes)
+  if (prevProps.header !== nextProps.header) {
+    return false;
+  }
+
+  if (prevProps.children !== nextProps.children) {
+    return false;
+  }
+
+  return true;
 };
 
 function SocialCommentSection({
@@ -33,22 +107,7 @@ function SocialCommentSection({
   withEmojis,
   highlightedCommentId,
   children,
-}: {
-  entity?: Entity | undefined | null;
-  entityId?: string | undefined | null;
-  foreignId?: string | undefined | null;
-  shortId?: string | undefined | null;
-  callbacks?: SocialStyleCallbacks;
-  styleConfig?: Partial<
-    PartialSocialStyleConfig & { sortByStyleConfig: ButtonStyles }
-  >;
-  isVisible?: boolean;
-  sortOptions?: Array<"top" | "new" | "old"> | null;
-  header?: React.ReactNode;
-  withEmojis?: boolean;
-  highlightedCommentId?: string | undefined | null;
-  children?: React.ReactNode;
-}) {
+}: SocialCommentSectionProps) {
   const styleConfig = useSocialStyle(styleConfigProp);
 
   const { CommentSectionProvider, SortByButton, CommentsFeed, NewCommentForm } =
@@ -143,4 +202,4 @@ function SocialCommentSection({
   );
 }
 
-export default SocialCommentSection;
+export default React.memo(SocialCommentSection, arePropsEqual);

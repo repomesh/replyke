@@ -21,6 +21,7 @@ import {
   useFetchEntityByShortId,
 } from "../entities";
 import { isUUID } from "../../utils/isUUID";
+import { useStableObject } from "../useStableObject";
 
 export interface UseCommentSectionDataProps {
   entity?: Entity | undefined | null;
@@ -91,9 +92,12 @@ function useCommentSectionData(
 
     defaultSortBy = "top" as CommentsSortByOptions,
     limit = 15,
-    callbacks = {},
+    callbacks: callbacksProp = {},
     highlightedCommentId,
   } = props;
+
+  // Stabilize callbacks reference to prevent unnecessary re-renders
+  const callbacks = useStableObject(callbacksProp);
 
   const { entity: entityFromContext, setEntity: setContextEntity } =
     useEntity();
