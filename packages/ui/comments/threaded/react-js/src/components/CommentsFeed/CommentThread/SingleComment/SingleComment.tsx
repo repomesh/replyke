@@ -10,7 +10,7 @@ import {
   UserAvatar,
 } from "@replyke/ui-core-react-js";
 import { useThreadedStyleConfig } from "@replyke/comments-threaded-core";
-import VoteButtons from "../VoteButtons";
+import VoteButtons from "./VoteButtons";
 import ActionMenu from "../ActionMenu";
 import NewReplyForm from "../NewReplyForm";
 import ToggleRepliesVisibilty from "./ToggleRepliesVisibilty";
