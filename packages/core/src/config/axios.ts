@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.replyke.com/api/v5";
+const BASE_URL = "https://api.replyke.com/api/v6";
 
 export default axios.create({
   baseURL: BASE_URL,

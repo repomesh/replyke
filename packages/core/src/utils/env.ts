@@ -74,17 +74,17 @@ export function isProduction(): boolean {
 export function getApiBaseUrl(): string {
   // Check process.env (traditional React apps)
   if (typeof process !== 'undefined' && process.env) {
-    return process.env.REACT_APP_API_BASE_URL || 'https://api.replyke.com/api/v5';
+    return process.env.REACT_APP_API_BASE_URL || 'https://api.replyke.com/api/v6';
   }
 
   // Check Vite environment
   const viteEnv = getViteEnv();
   if (viteEnv) {
-    return viteEnv.VITE_API_BASE_URL || 'https://api.replyke.com/api/v5';
+    return viteEnv.VITE_API_BASE_URL || 'https://api.replyke.com/api/v6';
   }
 
   // Fallback to default
-  return 'https://api.replyke.com/api/v5';
+  return 'https://api.replyke.com/api/v6';
 }
 
 /**
