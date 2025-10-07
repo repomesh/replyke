@@ -1,3 +1,4 @@
+import React from "react";
 import { ReplykeProvider as OriginalReplykeProvider } from "@replyke/core";
 
 // Re-export all exports from @replyke/core

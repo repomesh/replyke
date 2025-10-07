@@ -1,3 +1,5 @@
+import React from "react";
+
 interface MagnifyingGlassIconProps {
   color?: string;
   width?: number;

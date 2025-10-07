@@ -1,6 +1,6 @@
 {
   "name": "@replyke/comments-social-react-native",
-  "version": "6.0.0-beta.9",
+  "version": "6.0.0-beta.13",
   "private": false,
   "license": "Apache-2.0",
   "author": "Replyke, maintained by Yanay Tsabary",
@@ -43,7 +43,7 @@
     "@replyke/ui-core-react-native": "workspace:*"
   },
   "devDependencies": {
-    "@gorhom/bottom-sheet": "^5.0.6",
+    "@gorhom/bottom-sheet": "^5.2.6",
     "@replyke/core": "workspace:*",
     "react-native-gesture-handler": "^2.22.1"
   },

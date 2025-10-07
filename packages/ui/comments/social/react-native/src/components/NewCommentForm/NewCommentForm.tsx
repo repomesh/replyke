@@ -1,5 +1,4 @@
 import {
-  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -38,10 +37,13 @@ import { useSocialStyleConfig } from "@replyke/comments-social-core";
 import ReplyBanner from "./ReplyBanner";
 import MentionSuggestions from "./MentionSuggestions";
 
-const NewCommentForm = forwardRef<
-  { focus: () => void },
-  { withEmojis?: boolean }
->(({ withEmojis = true }, ref) => {
+function NewCommentForm({
+  withEmojis = true,
+  ref,
+}: {
+  withEmojis?: boolean;
+  ref?: React.Ref<{ focus: () => void }>;
+}) {
   const { user } = useUser();
   const { project } = useProject();
 
@@ -319,6 +321,8 @@ const NewCommentForm = forwardRef<
       </View>
     </>
   );
-});
+}
+
+NewCommentForm.displayName = "NewCommentForm";
 
 export default NewCommentForm;
