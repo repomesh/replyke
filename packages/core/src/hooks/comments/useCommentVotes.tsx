@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { handleError } from "../../utils/handleError";
 import { Comment } from "../../interfaces/models/Comment";
-import useUser from "../users/useUser";
+import { useUser } from "../user";
 
 // Import the communication hooks
 import useUpvoteComment from "./useUpvoteComment";

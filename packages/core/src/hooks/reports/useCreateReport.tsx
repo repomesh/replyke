@@ -1,9 +1,9 @@
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { ReportReasonKey } from "../../constants/reportReasons";
 import useProject from "../projects/useProject";
-import useUser from "../users/useUser";
+import { useUser } from "../user";
 
-function useCreateReport() {
+function useCreateReport({ type }: { type: "comment" | "entity" }) {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
@@ -73,7 +73,13 @@ function useCreateReport() {
     });
   };
 
-  return { createCommentReport, createEntityReport };
+  if (type === "comment") {
+    return createCommentReport;
+  } else if (type === "entity") {
+    return createEntityReport;
+  }
+
+  throw new Error("Invalid report type");
 }
 
 export default useCreateReport;

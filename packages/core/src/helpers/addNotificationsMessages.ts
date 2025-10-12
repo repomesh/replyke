@@ -1,9 +1,11 @@
 import {
   NotificationTemplate,
   NotificationTemplates,
-  UnifiedAppNotification,
+  PotentiallyPopulatedUnifiedAppNotification,
 } from "../interfaces/models/AppNotification";
 import { getUserName } from "./getUserName";
+
+
 
 // Utility function to replace variables in a template
 const replaceTemplateVariables = (
@@ -20,21 +22,19 @@ const replaceTemplateVariables = (
 // Centralized logic to build variable replacements
 const getReplacementVariables = (notification: any) => {
   return {
-    userName: getUserName(
+    initiatorName: getUserName(
       {
         id: notification.metadata.initiatorId,
         name: notification.metadata.initiatorName,
         username: notification.metadata.initiatorUsername,
-        avatar: notification.metadata.initiatorAvatar,
       },
       "name"
     ),
-    userUsername: getUserName(
+    initiatorUsername: getUserName(
       {
         id: notification.metadata.initiatorId,
         name: notification.metadata.initiatorName,
         username: notification.metadata.initiatorUsername,
-        avatar: notification.metadata.initiatorAvatar,
       },
       "username"
     ),
@@ -66,9 +66,9 @@ const configureMessage = (
 
 // Main notification mapping logic
 export default (
-  notifications: UnifiedAppNotification[],
+  notifications: PotentiallyPopulatedUnifiedAppNotification[],
   notificationTemplates?: Partial<NotificationTemplates>
-): UnifiedAppNotification[] => {
+): PotentiallyPopulatedUnifiedAppNotification[] => {
   return notifications.map((notification) => {
     if (notification.title) return notification;
 
@@ -76,10 +76,16 @@ export default (
     let content: string | null | undefined;
 
     switch (notification.type) {
+      case "system":
+        title = notification.metadata.title || "System message";
+        content =
+          notification.metadata.content || "You have a new system message";
+
+        break;
       case "entity-comment":
         ({ title, content } = configureMessage(
           notification,
-          `$userName commented on your post "$entityTitle"`,
+          `$initiatorUsername commented on your post`,
           `$commentContent`,
           notificationTemplates?.entityComment
         ));
@@ -87,7 +93,7 @@ export default (
       case "comment-reply":
         ({ title, content } = configureMessage(
           notification,
-          `$userName replied to your comment on "$entityTitle"`,
+          `$initiatorUsername replied to your comment`,
           `$replyContent`,
           notificationTemplates?.commentReply
         ));
@@ -95,7 +101,7 @@ export default (
       case "entity-mention":
         ({ title, content } = configureMessage(
           notification,
-          `$userName mentioned you in their post`,
+          `$initiatorUsername mentioned you in their post`,
           `$entityTitle`,
           notificationTemplates?.entityMention
         ));
@@ -103,7 +109,7 @@ export default (
       case "comment-mention":
         ({ title, content } = configureMessage(
           notification,
-          `$userName mentioned you in their comment on "$entityTitle"`,
+          `$initiatorUsername mentioned you in their comment`,
           `$commentContent`,
           notificationTemplates?.commentMention
         ));
@@ -111,7 +117,7 @@ export default (
       case "entity-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your post "$entityTitle"`,
+          `$initiatorUsername upvoted your post`,
           ``,
           notificationTemplates?.entityUpvote
         ));
@@ -119,7 +125,7 @@ export default (
       case "comment-upvote":
         ({ title, content } = configureMessage(
           notification,
-          `$userName upvoted your comment on "$entityTitle"`,
+          `$initiatorUsername upvoted your comment`,
           `$commentContent`,
           notificationTemplates?.commentUpvote
         ));
@@ -127,7 +133,7 @@ export default (
       case "new-follow":
         ({ title, content } = configureMessage(
           notification,
-          `$userName started following you`,
+          `$initiatorUsername started following you`,
           ``,
           notificationTemplates?.newFollow
         ));
@@ -140,6 +146,6 @@ export default (
       ...notification,
       title,
       content,
-    } as UnifiedAppNotification;
+    } as PotentiallyPopulatedUnifiedAppNotification;
   });
 };

@@ -7,13 +7,13 @@ import { EntityCommentsTree } from "../../interfaces/EntityCommentsTree";
 import { addCommentsToTree as addCommentsToTreeHandler } from "../../helpers/addCommentsToTree";
 import { removeCommentFromTree as removeCommentFromTreeHandler } from "../../helpers/removeCommentFromTree";
 
-export interface UseEntityCommentsDataProps {
+export interface UseEntityCommentsProps {
   entityId: string | undefined | null;
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
 }
 
-export interface UseEntityCommentsDataValues {
+export interface UseEntityCommentsValues {
   entityCommentsTree: EntityCommentsTree;
   comments: Comment[];
   newComments: Comment[];
@@ -30,8 +30,8 @@ export interface UseEntityCommentsDataValues {
 }
 
 function useEntityComments(
-  props: UseEntityCommentsDataProps
-): UseEntityCommentsDataValues {
+  props: UseEntityCommentsProps
+): UseEntityCommentsValues {
   const { entityId, limit = 10, defaultSortBy = "new" } = props;
 
   const fetchManyComments = useFetchManyComments();

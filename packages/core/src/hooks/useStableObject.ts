@@ -1,0 +1,27 @@
+import { useRef } from "react";
+import { deepEqual } from "../utils/objectComparison";
+
+/**
+ * Hook that returns a stable reference to an object that only changes
+ * when the content of the object actually changes (deep comparison).
+ *
+ * This is useful for preventing unnecessary re-renders when objects are
+ * recreated with the same content on every render.
+ *
+ * @param obj - The object to stabilize
+ * @returns A stable reference to the object
+ */
+export function useStableObject<T extends Record<string, any> | undefined>(
+  obj: T
+): T {
+  const ref = useRef<T>(obj);
+
+  // If the new object is deeply equal to the previous one, return the previous reference
+  if (deepEqual(ref.current, obj)) {
+    return ref.current;
+  }
+
+  // Otherwise, update the ref and return the new object
+  ref.current = obj;
+  return obj;
+}

@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { Comment, GifData } from "../../interfaces/models/Comment";
 import { Mention } from "../../interfaces/models/Mention";
-import useUser from "../users/useUser";
+import { useUser } from "../user";
 
 // Hook for adding a comment
 function useCreateComment() {

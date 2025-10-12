@@ -1,10 +1,8 @@
-export { default as useLists } from "./useLists";
-export { default as useListsData } from "./useListsData";
-export { default as useCreateList } from "./useCreateList";
-export { default as useFetchRootList } from "./useFetchRootList";
-export { default as useFetchSubLists } from "./useFetchSubLists";
+// Export Redux-powered lists hooks
+export { useListsActions } from "./useListsActions";
+export {
+  default as useLists,
+  type UseListsProps,
+  type UseListsValues,
+} from "./useLists";
 export { default as useIsEntitySaved } from "./useIsEntitySaved";
-export { default as useUpdateList } from "./useUpdateList";
-export { default as useAddToList } from "./useAddToList";
-export { default as useRemoveFromList } from "./useRemoveFromList";
-export { default as useDeleteList } from "./useDeleteList";

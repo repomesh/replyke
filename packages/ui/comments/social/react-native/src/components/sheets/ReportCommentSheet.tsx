@@ -26,7 +26,7 @@ const ReportCommentSheet = () => {
     setReportedComment,
     closeReportCommentSheet,
   } = useSheetManager();
-  const { createCommentReport } = useCreateReport();
+  const  createCommentReport = useCreateReport({ type: "comment" });
 
   const [submitting, setSubmitting] = useState(false);
   const [reason, setReason] = useState<ReportReasonKey | null>(null);

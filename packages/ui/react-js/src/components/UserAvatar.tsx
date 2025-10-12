@@ -1,4 +1,5 @@
 import { resetImg } from "../constants/reset-styles";
+import { getUserAvatar } from "../helpers";
 
 interface UserProps {
   id?: string;
@@ -31,10 +32,7 @@ function UserAvatar({
       }}
     >
       <img
-        src={
-          user.avatar ??
-          `https://api.dicebear.com/9.x/thumbs/svg?seed=${user.id}`
-        }
+        src={user.avatar ?? getUserAvatar(user.id!)}
         alt={user.name || user.id}
         style={{
           ...resetImg,

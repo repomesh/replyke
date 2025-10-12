@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { handleError } from "../../utils/handleError";
 import { Entity } from "../../interfaces/models/Entity";
-import useUser from "../users/useUser";
+import { useUser } from "../user";
 
 // Import the API communication hooks
 import useUpvoteEntity from "./useUpvoteEntity";

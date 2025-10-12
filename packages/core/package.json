@@ -1,6 +1,6 @@
 {
   "name": "@replyke/core",
-  "version": "5.1.5",
+  "version": "6.0.0",
   "private": false,
   "license": "Apache-2.0",
   "author": "Replyke, maintained by Yanay Tsabary",
@@ -46,9 +46,11 @@
     "dist"
   ],
   "dependencies": {
+    "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.4.0",
     "js-cookie": "^3.0.5",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-redux": "^9.0.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
