@@ -24,7 +24,7 @@ function useDeclineConnection() {
         throw new Error("No connection ID was provided");
       }
 
-      const response = await axios.put(
+      const response = await axios.patch(
         `/connections/${connectionId}/decline`,
         {},
         { withCredentials: true }
