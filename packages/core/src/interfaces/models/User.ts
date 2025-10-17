@@ -2,7 +2,7 @@ export type UserFull = {
   id: string;
   projectId: string;
   foreignId: string | null;
-  role: "admin" | "editor" | "visitor";
+  role: "admin" | "moderator" | "visitor";
   email: string | null;
   name: string | null;
   username: string | null;

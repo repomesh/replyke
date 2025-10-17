@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store";
+import type { AuthUser } from "../../interfaces/models/User";
 import {
   setUser,
   clearUser,
@@ -25,7 +26,13 @@ export function useUserActions() {
   const [updateUserMutation] = useUpdateUserMutation();
 
   // User data management actions
-  const handleSetUser = useCallback((user: any) => {
+  const handleSetUser = useCallback((user: AuthUser | null) => {
+    // IMPORTANT: Validate that user has required data before setting
+    // This prevents empty or partial user objects from being set to state
+    if (user && !user.id) {
+      console.warn('Attempted to set user without id - ignoring invalid user data');
+      return;
+    }
     dispatch(setUser(user));
     dispatch(clearError());
   }, [dispatch]);

@@ -2,7 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../config/axios';
 import { isReactNative } from '../../utils/isReactNative';
 import { handleError } from '../../utils/handleError';
-import type { AuthUser } from '../../interfaces/models/User';
 import type { RootState } from '../index';
 import { 
   setTokens, 

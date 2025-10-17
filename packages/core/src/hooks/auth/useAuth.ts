@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../store';
-import type { AuthUser } from '../../interfaces/models/User';
 import { 
   selectAccessToken,
   selectRefreshToken,

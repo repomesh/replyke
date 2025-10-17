@@ -64,8 +64,9 @@ function useUser(_: UseUserProps = {}): UseUserValues {
   }, [dispatch, projectId, currentProjectId]);
 
   // Sync auth user to user slice when auth user changes and we don't have a user yet
+  // IMPORTANT: Only sync if authUser has valid data (has an id) to prevent empty objects from being set
   useEffect(() => {
-    if (authUser && !user) {
+    if (authUser && authUser.id && !user) {
       setUser(authUser);
     }
   }, [authUser, user, setUser]);
