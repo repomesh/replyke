@@ -155,7 +155,12 @@ export { useUploadFile } from "./hooks/storage";
 
 // Interfaces
 export type { EntityCommentsTree } from "./interfaces/EntityCommentsTree";
-export type { UserFull, User, AuthUser } from "./interfaces/models/User";
+export type {
+  UserFull,
+  User,
+  AuthUser,
+  UserRole,
+} from "./interfaces/models/User";
 export * as AppNotification from "./interfaces/models/AppNotification";
 export type { Entity } from "./interfaces/models/Entity";
 export type { List } from "./interfaces/models/List";

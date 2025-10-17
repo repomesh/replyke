@@ -1,8 +1,9 @@
+export type UserRole = "admin" | "moderator" | "visitor";
 export type UserFull = {
   id: string;
   projectId: string;
   foreignId: string | null;
-  role: "admin" | "moderator" | "visitor";
+  role: UserRole;
   email: string | null;
   name: string | null;
   username: string | null;
