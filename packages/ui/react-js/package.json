@@ -1,6 +1,6 @@
 {
   "name": "@replyke/ui-core-react-js",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "private": false,
   "license": "Apache-2.0",
   "author": "Replyke, maintained by Yanay Tsabary",
@@ -47,8 +47,8 @@
     "dist"
   ],
   "dependencies": {
-    "@giphy/js-fetch-api": "^5.6.0",
-    "@giphy/react-components": "^10.0.1"
+    "@giphy/js-fetch-api": "^5.7.0",
+    "@giphy/react-components": "^10.1.0"
   },
   "devDependencies": {
     "@replyke/core": "workspace:*",

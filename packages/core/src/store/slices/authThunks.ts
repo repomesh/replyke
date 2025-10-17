@@ -1,25 +1,25 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../config/axios';
-import { isReactNative } from '../../utils/isReactNative';
-import { handleError } from '../../utils/handleError';
-import type { RootState } from '../index';
-import { 
-  setTokens, 
-  setUser, 
-  setLoadingInitial, 
-  setAuthenticating, 
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "../../config/axios";
+import { isReactNative } from "../../utils/isReactNative";
+import { handleError } from "../../utils/handleError";
+import type { RootState } from "../index";
+import {
+  setTokens,
+  setUser,
+  setLoadingInitial,
+  setAuthenticating,
   setInitialized,
-  resetAuth 
-} from './authSlice';
-import { 
-  setUser as setUserInUserSlice, 
-  clearUser as clearUserInUserSlice 
-} from './userSlice';
+  resetAuth,
+} from "./authSlice";
+import {
+  setUser as setUserInUserSlice,
+  clearUser as clearUserInUserSlice,
+} from "./userSlice";
 
 // Auth service functions - calling existing API patterns directly
 const authService = {
   async signUpWithEmailAndPassword(
-    projectId: string, 
+    projectId: string,
     data: {
       email: string;
       password: string;
@@ -49,7 +49,7 @@ const authService = {
       },
       { withCredentials: !isReactNative() }
     );
-    
+
     return response.data;
   },
 
@@ -57,12 +57,10 @@ const authService = {
     projectId: string,
     data: { email: string; password: string }
   ) {
-    const response = await axios.post(
-      `/${projectId}/auth/sign-in`,
-      data,
-      { withCredentials: !isReactNative() }
-    );
-    
+    const response = await axios.post(`/${projectId}/auth/sign-in`, data, {
+      withCredentials: !isReactNative(),
+    });
+
     return response.data;
   },
 
@@ -80,7 +78,7 @@ const authService = {
       { refreshToken },
       { withCredentials: !isReactNative() }
     );
-    
+
     return response.data;
   },
 
@@ -89,26 +87,24 @@ const authService = {
       `/${projectId}/auth/verify-external-user`,
       { userJwt }
     );
-    
+
     return response.data;
   },
 
   async changePassword(
-    projectId: string, 
+    projectId: string,
     data: { password: string; newPassword: string }
   ) {
-    await axios.post(
-      `/${projectId}/auth/change-password`,
-      data,
-      { withCredentials: !isReactNative() }
-    );
-  }
+    await axios.post(`/${projectId}/auth/change-password`, data, {
+      withCredentials: !isReactNative(),
+    });
+  },
 };
 
 // Async Thunks
 
 export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
-  'auth/signUpWithEmailAndPassword',
+  "auth/signUpWithEmailAndPassword",
   async (
     data: {
       projectId: string;
@@ -127,21 +123,28 @@ export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
   ) => {
     try {
       dispatch(setAuthenticating(true));
-      
-      const result = await authService.signUpWithEmailAndPassword(data.projectId, data);
-      
+
+      const result = await authService.signUpWithEmailAndPassword(
+        data.projectId,
+        data
+      );
+
       // Update auth state
-      dispatch(setTokens({ 
-        accessToken: result.accessToken, 
-        refreshToken: result.refreshToken 
-      }));
+      dispatch(
+        setTokens({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        })
+      );
       dispatch(setUser(result.user));
       dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
-      
+
       return result;
     } catch (error) {
       handleError(error, "Failed to register user with email and password:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     } finally {
       dispatch(setAuthenticating(false));
     }
@@ -149,28 +152,35 @@ export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
 );
 
 export const signInWithEmailAndPasswordThunk = createAsyncThunk(
-  'auth/signInWithEmailAndPassword',
+  "auth/signInWithEmailAndPassword",
   async (
     data: { projectId: string; email: string; password: string },
     { dispatch, rejectWithValue }
   ) => {
     try {
       dispatch(setAuthenticating(true));
-      
-      const result = await authService.signInWithEmailAndPassword(data.projectId, data);
-      
+
+      const result = await authService.signInWithEmailAndPassword(
+        data.projectId,
+        data
+      );
+
       // Update auth state
-      dispatch(setTokens({ 
-        accessToken: result.accessToken, 
-        refreshToken: result.refreshToken 
-      }));
+      dispatch(
+        setTokens({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        })
+      );
       dispatch(setUser(result.user));
       dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
-      
+
       return result;
     } catch (error) {
       handleError(error, "Failed to log user in:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     } finally {
       dispatch(setAuthenticating(false));
     }
@@ -178,14 +188,14 @@ export const signInWithEmailAndPasswordThunk = createAsyncThunk(
 );
 
 export const signOutThunk = createAsyncThunk(
-  'auth/signOut',
+  "auth/signOut",
   async (
     data: { projectId: string },
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
     const refreshToken = state.auth.refreshToken;
-    
+
     // If React Native and no refresh token, throw error (matches original logic)
     if (isReactNative() && !refreshToken) {
       throw new Error("No refresh token");
@@ -193,17 +203,19 @@ export const signOutThunk = createAsyncThunk(
 
     try {
       dispatch(setAuthenticating(true));
-      
+
       await authService.signOut(data.projectId, refreshToken);
-      
+
       // Clear auth state
       dispatch(resetAuth());
       dispatch(clearUserInUserSlice()); // Clear user from user slice
-      
+
       return;
     } catch (error) {
       handleError(error, "Failed to log user out:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     } finally {
       dispatch(setAuthenticating(false));
     }
@@ -211,81 +223,95 @@ export const signOutThunk = createAsyncThunk(
 );
 
 export const requestNewAccessTokenThunk = createAsyncThunk(
-  'auth/requestNewAccessToken',
+  "auth/requestNewAccessToken",
   async (
     data: { projectId: string },
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
     const refreshToken = state.auth.refreshToken;
-    
+
     // If React Native and no refresh token, return early
     if (isReactNative() && !refreshToken) {
       return;
     }
 
     try {
-      const result = await authService.requestNewAccessToken(data.projectId, refreshToken);
-      
+      const result = await authService.requestNewAccessToken(
+        data.projectId,
+        refreshToken
+      );
+
       // Update auth state
       dispatch(setTokens({ accessToken: result.accessToken }));
       dispatch(setUser(result.user));
       dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
-      
+
       return result.accessToken;
     } catch (error) {
       handleError(error, "Request new access token error:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 );
 
 export const verifyExternalUserThunk = createAsyncThunk(
-  'auth/verifyExternalUser',
+  "auth/verifyExternalUser",
   async (
     data: { projectId: string; userJwt: string },
     { dispatch, rejectWithValue }
   ) => {
     try {
-      const result = await authService.verifyExternalUser(data.projectId, data.userJwt);
-      
+      const result = await authService.verifyExternalUser(
+        data.projectId,
+        data.userJwt
+      );
+
       // Update auth state
-      dispatch(setTokens({ 
-        accessToken: result.accessToken, 
-        refreshToken: result.refreshToken 
-      }));
+      dispatch(
+        setTokens({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        })
+      );
       dispatch(setUser(result.user));
       dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
-      
+
       return result;
     } catch (error) {
       handleError(error, "Verify external user error:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 );
 
 export const changePasswordThunk = createAsyncThunk(
-  'auth/changePassword',
+  "auth/changePassword",
   async (
     data: { projectId: string; password: string; newPassword: string },
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    
+
     if (!state.auth.user) {
       throw new Error("No user is authenticated");
     }
 
     try {
       dispatch(setAuthenticating(true));
-      
+
       await authService.changePassword(data.projectId, data);
-      
+
       return;
     } catch (error) {
       handleError(error, "Failed to change password:");
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
     } finally {
       dispatch(setAuthenticating(false));
     }
@@ -294,7 +320,7 @@ export const changePasswordThunk = createAsyncThunk(
 
 // Initialize auth - handles the startup flow from useAuthData
 export const initializeAuthThunk = createAsyncThunk(
-  'auth/initialize',
+  "auth/initialize",
   async (
     data: { projectId: string; signedToken?: string | null },
     { dispatch }
@@ -304,19 +330,22 @@ export const initializeAuthThunk = createAsyncThunk(
 
       // Step 1: If we have a signed token, verify external user
       if (data.signedToken) {
-        await dispatch(verifyExternalUserThunk({ 
-          projectId: data.projectId, 
-          userJwt: data.signedToken 
-        }));
+        await dispatch(
+          verifyExternalUserThunk({
+            projectId: data.projectId,
+            userJwt: data.signedToken,
+          })
+        );
       }
 
       // Step 2: Try to refresh access token (matches original setTimeout logic)
       setTimeout(async () => {
-        await dispatch(requestNewAccessTokenThunk({ projectId: data.projectId }));
+        await dispatch(
+          requestNewAccessTokenThunk({ projectId: data.projectId })
+        );
         dispatch(setLoadingInitial(false));
         dispatch(setInitialized(true));
       }, 0);
-
     } catch (error) {
       dispatch(setLoadingInitial(false));
       dispatch(setInitialized(true));
