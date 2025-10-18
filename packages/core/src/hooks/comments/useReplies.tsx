@@ -4,6 +4,7 @@ import { handleError } from "../../utils/handleError";
 import useCommentSection from "./useCommentSection";
 import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
+import { isUUID } from "../../utils/isUUID";
 
 function useReplies({
   commentId,
@@ -41,7 +42,7 @@ function useReplies({
 
   useEffect(() => {
     const loadReplies = async () => {
-      if (!commentId) {
+      if (!commentId || !isUUID(commentId)) {
         // console.warn(
         //   "The 'fetch comments' operation was invoked without a valid comment ID and has been aborted."
         // );
