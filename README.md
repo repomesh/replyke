@@ -1,4 +1,4 @@
-# Replyke: Open-Source Framework for Building Social Products
+# Replyke: Open-Source Infrastructure layer for user-created content and social graphs
 
 <!-- <a target="_blank" href="https://discord.gg/REKxnCJzPz"><img src="https://dcbadge.limes.pink/api/server/REKxnCJzPz?compact=true" alt="" /></a> -->
 
