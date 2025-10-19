@@ -8,20 +8,52 @@ function useUpdateComment() {
   const { projectId } = useProject();
 
   const updateComment = useCallback(
-    async ({ commentId, content }: { commentId: string; content: string }) => {
+    async ({
+      commentId,
+      content,
+      metadata,
+    }: {
+      commentId: string;
+      content?: string;
+      metadata?: Record<string, any>;
+    }) => {
       if (!projectId) {
         throw new Error("No project specified");
       }
 
-      if (content.length < 1) {
+      // At least one of content or metadata must be provided
+      if (content === undefined && metadata === undefined) {
+        throw new Error("Either content or metadata must be provided");
+      }
+
+      // Validate content if provided
+      if (content !== undefined && content.length < 1) {
         throw new Error("Comment is too short");
+      }
+
+      // Validate metadata if provided
+      if (
+        metadata !== undefined &&
+        (typeof metadata !== "object" ||
+          metadata === null ||
+          Array.isArray(metadata))
+      ) {
+        throw new Error("Metadata must be a valid object");
+      }
+
+      // Build request body with only provided fields
+      const requestBody: { content?: string; metadata?: Record<string, any> } =
+        {};
+      if (content !== undefined) {
+        requestBody.content = content;
+      }
+      if (metadata !== undefined) {
+        requestBody.metadata = metadata;
       }
 
       const response = await axios.patch(
         `/${projectId}/comments/${commentId}`,
-        {
-          content,
-        }
+        requestBody
       );
 
       return response.data as Comment;
