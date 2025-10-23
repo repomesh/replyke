@@ -16,9 +16,18 @@ function useFetchManyComments() {
       page: number;
       limit?: number;
       includeEntity?: boolean;
+      sourceId?: string | null | undefined;
     }): Promise<Comment[]> => {
-      const { entityId, userId, parentId, sortBy, page, limit, includeEntity } =
-        props;
+      const {
+        entityId,
+        userId,
+        parentId,
+        sortBy,
+        page,
+        limit,
+        includeEntity,
+        sourceId,
+      } = props;
 
       if (page === 0) {
         throw new Error("Can't fetch comments with page 0");
@@ -36,16 +45,20 @@ function useFetchManyComments() {
         throw new Error("No project specified");
       }
 
+      const params: Record<string, any> = {
+        sortBy,
+        page,
+        limit,
+      };
+
+      if (entityId) params.entityId = entityId;
+      if (userId) params.userId = userId;
+      if (parentId) params.parentId = parentId;
+      if (includeEntity) params.includeEntity = includeEntity;
+      if (sourceId) params.sourceId = sourceId;
+
       const response = await axios.get(`/${projectId}/comments`, {
-        params: {
-          entityId,
-          userId,
-          parentId,
-          sortBy,
-          page,
-          limit,
-          includeEntity,
-        },
+        params,
       });
       return response.data as Comment[];
     },
