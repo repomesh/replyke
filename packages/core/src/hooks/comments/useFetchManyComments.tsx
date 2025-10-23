@@ -32,11 +32,6 @@ function useFetchManyComments() {
         throw new Error("Can't fetch without sortBy property");
       }
 
-      if (!entityId && !userId && !parentId)
-        throw new Error(
-          "Either entityId, userId or parentId properties are required to fetch comments"
-        );
-
       if (!projectId) {
         throw new Error("No project specified");
       }
