@@ -44,7 +44,7 @@ export interface EntityListsState {
 const createDefaultEntityListState = (): EntityListState => ({
   entities: [],
   page: 1,
-  loading: false,
+  loading: true,
   hasMore: true,
   error: null,
   lastFetched: null,
@@ -151,7 +151,10 @@ export const entityListsSlice = createSlice({
     },
 
     // Update filters and sort (unified function)
-    updateFiltersAndSort: (state, action: PayloadAction<FilterUpdatePayload>) => {
+    updateFiltersAndSort: (
+      state,
+      action: PayloadAction<FilterUpdatePayload>
+    ) => {
       const { listId, filters, options } = action.payload;
 
       // Ensure list exists
@@ -212,7 +215,10 @@ export const entityListsSlice = createSlice({
     },
 
     // Set entities for entity list
-    setEntityListEntities: (state, action: PayloadAction<EntitiesSetPayload>) => {
+    setEntityListEntities: (
+      state,
+      action: PayloadAction<EntitiesSetPayload>
+    ) => {
       const { listId, entities, append = false } = action.payload;
 
       if (!state.lists[listId]) {
@@ -223,8 +229,8 @@ export const entityListsSlice = createSlice({
 
       if (append) {
         // Filter out duplicates when appending
-        const existingIds = new Set(list.entities.map(e => e.id));
-        const newEntities = entities.filter(e => !existingIds.has(e.id));
+        const existingIds = new Set(list.entities.map((e) => e.id));
+        const newEntities = entities.filter((e) => !existingIds.has(e.id));
         list.entities = [...list.entities, ...newEntities];
       } else {
         list.entities = entities;
@@ -289,11 +295,14 @@ export const entityListsSlice = createSlice({
       if (!state.lists[listId]) return;
 
       const list = state.lists[listId];
-      list.entities = list.entities.filter(e => e.id !== entityId);
+      list.entities = list.entities.filter((e) => e.id !== entityId);
     },
 
     // Update keywords filters (special case due to complexity)
-    updateKeywordsFilters: (state, action: PayloadAction<KeywordsUpdatePayload>) => {
+    updateKeywordsFilters: (
+      state,
+      action: PayloadAction<KeywordsUpdatePayload>
+    ) => {
       const { listId, type, key, value } = action.payload;
 
       if (!state.lists[listId]) {
@@ -329,7 +338,9 @@ export const entityListsSlice = createSlice({
           } else {
             newFilters = {
               ...newFilters,
-              [key]: (newFilters[key] || []).filter((item) => !items.includes(item)),
+              [key]: (newFilters[key] || []).filter(
+                (item) => !items.includes(item)
+              ),
             };
           }
           break;
@@ -357,7 +368,8 @@ export const entityListsSlice = createSlice({
         }
       }
 
-      list.keywordsFilters = Object.keys(newFilters).length > 0 ? newFilters : null;
+      list.keywordsFilters =
+        Object.keys(newFilters).length > 0 ? newFilters : null;
 
       // Reset pagination when filters change
       list.page = 1;
@@ -376,9 +388,9 @@ export const entityListsSlice = createSlice({
       const ttl = action.payload; // TTL in milliseconds
       const now = Date.now();
 
-      Object.keys(state.lists).forEach(listId => {
+      Object.keys(state.lists).forEach((listId) => {
         const list = state.lists[listId];
-        if (list.lastFetched && (now - list.lastFetched) > ttl) {
+        if (list.lastFetched && now - list.lastFetched > ttl) {
           delete state.lists[listId];
         }
       });
@@ -403,7 +415,8 @@ export const {
 } = entityListsSlice.actions;
 
 // Base selectors
-const selectEntityListsState = (state: { entityLists: EntityListsState }) => state.entityLists;
+const selectEntityListsState = (state: { entityLists: EntityListsState }) =>
+  state.entityLists;
 const selectListId = (_: any, listId: string) => listId;
 
 // Memoized selectors using createSelector
@@ -415,20 +428,17 @@ export const selectEntityList = createSelector(
 
 export const selectEntityListEntities = createSelector(
   [selectEntityList],
-  (entityList): Entity[] =>
-    entityList?.entities || []
+  (entityList): Entity[] => entityList?.entities || []
 );
 
 export const selectEntityListLoading = createSelector(
   [selectEntityList],
-  (entityList): boolean =>
-    entityList?.loading || false
+  (entityList): boolean => entityList?.loading || false
 );
 
 export const selectEntityListHasMore = createSelector(
   [selectEntityList],
-  (entityList): boolean =>
-    entityList?.hasMore || false
+  (entityList): boolean => entityList?.hasMore || false
 );
 
 export const selectEntityListFilters = createSelector(
