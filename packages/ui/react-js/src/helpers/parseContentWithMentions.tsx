@@ -5,7 +5,9 @@ export const parseContentWithMentions = (
   mentions: Mention[],
   currentUserId: string | undefined,
   currentUserClickCallback: (() => void) | undefined,
-  otherUserClickCallback: ((userId: string) => void) | undefined
+  otherUserClickCallback:
+    | ((userId: string, userForeignId: string | null | undefined) => void)
+    | undefined
 ): (string | React.JSX.Element)[] => {
   if (!mentions.length) return [content];
 
@@ -49,7 +51,10 @@ export const parseContentWithMentions = (
               if (matchedMention.id === currentUserId) {
                 currentUserClickCallback?.();
               } else {
-                otherUserClickCallback?.(matchedMention.id);
+                otherUserClickCallback?.(
+                  matchedMention.id,
+                  matchedMention.foreignId
+                );
               }
             }}
             key={lastIndex}

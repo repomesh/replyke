@@ -51,6 +51,7 @@ const useMentions = ({
         ...prevMentions,
         {
           id: user.id,
+          foreignId: user.foreignId,
           username: user.username!,
         },
       ];

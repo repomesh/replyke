@@ -7,7 +7,10 @@ export type SocialStyleCallbacks = {
 
   currentUserClickCallback?: () => void; // What should happen when a user clicks their own avatar/name in the comment section (suggestion: direct them to their profile). Defaults to no action
 
-  otherUserClickCallback?: (userId: string) => void; // What should happen when a user clicks a different user's avatar/name/mention in the comment section (suggestion: direct them to that user's profile). Defaults to no action
+  otherUserClickCallback?: (
+    userId: string,
+    userForeignId: string | null
+  ) => void; // What should happen when a user clicks a different user's avatar/name/mention in the comment section (suggestion: direct them to that user's profile). Defaults to no action
 
   userCantBeMentionedCallback?: () => void; // What should happen when a user tries to mention another user but that other user has no username set, which is a pre-requisite to being mentioned. Defaults to basic alert message.s
 };

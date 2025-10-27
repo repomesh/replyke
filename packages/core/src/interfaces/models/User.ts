@@ -54,7 +54,6 @@ export type AuthUser = Pick<
 // This is used in some places where we need to return a user object to the client, either of themselves or of someone else.
 export type User = Omit<
   UserFull,
-  | "foreignId"
   | "email"
   | "secureMetadata"
   | "isVerified"

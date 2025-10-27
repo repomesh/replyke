@@ -147,7 +147,10 @@ const Comment = React.memo(
                 if (comment.user.id === user?.id) {
                   callbacks?.currentUserClickCallback?.();
                 } else {
-                  callbacks?.otherUserClickCallback?.(comment.user.id);
+                  callbacks?.otherUserClickCallback?.(
+                    comment.user.id,
+                    comment.user.foreignId
+                  );
                 }
               }}
             >
@@ -179,7 +182,10 @@ const Comment = React.memo(
                     if (comment.user.id === user?.id) {
                       callbacks?.currentUserClickCallback?.();
                     } else {
-                      callbacks?.otherUserClickCallback?.(comment.user.id);
+                      callbacks?.otherUserClickCallback?.(
+                        comment.user.id,
+                        comment.user.foreignId
+                      );
                     }
                   }}
                   style={{

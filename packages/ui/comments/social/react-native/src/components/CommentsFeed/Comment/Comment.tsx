@@ -161,7 +161,10 @@ const Comment = ({
               if (comment.user.id === user?.id) {
                 callbacks?.currentUserClickCallback?.();
               } else {
-                callbacks?.otherUserClickCallback?.(comment.user.id);
+                callbacks?.otherUserClickCallback?.(
+                  comment.user.id,
+                  comment.user.foreignId
+                );
               }
             }}
           >
@@ -178,7 +181,10 @@ const Comment = ({
                   if (comment.user.id === user?.id) {
                     callbacks?.currentUserClickCallback?.();
                   } else {
-                    callbacks?.otherUserClickCallback?.(comment.user.id);
+                    callbacks?.otherUserClickCallback?.(
+                      comment.user.id,
+                      comment.user.foreignId
+                    );
                   }
                 }}
               >
