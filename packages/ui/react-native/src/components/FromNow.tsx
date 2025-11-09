@@ -1,6 +1,25 @@
 import moment from "moment";
 import { Text } from "react-native";
-import { FontWeight } from "@replyke/ui-core";
+
+export type FontWeight =
+  | 100
+  | 200
+  | 300
+  | 400
+  | 500
+  | 600
+  | 700
+  | 800
+  | 900
+  | "100"
+  | "200"
+  | "300"
+  | "400"
+  | "500"
+  | "600"
+  | "700"
+  | "800"
+  | "900";
 
 function formatTime(time: Date | string, justNowText: string): string {
   const now = new Date();
