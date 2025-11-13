@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { Entity } from "../../interfaces/models/Entity";
-import { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
+import { EntityListSortByOptions, SortDirection } from "../../interfaces/EntityListSortByOptions";
 import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -24,6 +24,7 @@ export interface EntityListState {
 
   // Filter/sort state (user-controlled filters only)
   sortBy: EntityListSortByOptions;
+  sortDir: SortDirection | null;
   timeFrame: TimeFrame | null;
   userId: string | null;
   followedOnly: boolean;
@@ -55,6 +56,7 @@ const createDefaultEntityListState = (): EntityListState => ({
 
   // Default filters (user-controlled only)
   sortBy: "hot",
+  sortDir: null,
   timeFrame: null,
   userId: null,
   followedOnly: false,
@@ -74,6 +76,7 @@ const initialState: EntityListsState = {
 // Entity list filters interface - used by both Redux slice and hooks
 export interface EntityListFilters {
   sortBy?: EntityListSortByOptions;
+  sortDir?: SortDirection | null;
   timeFrame?: TimeFrame | null;
   userId?: string | null;
   followedOnly?: boolean;
@@ -169,6 +172,7 @@ export const entityListsSlice = createSlice({
         const defaultState = createDefaultEntityListState();
         // Reset all filter properties to defaults
         list.sortBy = defaultState.sortBy;
+        list.sortDir = defaultState.sortDir;
         list.timeFrame = defaultState.timeFrame;
         list.userId = defaultState.userId;
         list.followedOnly = defaultState.followedOnly;
@@ -448,6 +452,7 @@ export const selectEntityListFilters = createSelector(
 
     return {
       sortBy: entityList.sortBy,
+      sortDir: entityList.sortDir,
       timeFrame: entityList.timeFrame,
       userId: entityList.userId,
       followedOnly: entityList.followedOnly,

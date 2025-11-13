@@ -167,7 +167,14 @@ export type { List } from "./interfaces/models/List";
 export type { Comment, GifData } from "./interfaces/models/Comment";
 export type { Mention } from "./interfaces/models/Mention";
 export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
-export type { EntityListSortByOptions } from "./interfaces/EntityListSortByOptions";
+export type {
+  EntityListSortByOptions,
+  SortDirection,
+} from "./interfaces/EntityListSortByOptions";
+export {
+  validateSortBy,
+  validateMetadataPropertyName,
+} from "./interfaces/EntityListSortByOptions";
 export type { TimeFrame } from "./interfaces/TimeFrame";
 export type {
   Connection,

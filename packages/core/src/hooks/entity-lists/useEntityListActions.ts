@@ -17,7 +17,7 @@ import {
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import useProject from "../projects/useProject";
 import type { Entity } from "../../interfaces/models/Entity";
-import type { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
+import type { EntityListSortByOptions, SortDirection } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
 import type { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import type { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -29,6 +29,7 @@ import type { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFi
 interface FetchEntitiesOptions {
   page: number;
   sortBy: EntityListSortByOptions;
+  sortDir?: SortDirection | null;
   timeFrame?: TimeFrame | null;
   userId?: string | null;
   sourceId?: string | null;
@@ -98,6 +99,7 @@ export function useEntityListActions() {
           projectId,
           page: options.page,
           sortBy: options.sortBy,
+          sortDir: options.sortDir,
           timeFrame: options.timeFrame,
           userId: options.userId,
           sourceId: options.sourceId,

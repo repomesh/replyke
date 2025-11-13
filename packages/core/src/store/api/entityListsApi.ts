@@ -1,6 +1,7 @@
 import { baseApi } from "./baseApi";
 import type { Entity } from "../../interfaces/models/Entity";
-import type { EntityListSortByOptions } from "../../interfaces/EntityListSortByOptions";
+import type { EntityListSortByOptions, SortDirection } from "../../interfaces/EntityListSortByOptions";
+import { validateSortBy } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
 import type { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import type { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -74,6 +75,7 @@ interface FetchEntitiesParams {
   page: number;
   limit: number;
   sortBy: EntityListSortByOptions | null;
+  sortDir?: SortDirection | null;
   timeFrame?: TimeFrame | null;
   sourceId?: string | null;
   userId?: string | null;
@@ -132,6 +134,7 @@ export const entityListsApi = baseApi.injectEndpoints({
         page,
         limit,
         sortBy,
+        sortDir,
         timeFrame,
         sourceId,
         userId,
@@ -147,6 +150,9 @@ export const entityListsApi = baseApi.injectEndpoints({
           throw new Error("sortBy is required for fetching entities");
         }
 
+        // Validate sortBy (especially for metadata.* patterns)
+        validateSortBy(sortBy);
+
         return {
           url: `/${projectId}/entities`,
           method: "GET",
@@ -157,6 +163,7 @@ export const entityListsApi = baseApi.injectEndpoints({
             userId,
             sourceId,
             sortBy,
+            sortDir,
             timeFrame,
             keywordsFilters,
             metadataFilters,
