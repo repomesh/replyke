@@ -1,5 +1,7 @@
 export type SortDirection = "asc" | "desc";
 
+export type SortType = "auto" | "numeric" | "text" | "boolean" | "timestamp";
+
 export type EntityListSortByOptions =
   | "top"
   | "hot"
@@ -37,5 +39,20 @@ export function validateSortBy(sortBy: string): void {
       );
     }
     validateMetadataPropertyName(propertyName);
+  }
+}
+
+/**
+ * Validates a sortType value.
+ *
+ * @param sortType - The sortType value to validate
+ * @throws Error if sortType is not a valid type
+ */
+export function validateSortType(sortType: string): void {
+  const validTypes: SortType[] = ["auto", "numeric", "text", "boolean", "timestamp"];
+  if (!validTypes.includes(sortType as SortType)) {
+    throw new Error(
+      `Invalid sortType: '${sortType}'. Must be one of: ${validTypes.join(", ")}`
+    );
   }
 }

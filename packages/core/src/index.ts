@@ -170,10 +170,12 @@ export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
 export type {
   EntityListSortByOptions,
   SortDirection,
+  SortType,
 } from "./interfaces/EntityListSortByOptions";
 export {
   validateSortBy,
   validateMetadataPropertyName,
+  validateSortType,
 } from "./interfaces/EntityListSortByOptions";
 export type { TimeFrame } from "./interfaces/TimeFrame";
 export type {

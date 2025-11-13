@@ -24,7 +24,7 @@ import useInfusedData from "./useInfusedData";
 import useEntityListActions from "./useEntityListActions";
 
 import { Entity } from "../../interfaces/models/Entity";
-import { EntityListSortByOptions, SortDirection } from "../../interfaces/EntityListSortByOptions";
+import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -50,6 +50,7 @@ export interface UseEntityListValues {
 
   sortBy: EntityListSortByOptions | null;
   sortDir: SortDirection | null;
+  sortType: SortType | null;
   timeFrame: TimeFrame | null;
   sourceId: string | null;
   userId: string | null;
@@ -159,6 +160,7 @@ function useEntityList({
         const currentState = entityList || {
           sortBy: "hot",
           sortDir: null,
+          sortType: "auto",
           timeFrame: null,
           userId: null,
           followedOnly: false,
@@ -176,6 +178,7 @@ function useEntityList({
           // Reset only filter properties to defaults, keep config and state properties as-is
           finalFilters.sortBy = "hot";
           finalFilters.sortDir = null;
+          finalFilters.sortType = "auto";
           finalFilters.timeFrame = null;
           finalFilters.userId = null;
           finalFilters.followedOnly = false;
@@ -205,6 +208,7 @@ function useEntityList({
             // User-controlled filters from Redux state + new filters
             sortBy: finalFilters.sortBy,
             sortDir: finalFilters.sortDir,
+            sortType: finalFilters.sortType,
             timeFrame: finalFilters.timeFrame,
             userId: finalFilters.userId,
             followedOnly: finalFilters.followedOnly,
@@ -273,6 +277,7 @@ function useEntityList({
         followedOnly: entityList.followedOnly,
         sortBy: entityList.sortBy,
         sortDir: entityList.sortDir,
+        sortType: entityList.sortType,
         timeFrame: entityList.timeFrame,
         locationFilters: entityList.locationFilters,
         keywordsFilters: entityList.keywordsFilters,
@@ -388,6 +393,7 @@ function useEntityList({
 
       sortBy: filters?.sortBy || null,
       sortDir: filters?.sortDir || null,
+      sortType: filters?.sortType || null,
       timeFrame: filters?.timeFrame || null,
       sourceId: config?.sourceId || null,
       userId: filters?.userId || null,
