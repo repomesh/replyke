@@ -21,9 +21,7 @@ function useProjectData({
   useEffect(() => {
     const handleFetchProject = async () => {
       try {
-        const response = await axios.get(
-          `https://api.replyke.com/internal/projects/${projectId}/lean`
-        );
+        const response = await axios.get(`/${projectId}/projects/lean`);
 
         const fetchedProject = response.data as Project;
         setProject(fetchedProject);
