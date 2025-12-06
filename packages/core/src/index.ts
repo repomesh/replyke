@@ -20,6 +20,7 @@ export {
   ReplykeProvider,
   EntityProvider,
   CommentSectionProvider,
+  SpaceProvider,
 } from "./context";
 
 // -- projects
@@ -83,6 +84,41 @@ export {
   type EntityListFilters,
   type EntityListFetchOptions,
 } from "./hooks/entity-lists";
+
+// -- spaces
+export {
+  useSpace,
+  useSpaceData,
+  useFetchSpace,
+  useFetchSpaceByShortId,
+  useFetchSpaceBySlug,
+  useFetchSpaceBreadcrumb,
+  useFetchSpaceChildren,
+  useCreateSpace,
+  useUpdateSpace,
+  useDeleteSpace,
+  useJoinSpace,
+  useLeaveSpace,
+  useFetchSpaceMembers,
+  useFetchMySpaces,
+  useUpdateMemberRole,
+  useApproveMember,
+  useDeclineMember,
+  useRemoveMember,
+  useSpacePermissions,
+  type UseSpaceDataProps,
+  type UseSpaceDataValues,
+  type CreateSpaceProps,
+  type UpdateSpaceProps,
+} from "./hooks/spaces";
+
+// -- space lists
+export {
+  useSpaceList,
+  useSpaceListActions,
+  type UseSpaceListProps,
+  type UseSpaceListValues,
+} from "./hooks/space-lists";
 
 // -- comments
 export {
@@ -166,6 +202,24 @@ export type { Entity } from "./interfaces/models/Entity";
 export type { List } from "./interfaces/models/List";
 export type { Comment, GifData } from "./interfaces/models/Comment";
 export type { Mention } from "./interfaces/models/Mention";
+export type {
+  Space,
+  SpaceDetailed,
+  SpacePreview,
+  SpaceUserRole,
+  SpaceVisibility,
+  PostingPermission,
+} from "./interfaces/models/Space";
+export type {
+  SpaceMember,
+  SpaceMemberRole,
+  SpaceMemberStatus,
+} from "./interfaces/models/SpaceMember";
+export type {
+  SpaceListSortByOptions,
+  SpaceListFilters,
+} from "./interfaces/SpaceListSortByOptions";
+export type { SpaceBreadcrumb } from "./interfaces/SpaceBreadcrumb";
 export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
 export type {
   EntityListSortByOptions,

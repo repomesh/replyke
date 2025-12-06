@@ -5,6 +5,7 @@ import authReducer from "./slices/authSlice";
 import listsReducer from "./slices/listsSlice";
 import { userReducer } from "./slices/userSlice";
 import entityListsReducer from "./slices/entityListsSlice";
+import spaceListsReducer from "./slices/spaceListsSlice";
 
 // Combine all reducers
 export const rootReducer = combineReducers({
@@ -17,6 +18,7 @@ export const rootReducer = combineReducers({
   lists: listsReducer,
   user: userReducer,
   entityLists: entityListsReducer,
+  spaceLists: spaceListsReducer,
 
   // Future slices will be added here:
   // entities: entitiesSlice.reducer,

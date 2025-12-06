@@ -43,6 +43,7 @@ export type AuthUser = Pick<
   | "isVerified"
   | "isActive"
   | "lastActive"
+  | "createdAt"
 > & {
   suspensions: {
     reason: string | null;
