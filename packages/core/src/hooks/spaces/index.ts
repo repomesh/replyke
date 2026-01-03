@@ -9,6 +9,7 @@ export { default as useFetchSpaceByShortId } from "./useFetchSpaceByShortId";
 export { default as useFetchSpaceBySlug } from "./useFetchSpaceBySlug";
 export { default as useFetchSpaceBreadcrumb } from "./useFetchSpaceBreadcrumb";
 export { default as useFetchSpaceChildren } from "./useFetchSpaceChildren";
+export { default as useFetchManySpaces } from "./useFetchManySpaces";
 
 // CRUD hooks
 export { default as useCreateSpace } from "./useCreateSpace";
@@ -31,3 +32,4 @@ export { default as useRemoveMember } from "./useRemoveMember";
 
 // Helper hooks
 export { default as useSpacePermissions } from "./useSpacePermissions";
+export { default as useCheckSlugAvailability } from "./useCheckSlugAvailability";

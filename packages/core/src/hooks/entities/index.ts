@@ -8,6 +8,7 @@ export { default as useEntityVotes } from "./useEntityVotes";
 export { default as useFetchEntity } from "./useFetchEntity";
 export { default as useFetchEntityByForeignId } from "./useFetchEntityByForeignId";
 export { default as useFetchEntityByShortId } from "./useFetchEntityByShortId";
+export { default as useFetchManyEntities } from "./useFetchManyEntities";
 export { default as useIncrementEntityViews } from "./useIncrementEntityViews";
 export { default as useRemoveEntityDownvote } from "./useRemoveEntityDownvote";
 export { default as useRemoveEntityUpvote } from "./useRemoveEntityUpvote";
