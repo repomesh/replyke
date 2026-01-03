@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Space } from "../../interfaces/models/Space";
+import { Space, PaginatedResponse } from "../../interfaces/models/Space";
 import axios from "../../config/axios";
 
 interface FetchSpaceChildrenParams {
@@ -26,7 +26,7 @@ function useFetchSpaceChildren() {
         `/${projectId}/spaces/${spaceId}/children?page=${page}&limit=${limit}`
       );
 
-      return response.data as Space[];
+      return response.data as PaginatedResponse<Space>;
     },
     [projectId]
   );

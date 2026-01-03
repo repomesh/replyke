@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceMember, SpaceMemberRole } from "../../interfaces/models/SpaceMember";
-import axios from "../../config/axios";
+import { SpaceMemberRole } from "../../interfaces/models/SpaceMember";
+import { UpdateMemberRoleResponse } from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 interface UpdateMemberRoleParams {
   spaceId: string;
@@ -11,6 +12,7 @@ interface UpdateMemberRoleParams {
 
 function useUpdateMemberRole() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const updateMemberRole = useCallback(
     async ({ spaceId, memberId, role }: UpdateMemberRoleParams) => {
@@ -27,7 +29,7 @@ function useUpdateMemberRole() {
         { role }
       );
 
-      return response.data as SpaceMember;
+      return response.data as UpdateMemberRoleResponse;
     },
     [projectId]
   );
