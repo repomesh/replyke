@@ -68,6 +68,7 @@ export {
   useFetchEntity,
   useFetchEntityByForeignId,
   useFetchEntityByShortId,
+  useFetchManyEntities,
   useIncrementEntityViews,
   useRemoveEntityDownvote,
   useRemoveEntityUpvote,
@@ -94,6 +95,8 @@ export {
   useFetchSpaceBySlug,
   useFetchSpaceBreadcrumb,
   useFetchSpaceChildren,
+  useFetchManySpaces,
+  useCheckSlugAvailability,
   useCreateSpace,
   useUpdateSpace,
   useDeleteSpace,
@@ -182,6 +185,9 @@ export {
 
 // -- reports
 export { useCreateReport } from "./hooks/reports";
+export { useFetchSpaceReports } from "./hooks/reports";
+export { useHandleSpaceEntityReport } from "./hooks/reports";
+export { useHandleSpaceCommentReport } from "./hooks/reports";
 
 // -- general
 export { useGetMetadata } from "./hooks/utils";
@@ -206,14 +212,26 @@ export type {
   Space,
   SpaceDetailed,
   SpacePreview,
-  SpaceUserRole,
-  SpaceVisibility,
+  SpaceMemberPermissions,
+  ReadingPermission,
   PostingPermission,
+  PaginationMeta,
+  PaginatedResponse,
+  MySpaceItem,
+  MySpacesResponse,
+  JoinSpaceResponse,
+  LeaveSpaceResponse,
+  UpdateMemberRoleResponse,
+  ApproveMemberResponse,
+  DeclineMemberResponse,
+  DeleteSpaceResponse,
 } from "./interfaces/models/Space";
 export type {
   SpaceMember,
   SpaceMemberRole,
   SpaceMemberStatus,
+  SpaceMemberWithUser,
+  SpaceMembersResponse,
 } from "./interfaces/models/SpaceMember";
 export type {
   SpaceListSortByOptions,

@@ -13,7 +13,6 @@ import useSpacePermissions from "./useSpacePermissions";
 import { SpaceDetailed, SpacePreview } from "../../interfaces/models/Space";
 import { SpaceMemberStatus } from "../../interfaces/models/SpaceMember";
 import { handleError } from "../../utils/handleError";
-import { useUser } from "../user";
 
 export interface UseSpaceDataProps {
   space?: SpaceDetailed;
@@ -60,7 +59,6 @@ function useSpaceData({
   slug,
   space: spaceProp,
 }: UseSpaceDataProps): UseSpaceDataValues {
-  const { user } = useUser();
   const [space, setSpace] = useState<SpaceDetailed | undefined | null>(spaceProp);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,8 +81,9 @@ function useSpaceData({
 
   // Compute permissions
   const permissions = useSpacePermissions({
-    userRole: space?.userRole,
+    memberPermissions: space?.memberPermissions,
     postingPermission: space?.postingPermission || "members",
+    readingPermission: space?.readingPermission || "anyone",
   });
 
   // Handle space update
@@ -124,20 +123,24 @@ function useSpaceData({
     if (!space) return;
 
     try {
-      const member = await joinSpaceHook({ spaceId: space.id });
+      const response = await joinSpaceHook({ spaceId: space.id });
+      const member = response.membership;
 
-      // Update space with new userRole and member count
+      // Update space with new memberPermissions and member count
+      // Note: When joining, role is always "member", status is "pending" or "active"
       setSpace((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           membersCount: prev.membersCount + 1,
-          userRole: {
-            role: member.role,
+          memberPermissions: {
+            isAdmin: false,
+            isModerator: false,
+            isMember: member.status === "active",
             status: member.status,
             canPost: member.status === "active",
-            canModerate: member.role === "moderator" || member.role === "admin",
-            isAdmin: member.role === "admin",
+            canModerate: false,
+            canRead: true,
           },
         };
       });
@@ -154,13 +157,13 @@ function useSpaceData({
     try {
       await leaveSpaceHook({ spaceId: space.id });
 
-      // Update space to remove userRole and decrement member count
+      // Update space to remove memberPermissions and decrement member count
       setSpace((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           membersCount: Math.max(0, prev.membersCount - 1),
-          userRole: null,
+          memberPermissions: null,
         };
       });
     } catch (err) {
@@ -266,7 +269,7 @@ function useSpaceData({
     isModerator: permissions.isModerator,
     canPost: permissions.canPost,
     canModerate: permissions.canModerate,
-    membershipStatus: space?.userRole?.status || null,
+    membershipStatus: space?.memberPermissions?.status || null,
     isPending: permissions.isPending,
     isBanned: permissions.isBanned,
 

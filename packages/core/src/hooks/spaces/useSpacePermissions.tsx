@@ -1,9 +1,14 @@
 import { useMemo } from "react";
-import { SpaceUserRole, PostingPermission } from "../../interfaces/models/Space";
+import {
+  SpaceMemberPermissions,
+  PostingPermission,
+  ReadingPermission,
+} from "../../interfaces/models/Space";
 
 interface UseSpacePermissionsProps {
-  userRole: SpaceUserRole | null | undefined;
+  memberPermissions: SpaceMemberPermissions | null | undefined;
   postingPermission: PostingPermission;
+  readingPermission?: ReadingPermission;
 }
 
 interface UseSpacePermissionsValues {
@@ -12,16 +17,18 @@ interface UseSpacePermissionsValues {
   isModerator: boolean;
   canPost: boolean;
   canModerate: boolean;
+  canRead: boolean;
   isPending: boolean;
   isBanned: boolean;
 }
 
 function useSpacePermissions({
-  userRole,
+  memberPermissions,
   postingPermission,
+  readingPermission = "anyone",
 }: UseSpacePermissionsProps): UseSpacePermissionsValues {
   return useMemo(() => {
-    if (!userRole) {
+    if (!memberPermissions) {
       // User is not a member
       return {
         isMember: false,
@@ -29,16 +36,17 @@ function useSpacePermissions({
         isModerator: false,
         canPost: postingPermission === "anyone",
         canModerate: false,
+        canRead: readingPermission === "anyone",
         isPending: false,
         isBanned: false,
       };
     }
 
-    const isAdmin = userRole.role === "admin";
-    const isModerator = userRole.role === "moderator" || isAdmin;
-    const isActiveMember = userRole.status === "active";
-    const isPending = userRole.status === "pending";
-    const isBanned = userRole.status === "banned";
+    const isAdmin = memberPermissions.isAdmin;
+    const isModerator = memberPermissions.isModerator;
+    const isActiveMember = memberPermissions.status === "active";
+    const isPending = memberPermissions.status === "pending";
+    const isBanned = memberPermissions.status === "banned";
 
     let canPost = false;
     if (postingPermission === "anyone") {
@@ -49,16 +57,23 @@ function useSpacePermissions({
       canPost = isAdmin && isActiveMember && !isBanned;
     }
 
+    // canRead logic: if readingPermission is "members", only active members can read
+    let canRead = true;
+    if (readingPermission === "members") {
+      canRead = isActiveMember && !isBanned;
+    }
+
     return {
-      isMember: true,
+      isMember: memberPermissions.isMember,
       isAdmin,
       isModerator,
       canPost,
       canModerate: isModerator && isActiveMember && !isBanned,
+      canRead,
       isPending,
       isBanned,
     };
-  }, [userRole, postingPermission]);
+  }, [memberPermissions, postingPermission, readingPermission]);
 }
 
 export default useSpacePermissions;
