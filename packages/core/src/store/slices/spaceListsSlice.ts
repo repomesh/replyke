@@ -17,7 +17,7 @@ export interface SpaceListState {
   // Filter/sort state (user-controlled filters only)
   sortBy: SpaceListSortByOptions;
   search: string | null;
-  visibility: "public" | "private" | null;
+  readingPermission: "anyone" | "members" | null;
   memberOf: boolean;
   parentSpaceId: string | null;
 }
@@ -42,7 +42,7 @@ const createDefaultSpaceListState = (): SpaceListState => ({
   // Default filters (user-controlled only)
   sortBy: "newest",
   search: null,
-  visibility: null,
+  readingPermission: null,
   memberOf: false,
   parentSpaceId: undefined as any, // Will be set when fetchSpaces is called
 });
@@ -56,7 +56,7 @@ const initialState: SpaceListsState = {
 export interface SpaceListFilters {
   sortBy?: SpaceListSortByOptions;
   search?: string | null;
-  visibility?: "public" | "private" | null;
+  readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
 }
@@ -140,7 +140,7 @@ export const spaceListsSlice = createSlice({
         // Reset all filter properties to defaults
         list.sortBy = defaultState.sortBy;
         list.search = defaultState.search;
-        list.visibility = defaultState.visibility;
+        list.readingPermission = defaultState.readingPermission;
         list.memberOf = defaultState.memberOf;
         list.parentSpaceId = defaultState.parentSpaceId;
       }
@@ -346,7 +346,7 @@ export const selectSpaceListFilters = createSelector(
     return {
       sortBy: spaceList.sortBy,
       search: spaceList.search,
-      visibility: spaceList.visibility,
+      readingPermission: spaceList.readingPermission,
       memberOf: spaceList.memberOf,
       parentSpaceId: spaceList.parentSpaceId,
     };

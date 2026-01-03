@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceDetailed, SpaceVisibility, PostingPermission } from "../../interfaces/models/Space";
-import axios from "../../config/axios";
+import {
+  SpaceDetailed,
+  ReadingPermission,
+  PostingPermission,
+} from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 export interface UpdateSpaceProps {
   spaceId: string;
@@ -11,7 +15,7 @@ export interface UpdateSpaceProps {
     description: string | null;
     avatar: string | null;
     banner: string | null;
-    visibility: SpaceVisibility;
+    readingPermission: ReadingPermission;
     postingPermission: PostingPermission;
     requireJoinApproval: boolean;
     metadata: Record<string, any>;
@@ -20,6 +24,7 @@ export interface UpdateSpaceProps {
 
 function useUpdateSpace() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const updateSpace = useCallback(
     async ({ spaceId, update }: UpdateSpaceProps) => {

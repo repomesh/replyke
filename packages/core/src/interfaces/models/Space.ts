@@ -1,15 +1,32 @@
-export type SpaceVisibility = "public" | "private";
+export type ReadingPermission = "anyone" | "members";
 export type PostingPermission = "anyone" | "members" | "admins";
 
 export type SpaceMemberRole = "admin" | "moderator" | "member";
 export type SpaceMemberStatus = "pending" | "active" | "banned" | "rejected";
 
-export interface SpaceUserRole {
-  role: SpaceMemberRole;
-  status: SpaceMemberStatus;
+export interface SpaceMemberPermissions {
+  isAdmin: boolean;
+  isModerator: boolean;
+  isMember: boolean;
+  status: "pending" | "active" | "banned" | null;
   canPost: boolean;
   canModerate: boolean;
-  isAdmin: boolean;
+  canRead: boolean;
+}
+
+// Pagination metadata structure
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalItems: number;
+  hasMore: boolean;
+}
+
+// Generic paginated response wrapper
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: PaginationMeta;
 }
 
 export interface SpacePreview {
@@ -18,7 +35,7 @@ export interface SpacePreview {
   name: string;
   slug: string | null;
   avatar: string | null;
-  visibility?: SpaceVisibility;
+  readingPermission?: ReadingPermission;
   parentSpaceId?: string | null;
   depth?: number;
 }
@@ -38,7 +55,7 @@ export interface Space {
 
   // Ownership & permissions
   userId: string;
-  visibility: SpaceVisibility;
+  readingPermission: ReadingPermission;
   postingPermission: PostingPermission;
   requireJoinApproval: boolean;
 
@@ -57,16 +74,88 @@ export interface Space {
   // Computed fields
   membersCount: number;
   childSpacesCount: number;
+  isMember?: boolean; // Optional: only present when user is authenticated
 }
 
 // Extended space with detailed information (returned from single space fetch endpoints)
 export interface SpaceDetailed extends Space {
-  // User's role and permissions in this space (always included when fetching single space)
-  userRole: SpaceUserRole | null;
+  // Current user's membership permissions in this space (always included when fetching single space)
+  memberPermissions: SpaceMemberPermissions | null;
 
   // Parent space information (always included, null if root space)
   parentSpace: SpacePreview | null;
 
   // Child spaces preview (always included, empty array if no children)
   childSpaces: SpacePreview[];
+}
+
+// My Spaces response types
+export interface MySpaceItem {
+  space: Space;
+  membership: {
+    membershipId: string;
+    role: SpaceMemberRole;
+    status: SpaceMemberStatus;
+    joinedAt: Date;
+  };
+}
+
+export type MySpacesResponse = PaginatedResponse<MySpaceItem>;
+
+// Mutation response types
+export interface JoinSpaceResponse {
+  message: string;
+  membership: {
+    id: string;
+    spaceId: string;
+    userId: string;
+    role: "member";
+    status: "pending" | "active";
+    joinedAt: Date;
+  };
+}
+
+export interface LeaveSpaceResponse {
+  message: string;
+}
+
+export interface UpdateMemberRoleResponse {
+  message: string;
+  membership: {
+    id: string;
+    role: SpaceMemberRole;
+    status: string;
+    joinedAt: Date;
+    userId: string;
+  };
+}
+
+export interface ApproveMemberResponse {
+  message: string;
+  membership: {
+    id: string;
+    status: "active";
+    joinedAt: Date;
+  };
+}
+
+export interface DeclineMemberResponse {
+  message: string;
+  membership: {
+    id: string;
+    status: "rejected";
+  };
+}
+
+export interface DeleteSpaceResponse {
+  message: string;
+  deletedSpace: {
+    id: string;
+    name: string;
+  };
+  counts: {
+    entities: number;
+    members: number;
+    childSpaces: number;
+  };
 }

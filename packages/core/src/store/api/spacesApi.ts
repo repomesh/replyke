@@ -13,7 +13,7 @@ interface CreateSpaceParams {
   description?: string | null;
   avatar?: string | null;
   banner?: string | null;
-  visibility?: "public" | "private";
+  readingPermission?: "anyone" | "members";
   postingPermission?: "anyone" | "members" | "admins";
   requireJoinApproval?: boolean;
   metadata?: Record<string, any>;
@@ -26,7 +26,7 @@ interface FetchSpacesParams {
   limit?: number;
   sortBy?: SpaceListSortByOptions;
   search?: string | null;
-  visibility?: "public" | "private" | null;
+  readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
 }
@@ -55,7 +55,7 @@ interface UpdateSpaceParams {
     description: string | null;
     avatar: string | null;
     banner: string | null;
-    visibility: "public" | "private";
+    readingPermission: "anyone" | "members";
     postingPermission: "anyone" | "members" | "admins";
     requireJoinApproval: boolean;
     metadata: Record<string, any>;
@@ -167,7 +167,7 @@ export const spacesApi = baseApi.injectEndpoints({
         if (params.limit !== undefined) queryParams.append("limit", params.limit.toString());
         if (params.sortBy) queryParams.append("sortBy", params.sortBy);
         if (params.search) queryParams.append("search", params.search);
-        if (params.visibility) queryParams.append("visibility", params.visibility);
+        if (params.readingPermission) queryParams.append("readingPermission", params.readingPermission);
         if (params.memberOf !== undefined) queryParams.append("memberOf", params.memberOf.toString());
         if (params.parentSpaceId !== undefined) {
           // Convert null to "null" string for API
@@ -185,7 +185,7 @@ export const spacesApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Fetch single space by ID (returns detailed space with userRole, parentSpace, childSpaces)
+    // Fetch single space by ID (returns detailed space with memberPermissions, parentSpace, childSpaces)
     fetchSpace: builder.query<SpaceDetailed, FetchSpaceParams>({
       query: ({ projectId, spaceId }) => ({
         url: `/${projectId}/spaces/${spaceId}`,
@@ -305,14 +305,14 @@ export const spacesApi = baseApi.injectEndpoints({
         url: `/${projectId}/spaces/${spaceId}/join`,
         method: "POST",
       }),
-      // Optimistically update member count and user role
+      // Optimistically update member count and member permissions
       async onQueryStarted(
         { projectId, spaceId },
         { dispatch, queryFulfilled }
       ) {
         const patches: any[] = [];
 
-        // Update space query to increment member count and add userRole
+        // Update space query to increment member count and add memberPermissions
         patches.push(
           dispatch(
             spacesApi.util.updateQueryData(
@@ -320,7 +320,7 @@ export const spacesApi = baseApi.injectEndpoints({
               { projectId, spaceId },
               (draft) => {
                 draft.membersCount += 1;
-                // Note: userRole will be updated with actual data from response
+                // Note: memberPermissions will be updated with actual data from response
               }
             )
           )
@@ -335,12 +335,16 @@ export const spacesApi = baseApi.injectEndpoints({
               "fetchSpace",
               { projectId, spaceId },
               (draft) => {
-                draft.userRole = {
-                  role: member.role,
-                  status: member.status,
+                // Filter out "rejected" status as it's not valid for memberPermissions
+                const status = member.status === "rejected" ? null : member.status;
+                draft.memberPermissions = {
+                  isAdmin: member.role === "admin",
+                  isModerator: member.role === "moderator" || member.role === "admin",
+                  isMember: member.status === "active",
+                  status,
                   canPost: member.status === "active",
                   canModerate: member.role === "moderator" || member.role === "admin",
-                  isAdmin: member.role === "admin",
+                  canRead: true,
                 };
               }
             )
@@ -362,14 +366,14 @@ export const spacesApi = baseApi.injectEndpoints({
         url: `/${projectId}/spaces/${spaceId}/leave`,
         method: "DELETE",
       }),
-      // Optimistically update member count and user role
+      // Optimistically update member count and member permissions
       async onQueryStarted(
         { projectId, spaceId },
         { dispatch, queryFulfilled }
       ) {
         const patches: any[] = [];
 
-        // Update space query to decrement member count and remove userRole
+        // Update space query to decrement member count and remove memberPermissions
         patches.push(
           dispatch(
             spacesApi.util.updateQueryData(
@@ -377,7 +381,7 @@ export const spacesApi = baseApi.injectEndpoints({
               { projectId, spaceId },
               (draft) => {
                 draft.membersCount = Math.max(0, draft.membersCount - 1);
-                draft.userRole = null;
+                draft.memberPermissions = null;
               }
             )
           )

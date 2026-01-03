@@ -16,14 +16,18 @@ import {
 } from "../../store/api/spacesApi";
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import useProject from "../projects/useProject";
-import type { Space, SpaceVisibility, PostingPermission } from "../../interfaces/models/Space";
+import type {
+  Space,
+  ReadingPermission,
+  PostingPermission,
+} from "../../interfaces/models/Space";
 import type { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
 interface FetchSpacesOptions {
   page: number;
   sortBy: SpaceListSortByOptions;
   search?: string | null;
-  visibility?: "public" | "private" | null;
+  readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
   limit: number;
@@ -35,7 +39,7 @@ interface CreateSpaceOptions {
   description?: string | null;
   avatar?: string | null;
   banner?: string | null;
-  visibility?: SpaceVisibility;
+  readingPermission?: ReadingPermission;
   postingPermission?: PostingPermission;
   requireJoinApproval?: boolean;
   metadata?: Record<string, any>;
@@ -81,7 +85,7 @@ export function useSpaceListActions() {
           page: options.page,
           sortBy: options.sortBy,
           search: options.search,
-          visibility: options.visibility,
+          readingPermission: options.readingPermission,
           memberOf: options.memberOf,
           parentSpaceId: options.parentSpaceId,
           limit: options.limit,

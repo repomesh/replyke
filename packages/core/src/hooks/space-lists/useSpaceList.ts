@@ -22,7 +22,11 @@ import {
 
 import useSpaceListActions from "./useSpaceListActions";
 
-import { Space, SpaceVisibility, PostingPermission } from "../../interfaces/models/Space";
+import {
+  Space,
+  ReadingPermission,
+  PostingPermission,
+} from "../../interfaces/models/Space";
 import { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
 import { handleError } from "../../utils/handleError";
@@ -39,7 +43,7 @@ export interface UseSpaceListValues {
   // Current filters
   sortBy: SpaceListSortByOptions | null;
   search: string | null;
-  visibility: "public" | "private" | null;
+  readingPermission: "anyone" | "members" | null;
   memberOf: boolean;
   parentSpaceId: string | null;
 
@@ -56,7 +60,7 @@ export interface UseSpaceListValues {
     description?: string | null;
     avatar?: string | null;
     banner?: string | null;
-    visibility?: SpaceVisibility;
+    readingPermission?: ReadingPermission;
     postingPermission?: PostingPermission;
     requireJoinApproval?: boolean;
     metadata?: Record<string, any>;
@@ -133,7 +137,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         const currentState = spaceList || {
           sortBy: "newest",
           search: null,
-          visibility: null,
+          readingPermission: null,
           memberOf: false,
           parentSpaceId: null,
         };
@@ -143,7 +147,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         if (options?.resetUnspecified) {
           finalFilters.sortBy = "newest";
           finalFilters.search = null;
-          finalFilters.visibility = null;
+          finalFilters.readingPermission = null;
           finalFilters.memberOf = false;
           finalFilters.parentSpaceId = null;
         }
@@ -166,7 +170,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
             // User-controlled filters from Redux state + new filters
             sortBy: finalFilters.sortBy,
             search: finalFilters.search,
-            visibility: finalFilters.visibility,
+            readingPermission: finalFilters.readingPermission,
             memberOf: finalFilters.memberOf,
             parentSpaceId: finalFilters.parentSpaceId,
             // Configuration parameters from current config
@@ -225,7 +229,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         // User-controlled filters from Redux state
         sortBy: spaceList.sortBy,
         search: spaceList.search,
-        visibility: spaceList.visibility,
+        readingPermission: spaceList.readingPermission,
         memberOf: spaceList.memberOf,
         parentSpaceId: spaceList.parentSpaceId,
         // Configuration parameters from state (single source of truth)
@@ -250,7 +254,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
       description?: string | null;
       avatar?: string | null;
       banner?: string | null;
-      visibility?: SpaceVisibility;
+      readingPermission?: ReadingPermission;
       postingPermission?: PostingPermission;
       requireJoinApproval?: boolean;
       metadata?: Record<string, any>;
@@ -291,7 +295,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
 
       sortBy: filters?.sortBy || null,
       search: filters?.search || null,
-      visibility: filters?.visibility || null,
+      readingPermission: filters?.readingPermission || null,
       memberOf: filters?.memberOf || false,
       parentSpaceId: filters?.parentSpaceId || null,
 
