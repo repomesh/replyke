@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Space, SpaceVisibility, PostingPermission } from "../../interfaces/models/Space";
-import axios from "../../config/axios";
+import {
+  Space,
+  ReadingPermission,
+  PostingPermission,
+} from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 export interface CreateSpaceProps {
   name: string;
@@ -9,7 +13,7 @@ export interface CreateSpaceProps {
   description?: string | null;
   avatar?: string | null;
   banner?: string | null;
-  visibility?: SpaceVisibility;
+  readingPermission?: ReadingPermission;
   postingPermission?: PostingPermission;
   requireJoinApproval?: boolean;
   metadata?: Record<string, any>;
@@ -18,6 +22,7 @@ export interface CreateSpaceProps {
 
 function useCreateSpace() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const createSpace = useCallback(
     async (props: CreateSpaceProps) => {

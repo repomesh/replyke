@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import { SpaceDetailed } from "../../interfaces/models/Space";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchSpace() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const fetchSpace = useCallback(
     async ({ spaceId }: { spaceId: string }) => {

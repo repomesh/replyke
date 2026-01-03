@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceMember, SpaceMemberRole, SpaceMemberStatus } from "../../interfaces/models/SpaceMember";
-import axios from "../../config/axios";
+import {
+  SpaceMembersResponse,
+  SpaceMemberRole,
+  SpaceMemberStatus,
+} from "../../interfaces/models/SpaceMember";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 interface FetchSpaceMembersParams {
   spaceId: string;
@@ -13,6 +17,7 @@ interface FetchSpaceMembersParams {
 
 function useFetchSpaceMembers() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const fetchSpaceMembers = useCallback(
     async ({ spaceId, page, limit, role, status }: FetchSpaceMembersParams) => {
@@ -35,7 +40,7 @@ function useFetchSpaceMembers() {
 
       const response = await axios.get(url);
 
-      return response.data as SpaceMember[];
+      return response.data as SpaceMembersResponse;
     },
     [projectId]
   );

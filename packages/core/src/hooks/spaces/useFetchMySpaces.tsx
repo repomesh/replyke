@@ -1,20 +1,32 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Space } from "../../interfaces/models/Space";
-import axios from "../../config/axios";
+import { MySpacesResponse } from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
+
+interface FetchMySpacesParams {
+  page?: number;
+  limit?: number;
+  status?: "active" | "pending" | "banned";
+}
 
 function useFetchMySpaces() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
-  const fetchMySpaces = useCallback(async () => {
-    if (!projectId) {
-      throw new Error("No projectId available.");
-    }
+  const fetchMySpaces = useCallback(
+    async (params: FetchMySpacesParams = {}) => {
+      if (!projectId) {
+        throw new Error("No projectId available.");
+      }
 
-    const response = await axios.get(`/${projectId}/spaces/my-spaces`);
+      const response = await axios.get(`/${projectId}/spaces/my-spaces`, {
+        params,
+      });
 
-    return response.data as Space[];
-  }, [projectId]);
+      return response.data as MySpacesResponse;
+    },
+    [projectId]
+  );
 
   return fetchMySpaces;
 }

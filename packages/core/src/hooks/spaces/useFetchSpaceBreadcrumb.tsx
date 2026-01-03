@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import { SpaceBreadcrumb } from "../../interfaces/SpaceBreadcrumb";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchSpaceBreadcrumb() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const fetchSpaceBreadcrumb = useCallback(
     async ({ spaceId }: { spaceId: string }) => {

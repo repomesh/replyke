@@ -1,14 +1,19 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 interface RemoveMemberParams {
   spaceId: string;
   memberId: string;
 }
 
+interface RemoveMemberResponse {
+  message: string;
+}
+
 function useRemoveMember() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const removeMember = useCallback(
     async ({ spaceId, memberId }: RemoveMemberParams) => {
@@ -20,9 +25,11 @@ function useRemoveMember() {
         throw new Error("spaceId and memberId are required");
       }
 
-      await axios.delete(
+      const response = await axios.delete(
         `/${projectId}/spaces/${spaceId}/members/${memberId}`
       );
+
+      return response.data as RemoveMemberResponse;
     },
     [projectId]
   );

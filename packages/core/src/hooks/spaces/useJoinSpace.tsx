@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceMember } from "../../interfaces/models/SpaceMember";
-import axios from "../../config/axios";
+import { JoinSpaceResponse } from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useJoinSpace() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const joinSpace = useCallback(
     async ({ spaceId }: { spaceId: string }) => {
@@ -18,7 +19,7 @@ function useJoinSpace() {
 
       const response = await axios.post(`/${projectId}/spaces/${spaceId}/join`);
 
-      return response.data as SpaceMember;
+      return response.data as JoinSpaceResponse;
     },
     [projectId]
   );

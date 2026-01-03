@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceMember } from "../../interfaces/models/SpaceMember";
-import axios from "../../config/axios";
+import { ApproveMemberResponse } from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 interface ApproveMemberParams {
   spaceId: string;
@@ -10,6 +10,7 @@ interface ApproveMemberParams {
 
 function useApproveMember() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const approveMember = useCallback(
     async ({ spaceId, memberId }: ApproveMemberParams) => {
@@ -25,7 +26,7 @@ function useApproveMember() {
         `/${projectId}/spaces/${spaceId}/members/${memberId}/approve`
       );
 
-      return response.data as SpaceMember;
+      return response.data as ApproveMemberResponse;
     },
     [projectId]
   );

@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import axios from "../../config/axios";
+import { DeleteSpaceResponse } from "../../interfaces/models/Space";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useDeleteSpace() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const deleteSpace = useCallback(
     async ({ spaceId }: { spaceId: string }) => {
@@ -15,7 +17,9 @@ function useDeleteSpace() {
         throw new Error("Please pass a spaceId");
       }
 
-      await axios.delete(`/${projectId}/spaces/${spaceId}`);
+      const response = await axios.delete(`/${projectId}/spaces/${spaceId}`);
+
+      return response.data as DeleteSpaceResponse;
     },
     [projectId]
   );
