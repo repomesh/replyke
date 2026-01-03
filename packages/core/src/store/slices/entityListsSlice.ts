@@ -20,6 +20,7 @@ export interface EntityListState {
 
   // Configuration (set when fetchEntities is called)
   sourceId: string | null;
+  spaceId: string | null;
   limit: number;
 
   // Filter/sort state (user-controlled filters only)
@@ -53,6 +54,7 @@ const createDefaultEntityListState = (): EntityListState => ({
 
   // Default configuration
   sourceId: null,
+  spaceId: null,
   limit: 10,
 
   // Default filters (user-controlled only)
@@ -94,6 +96,7 @@ export interface EntityListFilters {
 // Configuration for entity list operations
 export interface EntityListConfig {
   sourceId?: string | null;
+  spaceId?: string | null;
   limit?: number;
 }
 
@@ -199,6 +202,9 @@ export const entityListsSlice = createSlice({
       if (action.payload.config) {
         if (action.payload.config.sourceId !== undefined) {
           list.sourceId = action.payload.config.sourceId;
+        }
+        if (action.payload.config.spaceId !== undefined) {
+          list.spaceId = action.payload.config.spaceId;
         }
         if (action.payload.config.limit !== undefined) {
           list.limit = action.payload.config.limit;

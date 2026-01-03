@@ -79,6 +79,7 @@ interface FetchEntitiesParams {
   sortType?: SortType | null;
   timeFrame?: TimeFrame | null;
   sourceId?: string | null;
+  spaceId?: string | null;
   userId?: string | null;
   followedOnly?: boolean;
   keywordsFilters?: KeywordsFilters | null;

@@ -53,6 +53,7 @@ interface FetchManyEntitiesParams {
   sortType?: SortType;
   timeFrame?: TimeFrame | null;
   sourceId?: string | null;
+  spaceId?: string | null;
   userId?: string | null;
   followedOnly?: boolean;
   keywordsFilters?: KeywordsFilters | null;
@@ -82,6 +83,7 @@ function useFetchManyEntities() {
       if (params?.sortType) queryParams.sortType = params.sortType;
       if (params?.timeFrame) queryParams.timeFrame = params.timeFrame;
       if (params?.sourceId) queryParams.sourceId = params.sourceId;
+      if (params?.spaceId) queryParams.spaceId = params.spaceId;
       if (params?.userId) queryParams.userId = params.userId;
       if (params?.followedOnly !== undefined) queryParams.followedOnly = params.followedOnly;
 

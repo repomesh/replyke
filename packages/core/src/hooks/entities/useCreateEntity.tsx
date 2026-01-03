@@ -12,6 +12,7 @@ function useCreateEntity() {
     async (props: {
       foreignId?: string;
       sourceId?: string;
+      spaceId?: string;
       title?: string;
       content?: string;
       attachments?: Record<string, any>[];
@@ -27,6 +28,7 @@ function useCreateEntity() {
       const {
         foreignId,
         sourceId,
+        spaceId,
         title,
         content,
         attachments,
@@ -46,6 +48,7 @@ function useCreateEntity() {
         {
           foreignId,
           sourceId,
+          spaceId,
           title,
           content,
           attachments,
