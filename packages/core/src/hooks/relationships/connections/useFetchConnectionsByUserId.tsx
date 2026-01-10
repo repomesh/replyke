@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../../projects/useProject";
-import { ConnectionsResponse } from "../../../interfaces/models/Connection";
+import { EstablishedConnection } from "../../../interfaces/models/Connection";
+import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 import axios from "../../../config/axios";
 
 interface FetchConnectionsByUserIdParams {
@@ -15,7 +16,7 @@ function useFetchConnectionsByUserId() {
   const fetchConnectionsByUserId = useCallback(
     async (
       props: FetchConnectionsByUserIdParams
-    ): Promise<ConnectionsResponse> => {
+    ): Promise<PaginatedResponse<EstablishedConnection>> => {
       const { userId, page = 1, limit = 20 } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -25,14 +26,17 @@ function useFetchConnectionsByUserId() {
         throw new Error("No user ID was provided");
       }
 
-      const response = await axios.get(`/users/${userId}/connections`, {
-        params: {
-          page,
-          limit,
-        },
-      });
+      const response = await axios.get<PaginatedResponse<EstablishedConnection>>(
+        `/users/${userId}/connections`,
+        {
+          params: {
+            page,
+            limit,
+          },
+        }
+      );
 
-      return response.data as ConnectionsResponse;
+      return response.data;
     },
     [projectId]
   );

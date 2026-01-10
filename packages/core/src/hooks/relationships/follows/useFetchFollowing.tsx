@@ -3,23 +3,12 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import type { User } from "../../../interfaces/models/User";
+import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 
 export interface FollowingWithFollowInfo {
   followId: string;
   user: User;
   followedAt: string;
-}
-
-export interface FollowingResponse {
-  following: FollowingWithFollowInfo[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalCount: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    limit: number;
-  };
 }
 
 export interface FetchFollowingParams {
@@ -42,15 +31,18 @@ function useFetchFollowing() {
         throw new Error("No user is logged in.");
       }
 
-      const response = await axios.get(`/${projectId}/follows/following`, {
-        params: {
-          page,
-          limit,
-        },
-        withCredentials: true,
-      });
+      const response = await axios.get<PaginatedResponse<FollowingWithFollowInfo>>(
+        `/${projectId}/follows/following`,
+        {
+          params: {
+            page,
+            limit,
+          },
+          withCredentials: true,
+        }
+      );
 
-      return response.data as FollowingResponse;
+      return response.data;
     },
     [axios, projectId, user]
   );

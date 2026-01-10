@@ -1,24 +1,13 @@
 import { useCallback } from "react";
 import useProject from "../../projects/useProject";
 import type { User } from "../../../interfaces/models/User";
+import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 import axios from "../../../config/axios";
 
 export interface FollowingWithFollowInfo {
   followId: string;
   user: User;
   followedAt: string;
-}
-
-export interface FollowingResponse {
-  following: FollowingWithFollowInfo[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalCount: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    limit: number;
-  };
 }
 
 export interface FetchFollowingByUserIdParams {
@@ -40,7 +29,7 @@ function useFetchFollowingByUserId() {
         throw new Error("No projectId available.");
       }
 
-      const response = await axios.get(
+      const response = await axios.get<PaginatedResponse<FollowingWithFollowInfo>>(
         `/${projectId}/users/${userId}/following`,
         {
           params: {
@@ -50,7 +39,7 @@ function useFetchFollowingByUserId() {
         }
       );
 
-      return response.data as FollowingResponse;
+      return response.data;
     },
     [projectId]
   );
