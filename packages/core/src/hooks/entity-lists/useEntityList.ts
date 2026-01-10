@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from "../../store";
 
 import {
   initializeList,
-  updateFiltersAndSort,
+  updateFiltersAndSortConfig,
   setEntityListLoading,
   setEntityListEntities,
   incrementPage,
@@ -13,9 +13,10 @@ import {
   selectEntityListLoading,
   selectEntityListHasMore,
   selectEntityListFilters,
+  selectEntityListSort,
   selectEntityListConfig,
-  type EntityListState,
   type EntityListFilters,
+  type EntityListSort,
   type EntityListConfig,
   type EntityListFetchOptions,
 } from "../../store/slices/entityListsSlice";
@@ -48,9 +49,12 @@ export interface UseEntityListValues {
   loading: boolean;
   hasMore: boolean;
 
+  // Individual sort properties (flat access for convenience)
   sortBy: EntityListSortByOptions | null;
   sortDir: SortDirection | null;
   sortType: SortType | null;
+
+  // Filter properties
   timeFrame: TimeFrame | null;
   sourceId: string | null;
   userId: string | null;
@@ -64,6 +68,7 @@ export interface UseEntityListValues {
 
   fetchEntities: (
     filters: Partial<EntityListFilters>,
+    sort?: Partial<EntityListSort>,
     config?: EntityListConfig,
     options?: EntityListFetchOptions
   ) => void;
@@ -107,6 +112,9 @@ function useEntityList({
   const filters = useSelector((state: RootState) =>
     selectEntityListFilters(state, listId)
   );
+  const sort = useSelector((state: RootState) =>
+    selectEntityListSort(state, listId)
+  );
   const config = useSelector((state: RootState) =>
     selectEntityListConfig(state, listId)
   );
@@ -124,6 +132,7 @@ function useEntityList({
   const handleFetchEntities = useCallback(
     (
       newFilters: Partial<EntityListFilters>,
+      newSort?: Partial<EntityListSort>,
       newConfig?: EntityListConfig,
       options?: EntityListFetchOptions
     ) => {
@@ -131,14 +140,16 @@ function useEntityList({
       const configWithDefaults = {
         sourceId: null,
         limit: 10,
+        include: null,
         ...newConfig,
       };
 
-      // Ensure Redux state is initialized and update filters/config
+      // Ensure Redux state is initialized and update filters/sort/config
       dispatch(initializeList({ listId }));
-      dispatch(updateFiltersAndSort({
+      dispatch(updateFiltersAndSortConfig({
         listId,
         filters: newFilters,
+        sort: newSort,
         config: configWithDefaults,
         options
       }));
@@ -153,7 +164,12 @@ function useEntityList({
       // Define the fetch logic
       const performFetch = async () => {
         // Use the applied config (configWithDefaults is the source of truth for this fetch)
-        const currentConfig = { sourceId: configWithDefaults.sourceId, limit: configWithDefaults.limit };
+        const currentConfig = {
+          sourceId: configWithDefaults.sourceId,
+          spaceId: configWithDefaults.spaceId,
+          limit: configWithDefaults.limit,
+          include: configWithDefaults.include,
+        };
 
         // Build final filters by taking current state and applying new filters
         // Use entityList if available, otherwise get current state from Redux after our updates
@@ -173,12 +189,8 @@ function useEntityList({
         };
         const finalFilters = { ...currentState };
 
-        // Apply resetUnspecified logic (only reset filter properties, not config)
-        if (options?.resetUnspecified) {
-          // Reset only filter properties to defaults, keep config and state properties as-is
-          finalFilters.sortBy = "hot";
-          finalFilters.sortDir = null;
-          finalFilters.sortType = "auto";
+        // Apply resetFilters flag - reset only filter properties
+        if (options?.resetFilters) {
           finalFilters.timeFrame = null;
           finalFilters.userId = null;
           finalFilters.followedOnly = false;
@@ -190,6 +202,13 @@ function useEntityList({
           finalFilters.metadataFilters = null;
         }
 
+        // Apply resetSort flag - reset only sort properties
+        if (options?.resetSort) {
+          finalFilters.sortBy = "hot";
+          finalFilters.sortDir = null;
+          finalFilters.sortType = "auto";
+        }
+
         // Apply new filters
         Object.keys(newFilters).forEach((key) => {
           if (newFilters[key as keyof typeof newFilters] !== undefined) {
@@ -197,6 +216,13 @@ function useEntityList({
               newFilters[key as keyof typeof newFilters];
           }
         });
+
+        // Apply new sort
+        if (newSort) {
+          if (newSort.sortBy !== undefined) finalFilters.sortBy = newSort.sortBy;
+          if (newSort.sortDir !== undefined) finalFilters.sortDir = newSort.sortDir;
+          if (newSort.sortType !== undefined) finalFilters.sortType = newSort.sortType;
+        }
 
         if (!finalFilters.sortBy) return; // sortBy is required
 
@@ -221,6 +247,8 @@ function useEntityList({
             // Configuration parameters from current config
             limit: currentConfig.limit,
             sourceId: currentConfig.sourceId,
+            spaceId: currentConfig.spaceId,
+            include: currentConfig.include,
           });
         } catch (err) {
           console.error(
@@ -231,9 +259,10 @@ function useEntityList({
       };
 
       // Execute immediately if requested, otherwise debounce
-      // For initial loads (empty filters object), make it immediate by default
+      // For initial loads (empty filters and no sort), make it immediate by default
       const shouldBeImmediate =
-        options?.immediate || Object.keys(newFilters).length === 0;
+        options?.fetchImmediately ||
+        (Object.keys(newFilters).length === 0 && !newSort);
 
       if (shouldBeImmediate) {
         performFetch();
@@ -288,6 +317,8 @@ function useEntityList({
         // Configuration parameters from state (single source of truth)
         limit: config.limit,
         sourceId: config.sourceId,
+        spaceId: config.spaceId,
+        include: config.include,
       });
     } catch (err) {
       console.error(
@@ -327,6 +358,7 @@ function useEntityList({
         const newEntity = await entityActions.createEntity(listId, {
           ...restOfProps,
           sourceId: config?.sourceId || null,
+          spaceId: config?.spaceId || null,
           insertPosition,
         });
 
@@ -391,9 +423,12 @@ function useEntityList({
       loading,
       hasMore,
 
-      sortBy: filters?.sortBy || null,
-      sortDir: filters?.sortDir || null,
-      sortType: filters?.sortType || null,
+      // Individual sort properties (flat access for convenience)
+      sortBy: sort?.sortBy || null,
+      sortDir: sort?.sortDir || null,
+      sortType: sort?.sortType || null,
+
+      // Filter properties
       timeFrame: filters?.timeFrame || null,
       sourceId: config?.sourceId || null,
       userId: filters?.userId || null,
@@ -417,6 +452,7 @@ function useEntityList({
       infusedEntities,
       loading,
       hasMore,
+      sort,
       filters,
       config,
       handleFetchEntities,

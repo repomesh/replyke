@@ -1,5 +1,5 @@
 import { baseApi } from "./baseApi";
-import type { Entity } from "../../interfaces/models/Entity";
+import type { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import type { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { validateSortBy } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
@@ -47,8 +47,8 @@ const buildQueryParams = (params: Record<string, any>): Record<string, any> => {
   const cleanParams: Record<string, any> = {};
 
   Object.entries(params).forEach(([key, value]) => {
-    // Skip undefined values, but allow null for sourceId
-    if (value === undefined || (value === null && key !== 'sourceId')) {
+    // Skip undefined values, but allow null for sourceId and spaceId
+    if (value === undefined || (value === null && !['sourceId', 'spaceId'].includes(key))) {
       return;
     }
 
@@ -74,12 +74,14 @@ interface FetchEntitiesParams {
   projectId: string;
   page: number;
   limit: number;
+
+  // Sort parameters
   sortBy: EntityListSortByOptions | null;
   sortDir?: SortDirection | null;
   sortType?: SortType | null;
+
+  // Filter parameters
   timeFrame?: TimeFrame | null;
-  sourceId?: string | null;
-  spaceId?: string | null;
   userId?: string | null;
   followedOnly?: boolean;
   keywordsFilters?: KeywordsFilters | null;
@@ -88,6 +90,11 @@ interface FetchEntitiesParams {
   titleFilters?: TitleFilters | null;
   contentFilters?: ContentFilters | null;
   attachmentsFilters?: AttachmentsFilters | null;
+
+  // Configuration parameters
+  sourceId?: string | null;
+  spaceId?: string | null;
+  include?: EntityIncludeParam | null;
 }
 
 interface CreateEntityParams {
@@ -103,6 +110,7 @@ interface CreateEntityParams {
   };
   metadata?: Record<string, any>;
   sourceId?: string | null;
+  spaceId?: string | null;
 }
 
 interface UpdateEntityParams {
@@ -140,6 +148,7 @@ export const entityListsApi = baseApi.injectEndpoints({
         sortType,
         timeFrame,
         sourceId,
+        spaceId,
         userId,
         followedOnly,
         keywordsFilters,
@@ -147,7 +156,8 @@ export const entityListsApi = baseApi.injectEndpoints({
         metadataFilters,
         titleFilters,
         contentFilters,
-        attachmentsFilters
+        attachmentsFilters,
+        include
       }) => {
         if (!sortBy) {
           throw new Error("sortBy is required for fetching entities");
@@ -165,6 +175,7 @@ export const entityListsApi = baseApi.injectEndpoints({
             followedOnly,
             userId,
             sourceId,
+            spaceId,
             sortBy,
             sortDir,
             sortType,
@@ -175,11 +186,18 @@ export const entityListsApi = baseApi.injectEndpoints({
             contentFilters,
             attachmentsFilters,
             locationFilters,
+            include: include
+              ? Array.isArray(include) ? include.join(',') : include
+              : undefined,
           }),
         };
       },
-      providesTags: (result, error, { projectId, sourceId }) => [
-        { type: "Entity" as const, id: `${projectId}-${sourceId || 'all'}-LIST` },
+      transformResponse: (response: { data: Entity[], pagination: any }) => {
+        // Extract the data array from the paginated v7 API response
+        return response.data;
+      },
+      providesTags: (result, error, { projectId, sourceId, spaceId }) => [
+        { type: "Entity" as const, id: `${projectId}-${sourceId || 'all'}-${spaceId || 'no-space'}-LIST` },
         ...(result?.map(({ id }) => ({
           type: "Entity" as const,
           id,
@@ -194,10 +212,10 @@ export const entityListsApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (result, error, { projectId, sourceId }) => [
-        { type: "Entity", id: `${projectId}-${sourceId || 'all'}-LIST` },
+      invalidatesTags: (result, error, { projectId, sourceId, spaceId }) => [
+        { type: "Entity", id: `${projectId}-${sourceId || 'all'}-${spaceId || 'no-space'}-LIST` },
         // Also invalidate the 'all' list if we're creating in a specific source
-        ...(sourceId ? [{ type: "Entity" as const, id: `${projectId}-all-LIST` }] : []),
+        ...(sourceId ? [{ type: "Entity" as const, id: `${projectId}-all-no-space-LIST` }] : []),
       ],
     }),
 
