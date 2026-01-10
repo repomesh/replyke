@@ -1,3 +1,5 @@
+import { PaginatedResponse, PaginationMetadata } from "../IPaginatedResponse";
+
 export type ReadingPermission = "anyone" | "members";
 export type PostingPermission = "anyone" | "members" | "admins";
 
@@ -13,21 +15,7 @@ export interface SpaceMemberPermissions {
   canModerate: boolean;
   canRead: boolean;
 }
-
-// Pagination metadata structure
-export interface PaginationMeta {
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  totalItems: number;
-  hasMore: boolean;
-}
-
-// Generic paginated response wrapper
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: PaginationMeta;
-}
+export type PaginationMeta = PaginationMetadata;
 
 export interface SpacePreview {
   id: string;

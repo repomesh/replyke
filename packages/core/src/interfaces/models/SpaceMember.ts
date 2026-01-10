@@ -1,4 +1,4 @@
-import { PaginatedResponse } from "./Space";
+import { PaginatedResponse } from "../IPaginatedResponse";
 
 export type SpaceMemberRole = "admin" | "moderator" | "member";
 export type SpaceMemberStatus = "pending" | "active" | "banned" | "rejected";
