@@ -53,7 +53,7 @@ function useProfileComments(
 
       setPage(1);
 
-      const newComments = await fetchManyComments({
+      const response = await fetchManyComments({
         userId,
         page: 1,
         sortBy,
@@ -61,12 +61,11 @@ function useProfileComments(
         includeEntity,
       });
 
-      if (newComments) {
+      if (response) {
+        const { data: newComments, pagination } = response;
         setComments(newComments);
-        if (newComments.length < limit) {
-          hasMore.current = false;
-          setHasMoreState(false);
-        }
+        hasMore.current = pagination.hasMore;
+        setHasMoreState(pagination.hasMore);
       }
     } catch (err) {
       handleError(err, "Failed to reset profile comments:");
@@ -93,7 +92,7 @@ function useProfileComments(
       loading.current = true;
       setLoadingState(true);
       try {
-        const newComments = await fetchManyComments({
+        const response = await fetchManyComments({
           userId,
           page,
           sortBy,
@@ -101,12 +100,11 @@ function useProfileComments(
           includeEntity,
         });
 
-        if (newComments) {
+        if (response) {
+          const { data: newComments, pagination } = response;
           setComments((prevComments) => [...prevComments, ...newComments]);
-          if (newComments.length < limit) {
-            hasMore.current = false;
-            setHasMoreState(false);
-          }
+          hasMore.current = pagination.hasMore;
+          setHasMoreState(pagination.hasMore);
         }
       } catch (err) {
         handleError(err, "Loading more comments failed:");

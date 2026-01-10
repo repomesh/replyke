@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { Comment } from "../../interfaces/models/Comment";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
 
@@ -17,7 +18,7 @@ function useFetchManyComments() {
       limit?: number;
       includeEntity?: boolean;
       sourceId?: string | null | undefined;
-    }): Promise<Comment[]> => {
+    }): Promise<PaginatedResponse<Comment>> => {
       const {
         entityId,
         userId,
@@ -57,10 +58,13 @@ function useFetchManyComments() {
       if (includeEntity) params.includeEntity = includeEntity;
       if (sourceId) params.sourceId = sourceId;
 
-      const response = await axios.get(`/${projectId}/comments`, {
-        params,
-      });
-      return response.data as Comment[];
+      const response = await axios.get<PaginatedResponse<Comment>>(
+        `/${projectId}/comments`,
+        {
+          params,
+        }
+      );
+      return response.data;
     },
     [projectId]
   );

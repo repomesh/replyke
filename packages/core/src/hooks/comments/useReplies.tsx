@@ -52,14 +52,17 @@ function useReplies({
       try {
         setLoadingState(true);
 
-        const fetchedReplies: Comment[] = await fetchManyComments({
+        const response = await fetchManyComments({
           parentId: commentId,
           page,
           sortBy,
           limit: 5,
         });
 
-        addCommentsToTree?.(fetchedReplies);
+        if (response) {
+          const { data: fetchedReplies } = response;
+          addCommentsToTree?.(fetchedReplies);
+        }
       } catch (err: unknown) {
         handleError(err, "Failed to fetch replies: ");
       } finally {

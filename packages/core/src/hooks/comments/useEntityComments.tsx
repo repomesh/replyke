@@ -99,19 +99,18 @@ function useEntityComments(
       setEntityCommentsTree({});
       setPage(1);
 
-      const newComments = await fetchManyComments({
+      const response = await fetchManyComments({
         entityId,
         page: 1,
         sortBy,
         limit,
       });
 
-      if (newComments) {
+      if (response) {
+        const { data: newComments, pagination } = response;
         addCommentsToTree(newComments);
-        if (newComments.length < limit) {
-          hasMore.current = false;
-          setHasMoreState(false);
-        }
+        hasMore.current = pagination.hasMore;
+        setHasMoreState(pagination.hasMore);
       }
     } catch (err) {
       handleError(err, "Failed to reset entity comments:");
@@ -143,19 +142,18 @@ function useEntityComments(
         loading.current = true;
         setLoadingState(true);
 
-        const newComments = await fetchManyComments({
+        const response = await fetchManyComments({
           entityId,
           page,
           sortBy,
           limit,
         });
 
-        if (newComments) {
+        if (response) {
+          const { data: newComments, pagination } = response;
           addCommentsToTree(newComments);
-          if (newComments.length < limit) {
-            hasMore.current = false;
-            setHasMoreState(false);
-          }
+          hasMore.current = pagination.hasMore;
+          setHasMoreState(pagination.hasMore);
         }
       } catch (err) {
         handleError(err, "Loading more comments failed:");
