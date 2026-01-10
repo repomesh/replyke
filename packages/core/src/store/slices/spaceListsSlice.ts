@@ -69,7 +69,7 @@ export interface SpaceListConfig {
 // Options for space list operations
 export interface SpaceListFetchOptions {
   resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
-  immediate?: boolean; // Skip debouncing, fetch immediately (used by hooks)
+  fetchImmediately?: boolean; // Skip debouncing, fetch immediately (used by hooks)
   clearImmediately?: boolean; // Clear spaces immediately before fetch starts
 }
 

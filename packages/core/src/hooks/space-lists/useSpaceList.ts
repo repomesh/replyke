@@ -187,7 +187,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
       // Execute immediately if requested, otherwise debounce
       // For initial loads (empty filters object), make it immediate by default
       const shouldBeImmediate =
-        options?.immediate || Object.keys(newFilters).length === 0;
+        options?.fetchImmediately || Object.keys(newFilters).length === 0;
 
       if (shouldBeImmediate) {
         performFetch();
