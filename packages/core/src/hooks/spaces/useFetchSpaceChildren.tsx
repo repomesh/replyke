@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Space, PaginatedResponse } from "../../interfaces/models/Space";
+import { Space } from "../../interfaces/models/Space";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import axios from "../../config/axios";
 
 interface FetchSpaceChildrenParams {
@@ -22,11 +23,11 @@ function useFetchSpaceChildren() {
         throw new Error("Please pass a spaceId");
       }
 
-      const response = await axios.get(
+      const response = await axios.get<PaginatedResponse<Space>>(
         `/${projectId}/spaces/${spaceId}/children?page=${page}&limit=${limit}`
       );
 
-      return response.data as PaginatedResponse<Space>;
+      return response.data;
     },
     [projectId]
   );

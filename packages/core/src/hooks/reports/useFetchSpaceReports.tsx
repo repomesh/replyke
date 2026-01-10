@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 
 interface FetchSpaceReportsParams {
   spaceId: string;
@@ -71,9 +72,9 @@ function useFetchSpaceReports() {
         queryString ? `?${queryString}` : ""
       }`;
 
-      const response = await axios.get(url);
+      const response = await axios.get<PaginatedResponse<Report>>(url);
 
-      return response.data as Report[];
+      return response.data;
     },
     [projectId, axios]
   );

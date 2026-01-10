@@ -38,11 +38,11 @@ function useFetchSpaceMembers() {
       const queryString = queryParams.toString();
       const url = `/${projectId}/spaces/${spaceId}/members${queryString ? `?${queryString}` : ""}`;
 
-      const response = await axios.get(url);
+      const response = await axios.get<SpaceMembersResponse>(url);
 
-      return response.data as SpaceMembersResponse;
+      return response.data;
     },
-    [projectId]
+    [projectId, axios]
   );
 
   return fetchSpaceMembers;

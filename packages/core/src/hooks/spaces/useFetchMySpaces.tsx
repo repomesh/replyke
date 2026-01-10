@@ -19,13 +19,16 @@ function useFetchMySpaces() {
         throw new Error("No projectId available.");
       }
 
-      const response = await axios.get(`/${projectId}/spaces/my-spaces`, {
-        params,
-      });
+      const response = await axios.get<MySpacesResponse>(
+        `/${projectId}/spaces/my-spaces`,
+        {
+          params,
+        }
+      );
 
-      return response.data as MySpacesResponse;
+      return response.data;
     },
-    [projectId]
+    [projectId, axios]
   );
 
   return fetchMySpaces;

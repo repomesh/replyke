@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { Space, PaginatedResponse } from "../../interfaces/models/Space";
+import { Space } from "../../interfaces/models/Space";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
 interface FetchManySpacesParams {
@@ -32,11 +33,14 @@ function useFetchManySpaces() {
       if (params?.memberOf !== undefined) queryParams.memberOf = params.memberOf;
       if (params?.parentSpaceId !== undefined) queryParams.parentSpaceId = params.parentSpaceId || "null";
 
-      const response = await axios.get(`/${projectId}/spaces`, {
-        params: queryParams,
-      });
+      const response = await axios.get<PaginatedResponse<Space>>(
+        `/${projectId}/spaces`,
+        {
+          params: queryParams,
+        }
+      );
 
-      return response.data as PaginatedResponse<Space>;
+      return response.data;
     },
     [projectId, axios]
   );
