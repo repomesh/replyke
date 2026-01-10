@@ -83,6 +83,7 @@ export {
   type UseEntityListProps,
   type UseEntityListValues,
   type EntityListFilters,
+  type EntityListSort,
   type EntityListFetchOptions,
 } from "./hooks/entity-lists";
 
@@ -196,6 +197,10 @@ export { useGetMetadata } from "./hooks/utils";
 export { useUploadFile } from "./hooks/storage";
 
 // Interfaces
+export type {
+  PaginatedResponse,
+  PaginationMetadata,
+} from "./interfaces/IPaginatedResponse";
 export type { EntityCommentsTree } from "./interfaces/EntityCommentsTree";
 export type {
   UserFull,
@@ -216,7 +221,6 @@ export type {
   ReadingPermission,
   PostingPermission,
   PaginationMeta,
-  PaginatedResponse,
   MySpaceItem,
   MySpacesResponse,
   JoinSpaceResponse,
