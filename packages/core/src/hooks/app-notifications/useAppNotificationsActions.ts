@@ -99,22 +99,24 @@ export function useAppNotificationsActions() {
       dispatch(resetNotifications());
 
       // Fetch first page
-      const result = await triggerFetchNotifications({
+      const response = await triggerFetchNotifications({
         projectId,
         page: 1,
         limit,
       }).unwrap();
 
-      if (result) {
+      if (response) {
+        const { data: notifications, pagination } = response;
         // Apply notification templates
         const completeNotifications = addNotificationsMessages(
-          result,
+          notifications,
           notificationTemplates
         );
 
         dispatch(
           addNotifications({
             notifications: completeNotifications,
+            hasMore: pagination.hasMore,
             isFirstPage: true,
           })
         );
@@ -140,19 +142,25 @@ export function useAppNotificationsActions() {
       try {
         dispatch(setLoading(true));
 
-        const result = await triggerFetchNotifications({
+        const response = await triggerFetchNotifications({
           projectId,
           page: pageToFetch,
           limit,
         }).unwrap();
 
-        if (result) {
+        if (response) {
+          const { data: notifications, pagination } = response;
           const completeNotifications = addNotificationsMessages(
-            result,
+            notifications,
             notificationTemplates
           );
 
-          dispatch(addNotifications({ notifications: completeNotifications }));
+          dispatch(
+            addNotifications({
+              notifications: completeNotifications,
+              hasMore: pagination.hasMore,
+            })
+          );
         }
       } catch (error) {
         handleError(error, "Loading more app notifications failed:");

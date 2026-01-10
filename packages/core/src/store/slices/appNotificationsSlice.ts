@@ -75,9 +75,9 @@ export const appNotificationsSlice = createSlice({
     },
 
     // Add new notifications (for pagination)
-    addNotifications: (state, action: PayloadAction<{ notifications: UnifiedAppNotification[]; isFirstPage?: boolean }>) => {
-      const { notifications, isFirstPage = false } = action.payload;
-      
+    addNotifications: (state, action: PayloadAction<{ notifications: UnifiedAppNotification[]; hasMore: boolean; isFirstPage?: boolean }>) => {
+      const { notifications, hasMore, isFirstPage = false } = action.payload;
+
       if (isFirstPage) {
         state.notifications = notifications;
       } else {
@@ -86,12 +86,10 @@ export const appNotificationsSlice = createSlice({
         const newNotifications = notifications.filter(n => !existingIds.has(n.id));
         state.notifications.push(...newNotifications);
       }
-      
-      // Update hasMore based on returned count vs limit
-      if (notifications.length < state.limit) {
-        state.hasMore = false;
-      }
-      
+
+      // Update hasMore from pagination metadata
+      state.hasMore = hasMore;
+
       state.loading = false;
     },
 
