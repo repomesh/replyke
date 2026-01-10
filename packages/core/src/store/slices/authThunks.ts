@@ -65,17 +65,19 @@ const authService = {
   },
 
   async signOut(projectId: string, refreshToken: string | null) {
+    const payload = refreshToken ? { refreshToken } : {};
     await axios.post(
       `/${projectId}/auth/sign-out`,
-      { refreshToken },
+      payload,
       { withCredentials: !isReactNative() }
     );
   },
 
   async requestNewAccessToken(projectId: string, refreshToken: string | null) {
+    const payload = refreshToken ? { refreshToken } : {};
     const response = await axios.post(
       `/${projectId}/auth/request-new-access-token`,
-      { refreshToken },
+      payload,
       { withCredentials: !isReactNative() }
     );
 
