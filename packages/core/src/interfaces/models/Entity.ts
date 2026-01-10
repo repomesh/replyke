@@ -1,5 +1,6 @@
 import { Mention } from "./Mention";
 import { User } from "./User";
+import { Space } from "./Space";
 
 export interface TopComment {
   id: string;
@@ -16,6 +17,7 @@ export interface Entity {
   projectId: string;
   sourceId: string | null;
   spaceId: string | null; // Optional space association - entities can be organized into spaces
+  space?: Space | null; // Optional space object populated when include contains "space"
   user?: User | null;
   title: string | null;
   content: string | null;
@@ -39,3 +41,7 @@ export interface Entity {
   updatedAt: Date; // Use camelCase for `updated_at`
   deletedAt: Date | null; // Use camelCase for `updated_at`
 }
+
+export type EntityInclude = "space" | "user" | "topComment";
+export type EntityIncludeArray = EntityInclude[];
+export type EntityIncludeParam = string | EntityIncludeArray;

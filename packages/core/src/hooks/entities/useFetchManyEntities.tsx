@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { Entity } from "../../interfaces/models/Entity";
+import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
@@ -62,6 +63,7 @@ interface FetchManyEntitiesParams {
   attachmentsFilters?: AttachmentsFilters | null;
   locationFilters?: LocationFilters | null;
   metadataFilters?: MetadataFilters | null;
+  include?: EntityIncludeParam;
 }
 
 function useFetchManyEntities() {
@@ -87,6 +89,12 @@ function useFetchManyEntities() {
       if (params?.userId) queryParams.userId = params.userId;
       if (params?.followedOnly !== undefined) queryParams.followedOnly = params.followedOnly;
 
+      if (params?.include) {
+        queryParams.include = Array.isArray(params.include)
+          ? params.include.join(',')
+          : params.include;
+      }
+
       // Serialize complex filter objects into bracket notation
       if (params?.keywordsFilters) {
         Object.assign(queryParams, serializeObject(params.keywordsFilters, 'keywordsFilters'));
@@ -107,11 +115,14 @@ function useFetchManyEntities() {
         Object.assign(queryParams, serializeObject(params.metadataFilters, 'metadataFilters'));
       }
 
-      const response = await axios.get(`/${projectId}/entities`, {
-        params: queryParams,
-      });
+      const response = await axios.get<PaginatedResponse<Entity>>(
+        `/${projectId}/entities`,
+        {
+          params: queryParams,
+        }
+      );
 
-      return response.data as Entity[];
+      return response.data;
     },
     [projectId, axios]
   );
