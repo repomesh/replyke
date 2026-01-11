@@ -135,6 +135,20 @@ export interface DeclineMemberResponse {
   };
 }
 
+export interface CheckMyMembershipResponse {
+  isMember: boolean;
+  role: "admin" | "moderator" | "member" | null;
+  status: "pending" | "active" | "banned" | "rejected" | null;
+  joinedAt: Date | null;
+  permissions: {
+    canPost: boolean;
+    canModerate: boolean;
+    canRead: boolean;
+    isAdmin: boolean;
+    isModerator: boolean;
+  };
+}
+
 export interface DeleteSpaceResponse {
   message: string;
   deletedSpace: {

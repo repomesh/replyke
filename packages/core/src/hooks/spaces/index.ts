@@ -23,6 +23,7 @@ export { default as useJoinSpace } from "./useJoinSpace";
 export { default as useLeaveSpace } from "./useLeaveSpace";
 export { default as useFetchSpaceMembers } from "./useFetchSpaceMembers";
 export { default as useFetchMySpaces } from "./useFetchMySpaces";
+export { default as useCheckMyMembership } from "./useCheckMyMembership";
 
 // Member management hooks
 export { default as useUpdateMemberRole } from "./useUpdateMemberRole";
