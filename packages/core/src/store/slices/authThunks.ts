@@ -6,7 +6,6 @@ import type { RootState } from "../index";
 import {
   setTokens,
   setUser,
-  setLoadingInitial,
   setAuthenticating,
   setInitialized,
   resetAuth,
@@ -328,8 +327,6 @@ export const initializeAuthThunk = createAsyncThunk(
     { dispatch }
   ) => {
     try {
-      dispatch(setLoadingInitial(true));
-
       // Step 1: If we have a signed token, verify external user
       if (data.signedToken) {
         await dispatch(
@@ -345,11 +342,9 @@ export const initializeAuthThunk = createAsyncThunk(
         await dispatch(
           requestNewAccessTokenThunk({ projectId: data.projectId })
         );
-        dispatch(setLoadingInitial(false));
         dispatch(setInitialized(true));
       }, 0);
     } catch (error) {
-      dispatch(setLoadingInitial(false));
       dispatch(setInitialized(true));
       handleError(error, "Auth initialization failed:");
     }

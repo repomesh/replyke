@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import type { AppDispatch, RootState } from '../../store';
-import { 
+import {
   selectAccessToken,
   selectRefreshToken,
-  selectLoadingInitial,
+  selectInitialized,
   setRefreshToken
 } from '../../store/slices/authSlice';
 import { 
@@ -18,7 +18,7 @@ import useProject from '../projects/useProject';
 
 // Define the interface to match the original useAuth hook
 export interface UseAuthValues {
-  loadingInitial: boolean;
+  initialized: boolean;
   accessToken: string | null;
   refreshToken: string | null;
   setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
@@ -54,7 +54,7 @@ export default function useAuth(): UseAuthValues {
   const { projectId } = useProject();
   
   // Selectors
-  const loadingInitial = useSelector((state: RootState) => selectLoadingInitial(state));
+  const initialized = useSelector((state: RootState) => selectInitialized(state));
   const accessToken = useSelector((state: RootState) => selectAccessToken(state));
   const refreshToken = useSelector((state: RootState) => selectRefreshToken(state));
 
@@ -161,7 +161,7 @@ export default function useAuth(): UseAuthValues {
   }, [dispatch, refreshToken]);
 
   return {
-    loadingInitial,
+    initialized,
     accessToken,
     refreshToken,
     setRefreshToken: handleSetRefreshToken,
