@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import axios from "../../config/axios";
 
 function useFetchComment() {
@@ -9,10 +9,10 @@ function useFetchComment() {
   const fetchComment = useCallback(
     async ({
       commentId,
-      withParent,
+      include,
     }: {
       commentId: string;
-      withParent?: boolean;
+      include?: CommentIncludeParam;
     }) => {
       if (!projectId) {
         throw new Error("No project specified");
@@ -22,15 +22,18 @@ function useFetchComment() {
         throw new Error("No comment ID passed");
       }
 
+      const params: Record<string, any> = {};
+
+      if (include) {
+        params.include = Array.isArray(include) ? include.join(',') : include;
+      }
+
       const response = await axios.get(`/${projectId}/comments/${commentId}`, {
-        params: {
-          withParent,
-        },
+        params,
       });
 
       return response.data as {
         comment: Comment;
-        parentComment: Comment | null;
       };
     },
     [projectId]

@@ -57,6 +57,7 @@ function useReplies({
           page,
           sortBy,
           limit: 5,
+          include: "user", // Always include user for replies display
         });
 
         if (response) {

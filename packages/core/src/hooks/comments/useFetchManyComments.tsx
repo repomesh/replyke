@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
@@ -16,7 +16,7 @@ function useFetchManyComments() {
       sortBy?: CommentsSortByOptions;
       page: number;
       limit?: number;
-      includeEntity?: boolean;
+      include?: CommentIncludeParam;
       sourceId?: string | null | undefined;
     }): Promise<PaginatedResponse<Comment>> => {
       const {
@@ -26,7 +26,7 @@ function useFetchManyComments() {
         sortBy,
         page,
         limit,
-        includeEntity,
+        include,
         sourceId,
       } = props;
 
@@ -36,10 +36,6 @@ function useFetchManyComments() {
 
       if (limit === 0) {
         throw new Error("Can't fetch with limit 0");
-      }
-
-      if (!sortBy) {
-        throw new Error("Can't fetch without sortBy property");
       }
 
       if (!projectId) {
@@ -55,8 +51,11 @@ function useFetchManyComments() {
       if (entityId) params.entityId = entityId;
       if (userId) params.userId = userId;
       if (parentId) params.parentId = parentId;
-      if (includeEntity) params.includeEntity = includeEntity;
       if (sourceId) params.sourceId = sourceId;
+
+      if (include) {
+        params.include = Array.isArray(include) ? include.join(',') : include;
+      }
 
       const response = await axios.get<PaginatedResponse<Comment>>(
         `/${projectId}/comments`,

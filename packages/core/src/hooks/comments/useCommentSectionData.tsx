@@ -118,7 +118,12 @@ function useCommentSectionData(
     loadMore,
     addCommentsToTree,
     removeCommentFromTree,
-  } = useEntityComments({ entityId: entity?.id, defaultSortBy, limit });
+  } = useEntityComments({
+    entityId: entity?.id,
+    defaultSortBy,
+    limit,
+    include: "user",
+  });
 
   const createComment = useCreateComment();
   const deleteComment = useDeleteComment();
@@ -170,7 +175,8 @@ function useCommentSectionData(
   const handleShallowReply = useCallback(
     (comment: Comment) => {
       setRepliedToComment!({ id: comment.parentId ?? undefined });
-      setPushMention(comment.user);
+
+      if (comment.user) setPushMention(comment.user);
     },
     [setRepliedToComment]
   );
@@ -336,7 +342,7 @@ function useCommentSectionData(
       try {
         const fetchedCommentData = await fetchComment({
           commentId: highlightedCommentId!,
-          withParent: true,
+          include: ["user", "parent"],
         });
 
         if (!fetchedCommentData) {
@@ -346,10 +352,17 @@ function useCommentSectionData(
 
         if (!fetchedCommentData.comment) {
           console.error("Highlighted comment not found");
+          return;
         }
 
-        setHighlightedComment(fetchedCommentData);
-        const { comment: targetComment, parentComment } = fetchedCommentData;
+        const targetComment = fetchedCommentData.comment;
+        const parentComment = targetComment.parentComment ?? null;
+
+        // Maintain backward-compatible state structure
+        setHighlightedComment({
+          comment: targetComment,
+          parentComment: parentComment,
+        });
 
         addCommentsToTree?.(
           parentComment ? [targetComment, parentComment] : [targetComment]

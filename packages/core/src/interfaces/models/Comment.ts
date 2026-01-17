@@ -16,10 +16,11 @@ export interface Comment {
   projectId: string; // Required
   foreignId: string | null;
   entityId: string; // Required
-  entity?: Entity; // We might request to include the entity when fetching comments
+  entity?: Entity; // Optional - included when include contains "entity" or "space"
   userId: string;
-  user: User;
+  user?: User; // Optional - included when include contains "user"
   parentId: string | null; // Optional parent comment (if it's a reply)
+  parentComment?: Comment; // Optional - included when include contains "parent"
   content: string | null; // Required
   gif: GifData | null;
   mentions: Mention[];
@@ -32,3 +33,7 @@ export interface Comment {
   deletedAt: Date | null; // Timestamp for updating
   parentDeletedAt: Date | null; // Timestamp for updating
 }
+
+export type CommentInclude = "user" | "entity" | "space" | "parent";
+export type CommentIncludeArray = CommentInclude[];
+export type CommentIncludeParam = CommentInclude | CommentIncludeArray;

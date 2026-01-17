@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { handleError } from "../../utils/handleError";
@@ -11,6 +11,7 @@ export interface UseEntityCommentsProps {
   entityId: string | undefined | null;
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
+  include?: CommentIncludeParam;
 }
 
 export interface UseEntityCommentsValues {
@@ -32,7 +33,7 @@ export interface UseEntityCommentsValues {
 function useEntityComments(
   props: UseEntityCommentsProps
 ): UseEntityCommentsValues {
-  const { entityId, limit = 10, defaultSortBy = "new" } = props;
+  const { entityId, limit = 10, defaultSortBy = "new", include } = props;
 
   const fetchManyComments = useFetchManyComments();
 
@@ -104,6 +105,7 @@ function useEntityComments(
         page: 1,
         sortBy,
         limit,
+        include,
       });
 
       if (response) {
