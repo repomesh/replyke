@@ -48,14 +48,14 @@ export {
   type UseAppNotificationsValues,
 } from "./hooks/app-notifications";
 
-// -- lists
+// -- collections
 export {
-  useLists,
-  useListsActions,
-  useIsEntitySaved,
-  type UseListsProps,
-  type UseListsValues,
-} from "./hooks/lists";
+  useCollections,
+  useCollectionsActions,
+  useIsEntityInCollection,
+  type UseCollectionsProps,
+  type UseCollectionsValues,
+} from "./hooks/collections";
 
 // -- entities
 export {
@@ -221,7 +221,7 @@ export type {
   EntityIncludeArray,
   EntityIncludeParam,
 } from "./interfaces/models/Entity";
-export type { List } from "./interfaces/models/List";
+export type { Collection } from "./interfaces/models/Collection";
 export type {
   Comment,
   GifData,

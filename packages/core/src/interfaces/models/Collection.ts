@@ -1,6 +1,6 @@
 import { Entity } from "./Entity";
 
-export interface List {
+export interface Collection {
   id: string;
   projectId: string;
   userId: string;

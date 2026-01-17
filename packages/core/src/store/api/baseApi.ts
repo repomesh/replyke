@@ -31,7 +31,7 @@ export const baseApi = createApi({
   baseQuery: createBaseQuery(),
   tagTypes: [
     'AppNotification',
-    'List',
+    'Collection',
     'User',
     'Entity',
     'Space',

@@ -4,8 +4,8 @@ export { baseApi } from "./baseApi";
 // Export app notifications API
 export * from "./appNotificationsApi";
 
-// Export lists API
-export * from "./listsApi";
+// Export collections API
+export * from "./collectionsApi";
 
 // Export entity lists API
 export * from "./entityListsApi";

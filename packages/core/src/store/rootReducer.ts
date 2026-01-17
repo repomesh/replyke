@@ -2,7 +2,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { baseApi } from "./api/baseApi";
 import { appNotificationsSlice } from "./slices/appNotificationsSlice";
 import authReducer from "./slices/authSlice";
-import listsReducer from "./slices/listsSlice";
+import collectionsReducer from "./slices/collectionsSlice";
 import { userReducer } from "./slices/userSlice";
 import entityListsReducer from "./slices/entityListsSlice";
 import spaceListsReducer from "./slices/spaceListsSlice";
@@ -15,7 +15,7 @@ export const rootReducer = combineReducers({
   // Feature slices
   auth: authReducer,
   appNotifications: appNotificationsSlice.reducer,
-  lists: listsReducer,
+  collections: collectionsReducer,
   user: userReducer,
   entityLists: entityListsReducer,
   spaceLists: spaceListsReducer,

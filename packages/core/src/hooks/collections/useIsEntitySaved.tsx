@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
-function useIsEntitySaved() {
+function useIsEntityInCollection() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
@@ -27,7 +27,7 @@ function useIsEntitySaved() {
 
       // checkedStatus.current[entityId] = true; // Mark this entityId as checked
       const response = await axios.get<boolean>(
-        `/${projectId}/lists/is-entity-saved`,
+        `/${projectId}/collections/is-entity-saved`,
         {
           params: { entityId },
           withCredentials: true,
@@ -44,4 +44,4 @@ function useIsEntitySaved() {
   return { checkIfEntityIsSaved, entityIsSaved };
 }
 
-export default useIsEntitySaved;
+export default useIsEntityInCollection;
