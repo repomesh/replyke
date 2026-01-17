@@ -7,7 +7,6 @@ import {
   selectCurrentList,
   selectSubLists,
   selectListsLoading,
-  selectListHistory,
   selectSubListsMap,
   selectCurrentProjectId,
 } from "../../store/slices/listsSlice";
@@ -27,7 +26,7 @@ export interface UseListsValues {
   goBack: () => void;
   goToRoot: () => void;
 
-  isEntityInList: (selectedEntityId: string) => boolean;
+  isEntityInList: (selectedEntityId: string, listId?: string) => boolean;
 
   createList: (props: { listName: string }) => Promise<void>;
   updateList: (props: {
@@ -60,11 +59,11 @@ function useLists(_: UseListsProps = {}): UseListsValues {
   const loading = useSelector((state: RootState) =>
     selectListsLoading(state)
   );
-  const listHistory = useSelector((state: RootState) =>
-    selectListHistory(state)
-  );
   const subListsMap = useSelector((state: RootState) =>
     selectSubListsMap(state)
+  );
+  const listsById = useSelector((state: RootState) =>
+    state.lists.listsById
   );
   const currentProjectId = useSelector((state: RootState) =>
     selectCurrentProjectId(state)
@@ -110,11 +109,12 @@ function useLists(_: UseListsProps = {}): UseListsValues {
     fetchSubLists(projectId, currentList.id);
   }, [fetchSubLists, user, projectId, currentList, subListsMap]);
 
-  // Entity membership checker
-  const isEntityInList = useCallback((selectedEntityId: string): boolean => {
-    if (!currentList) return false;
-    return currentList.entityIds.some(entityId => entityId === selectedEntityId);
-  }, [currentList]);
+  // Entity membership checker - checks if entity is in specified list (or current list if not specified)
+  const isEntityInList = useCallback((selectedEntityId: string, listId?: string): boolean => {
+    const targetList = listId ? listsById[listId] : currentList;
+    if (!targetList) return false;
+    return targetList.entityIds.some(entityId => entityId === selectedEntityId);
+  }, [currentList, listsById]);
 
   // Wrapped CRUD operations that match the original interface
   const handleCreateList = useCallback(
