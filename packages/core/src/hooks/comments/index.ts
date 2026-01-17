@@ -9,4 +9,8 @@ export { default as useUpdateComment } from "./useUpdateComment";
 export { default as useCommentVotes } from "./useCommentVotes";
 export { default as useDeleteComment } from "./useDeleteComment";
 export { default as useEntityComments } from "./useEntityComments";
-export { default as useProfileComments } from "./useProfileComments";
+export { default as useFetchManyCommentsWrapper } from "./useFetchManyCommentsWrapper";
+export type {
+  UseFetchManyCommentsWrapperProps,
+  UseFetchManyCommentsWrapperValues,
+} from "./useFetchManyCommentsWrapper";

@@ -10,6 +10,11 @@ export { default as useFetchEntityByForeignId } from "./useFetchEntityByForeignI
 export { default as useFetchEntityByShortId } from "./useFetchEntityByShortId";
 export { default as useFetchManyEntities } from "./useFetchManyEntities";
 export { default as useIncrementEntityViews } from "./useIncrementEntityViews";
+export { default as useFetchManyEntitiesWrapper } from "./useFetchManyEntitiesWrapper";
+export type {
+  UseFetchManyEntitiesWrapperProps,
+  UseFetchManyEntitiesWrapperValues,
+} from "./useFetchManyEntitiesWrapper";
 export { default as useRemoveEntityDownvote } from "./useRemoveEntityDownvote";
 export { default as useRemoveEntityUpvote } from "./useRemoveEntityUpvote";
 export { default as useUpdateEntity } from "./useUpdateEntity";

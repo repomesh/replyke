@@ -1,17 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import useFetchManyComments from "./useFetchManyComments";
 import { handleError } from "../../utils/handleError";
 
-export interface UseProfileCommentsProps {
-  userId: string | undefined | null;
+export interface UseFetchManyCommentsWrapperProps {
+  entityId?: string | null;
+  userId?: string | null;
+  parentId?: string | null;
+  sourceId?: string | null;
   limit?: number;
+  include?: CommentIncludeParam;
   defaultSortBy?: CommentsSortByOptions;
-  includeEntity?: boolean;
 }
 
-export interface UseProfileCommentsValues {
+export interface UseFetchManyCommentsWrapperValues {
   comments: Comment[];
   loading: boolean;
   hasMore: boolean;
@@ -20,27 +23,32 @@ export interface UseProfileCommentsValues {
   loadMore: () => void;
 }
 
-function useProfileComments(
-  props: UseProfileCommentsProps
-): UseProfileCommentsValues {
-  const { userId, limit = 10, defaultSortBy = "new", includeEntity } = props;
+function useFetchManyCommentsWrapper(
+  props: UseFetchManyCommentsWrapperProps
+): UseFetchManyCommentsWrapperValues {
+  const {
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    limit = 10,
+    defaultSortBy = "new",
+    include,
+  } = props;
   const fetchManyComments = useFetchManyComments();
 
   const loading = useRef(true);
-  const [loadingState, setLoadingState] = useState(true); // required to trigger rerenders
+  const [loadingState, setLoadingState] = useState(true);
 
   const hasMore = useRef(true);
-  const [hasMoreState, setHasMoreState] = useState(true); // required to trigger rerenders
+  const [hasMoreState, setHasMoreState] = useState(true);
 
   const [sortBy, setSortBy] = useState<CommentsSortByOptions>(defaultSortBy);
   const [page, setPage] = useState(1);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const resetComments = useCallback(async () => {
-    if (!userId) {
-      // console.warn(
-      //   "The 'fetch comments' operation was invoked without a valid user and has been aborted."
-      // );
+    if (!userId && !entityId && !parentId) {
       return;
     }
 
@@ -54,11 +62,14 @@ function useProfileComments(
       setPage(1);
 
       const response = await fetchManyComments({
+        entityId,
         userId,
+        parentId,
+        sourceId,
         page: 1,
         sortBy,
-        limit: 10,
-        includeEntity,
+        limit,
+        include,
       });
 
       if (response) {
@@ -68,12 +79,21 @@ function useProfileComments(
         setHasMoreState(pagination.hasMore);
       }
     } catch (err) {
-      handleError(err, "Failed to reset profile comments:");
+      handleError(err, "Failed to reset comments:");
     } finally {
       loading.current = false;
       setLoadingState(false);
     }
-  }, [fetchManyComments, limit, sortBy, userId, includeEntity]);
+  }, [
+    fetchManyComments,
+    limit,
+    sortBy,
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    include,
+  ]);
 
   const loadMore = () => {
     if (loading.current || !hasMore.current) return;
@@ -86,18 +106,21 @@ function useProfileComments(
     resetComments();
   }, [resetComments]);
 
-  // useEffect to get a new batch of entities
+  // useEffect to get a new batch of comments
   useEffect(() => {
     const loadMoreComments = async () => {
       loading.current = true;
       setLoadingState(true);
       try {
         const response = await fetchManyComments({
+          entityId,
           userId,
+          parentId,
+          sourceId,
           page,
           sortBy,
           limit,
-          includeEntity,
+          include,
         });
 
         if (response) {
@@ -114,11 +137,21 @@ function useProfileComments(
       }
     };
 
-    // We only load more if th page changed
+    // We only load more if the page changed
     if (page > 1 && hasMore.current && !loading.current) {
       loadMoreComments();
     }
-  }, [page]);
+  }, [
+    page,
+    fetchManyComments,
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    sortBy,
+    limit,
+    include,
+  ]);
 
   return {
     comments,
@@ -130,4 +163,4 @@ function useProfileComments(
   };
 }
 
-export default useProfileComments;
+export default useFetchManyCommentsWrapper;

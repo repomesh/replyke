@@ -1,0 +1,237 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import { TimeFrame } from "../../interfaces/TimeFrame";
+import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
+import { TitleFilters } from "../../interfaces/entity-filters/TitleFilters";
+import { ContentFilters } from "../../interfaces/entity-filters/ContentFilters";
+import { AttachmentsFilters } from "../../interfaces/entity-filters/AttachmentsFilters";
+import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
+import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
+import useFetchManyEntities from "./useFetchManyEntities";
+import { handleError } from "../../utils/handleError";
+
+export interface UseFetchManyEntitiesWrapperProps {
+  userId?: string | null;
+  limit?: number;
+  sourceId?: string | null;
+  spaceId?: string | null;
+  followedOnly?: boolean;
+  include?: EntityIncludeParam;
+  defaultSortBy?: EntityListSortByOptions;
+  defaultSortDir?: SortDirection;
+  defaultSortType?: SortType;
+  timeFrame?: TimeFrame | null;
+  keywordsFilters?: KeywordsFilters | null;
+  titleFilters?: TitleFilters | null;
+  contentFilters?: ContentFilters | null;
+  attachmentsFilters?: AttachmentsFilters | null;
+  locationFilters?: LocationFilters | null;
+  metadataFilters?: MetadataFilters | null;
+}
+
+export interface UseFetchManyEntitiesWrapperValues {
+  entities: Entity[];
+  loading: boolean;
+  hasMore: boolean;
+  sortBy: EntityListSortByOptions;
+  sortDir: SortDirection;
+  sortType: SortType;
+  setSortBy: (newSortBy: EntityListSortByOptions) => void;
+  setSortDir: (newSortDir: SortDirection) => void;
+  setSortType: (newSortType: SortType) => void;
+  loadMore: () => void;
+}
+
+function useFetchManyEntitiesWrapper(
+  props: UseFetchManyEntitiesWrapperProps
+): UseFetchManyEntitiesWrapperValues {
+  const {
+    userId,
+    limit = 10,
+    defaultSortBy = "new",
+    defaultSortDir = "desc",
+    defaultSortType = "auto",
+    timeFrame,
+    sourceId,
+    spaceId,
+    include,
+    followedOnly,
+    keywordsFilters,
+    titleFilters,
+    contentFilters,
+    attachmentsFilters,
+    locationFilters,
+    metadataFilters,
+  } = props;
+  const fetchManyEntities = useFetchManyEntities();
+
+  const loading = useRef(true);
+  const [loadingState, setLoadingState] = useState(true);
+
+  const hasMore = useRef(true);
+  const [hasMoreState, setHasMoreState] = useState(true);
+
+  const [sortBy, setSortBy] = useState<EntityListSortByOptions>(defaultSortBy);
+  const [sortDir, setSortDir] = useState<SortDirection>(defaultSortDir);
+  const [sortType, setSortType] = useState<SortType>(defaultSortType);
+  const [page, setPage] = useState(1);
+  const [entities, setEntities] = useState<Entity[]>([]);
+
+  const resetEntities = useCallback(async () => {
+    if (!userId) {
+      return;
+    }
+
+    try {
+      loading.current = true;
+      setLoadingState(true);
+
+      hasMore.current = true;
+      setHasMoreState(true);
+
+      setPage(1);
+
+      const response = await fetchManyEntities({
+        userId,
+        page: 1,
+        sortBy,
+        sortDir,
+        sortType,
+        timeFrame,
+        sourceId,
+        spaceId,
+        limit,
+        include,
+        followedOnly,
+        keywordsFilters,
+        titleFilters,
+        contentFilters,
+        attachmentsFilters,
+        locationFilters,
+        metadataFilters,
+      });
+
+      if (response) {
+        const { data: newEntities, pagination } = response;
+        setEntities(newEntities);
+        hasMore.current = pagination.hasMore;
+        setHasMoreState(pagination.hasMore);
+      }
+    } catch (err) {
+      handleError(err, "Failed to reset profile entities:");
+    } finally {
+      loading.current = false;
+      setLoadingState(false);
+    }
+  }, [
+    fetchManyEntities,
+    limit,
+    sortBy,
+    sortDir,
+    sortType,
+    timeFrame,
+    sourceId,
+    spaceId,
+    userId,
+    include,
+    followedOnly,
+    keywordsFilters,
+    titleFilters,
+    contentFilters,
+    attachmentsFilters,
+    locationFilters,
+    metadataFilters,
+  ]);
+
+  const loadMore = () => {
+    if (loading.current || !hasMore.current) return;
+    setPage((prevPage) => {
+      return prevPage + 1;
+    });
+  };
+
+  useEffect(() => {
+    resetEntities();
+  }, [resetEntities]);
+
+  // useEffect to get a new batch of entities
+  useEffect(() => {
+    const loadMoreEntities = async () => {
+      loading.current = true;
+      setLoadingState(true);
+      try {
+        const response = await fetchManyEntities({
+          userId,
+          page,
+          sortBy,
+          sortDir,
+          sortType,
+          timeFrame,
+          sourceId,
+          spaceId,
+          limit,
+          include,
+          followedOnly,
+          keywordsFilters,
+          titleFilters,
+          contentFilters,
+          attachmentsFilters,
+          locationFilters,
+          metadataFilters,
+        });
+
+        if (response) {
+          const { data: newEntities, pagination } = response;
+          setEntities((prevEntities) => [...prevEntities, ...newEntities]);
+          hasMore.current = pagination.hasMore;
+          setHasMoreState(pagination.hasMore);
+        }
+      } catch (err) {
+        handleError(err, "Loading more entities failed:");
+      } finally {
+        loading.current = false;
+        setLoadingState(false);
+      }
+    };
+
+    // We only load more if the page changed
+    if (page > 1 && hasMore.current && !loading.current) {
+      loadMoreEntities();
+    }
+  }, [
+    page,
+    fetchManyEntities,
+    userId,
+    sortBy,
+    sortDir,
+    sortType,
+    timeFrame,
+    sourceId,
+    spaceId,
+    limit,
+    include,
+    followedOnly,
+    keywordsFilters,
+    titleFilters,
+    contentFilters,
+    attachmentsFilters,
+    locationFilters,
+    metadataFilters,
+  ]);
+
+  return {
+    entities,
+    loading: loadingState,
+    hasMore: hasMoreState,
+    sortBy,
+    sortDir,
+    sortType,
+    setSortBy,
+    setSortDir,
+    setSortType,
+    loadMore,
+  };
+}
+
+export default useFetchManyEntitiesWrapper;
