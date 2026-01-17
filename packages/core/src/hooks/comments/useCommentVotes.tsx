@@ -20,6 +20,17 @@ function useCommentVotes(props: {
   const [previousComment, setPreviousComment] = useState<Comment>(comment);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Compute current user's vote state
+  const userUpvotedComment = !!(
+    user?.id &&
+    comment.upvotes.includes(user.id)
+  );
+
+  const userDownvotedComment = !!(
+    user?.id &&
+    comment.downvotes.includes(user.id)
+  );
+
   // Helper to update state and remember the previous value
   const updateCommentState = (newCommentState: Comment) => {
     setPreviousComment(comment);
@@ -135,6 +146,8 @@ function useCommentVotes(props: {
   };
 
   return {
+    userUpvotedComment,
+    userDownvotedComment,
     upvoteComment: handleUpvote,
     removeCommentUpvote: handleRemoveUpvote,
     downvoteComment: handleDownvote,

@@ -10,7 +10,6 @@ import useDeleteEntity from "./useDeleteEntity";
 import useIncrementEntityViews from "./useIncrementEntityViews";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
-import { useUser } from "../user";
 
 export interface UseEntityDataProps {
   entity?: Entity;
@@ -42,7 +41,6 @@ function useEntityData({
   entity: entityProp,
   createIfNotFound,
 }: UseEntityDataProps): UseEntityDataValues {
-  const { user } = useUser();
   const [entity, setEntity] = useState<Entity | undefined | null>(entityProp);
 
   const entityViewsIncremented = useRef<boolean>(false);
@@ -50,23 +48,13 @@ function useEntityData({
   // Cache to store fetched entities keyed by unique identifier
   const entityCache = useRef<Record<string, Entity>>({});
 
-  const userUpvotedEntity = !!(
-    entity?.upvotes &&
-    user?.id &&
-    entity.upvotes.includes(user.id)
-  );
-
-  const userDownvotedEntity = !!(
-    entity?.downvotes &&
-    user?.id &&
-    entity.downvotes.includes(user.id)
-  );
-
   const fetchEntity = useFetchEntity();
   const fetchEntityByForeignId = useFetchEntityByForeignId();
   const fetchEntityByShortId = useFetchEntityByShortId();
 
   const {
+    userUpvotedEntity,
+    userDownvotedEntity,
     upvoteEntity,
     removeEntityUpvote,
     downvoteEntity,

@@ -21,6 +21,19 @@ function useEntityVotes(props: {
     Entity | undefined | null
   >(entity);
 
+  // Compute current user's vote state
+  const userUpvotedEntity = !!(
+    entity?.upvotes &&
+    user?.id &&
+    entity.upvotes.includes(user.id)
+  );
+
+  const userDownvotedEntity = !!(
+    entity?.downvotes &&
+    user?.id &&
+    entity.downvotes.includes(user.id)
+  );
+
   // Save the current state for potential reversion on error
   const updateEntityState = (newEntityState: Entity | undefined) => {
     setPreviousEntity(entity);
@@ -140,6 +153,8 @@ function useEntityVotes(props: {
   };
 
   return {
+    userUpvotedEntity,
+    userDownvotedEntity,
     upvoteEntity: handleUpvote,
     removeEntityUpvote: handleRemoveUpvote,
     downvoteEntity: handleDownvote,
