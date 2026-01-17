@@ -70,10 +70,13 @@ export {
   useFetchEntityByShortId,
   useFetchManyEntities,
   useIncrementEntityViews,
+  useFetchManyEntitiesWrapper,
   useRemoveEntityDownvote,
   useRemoveEntityUpvote,
   useUpdateEntity,
   useUpvoteEntity,
+  type UseFetchManyEntitiesWrapperProps,
+  type UseFetchManyEntitiesWrapperValues,
 } from "./hooks/entities";
 
 // -- entity lists
@@ -137,13 +140,16 @@ export {
   useCommentVotes,
   useDeleteComment,
   useEntityComments,
-  useProfileComments,
+  useFetchManyCommentsWrapper,
+  type UseFetchManyCommentsWrapperProps,
+  type UseFetchManyCommentsWrapperValues,
 } from "./hooks/comments";
 
 // -- users
 export {
   useFetchUser,
   useFetchUserByForeignId,
+  useFetchUserByUsername,
   useCheckUsernameAvailability,
   useFetchUserSuggestions,
   useMentions,
@@ -209,9 +215,20 @@ export type {
   UserRole,
 } from "./interfaces/models/User";
 export * as AppNotification from "./interfaces/models/AppNotification";
-export type { Entity } from "./interfaces/models/Entity";
+export type {
+  Entity,
+  EntityInclude,
+  EntityIncludeArray,
+  EntityIncludeParam,
+} from "./interfaces/models/Entity";
 export type { List } from "./interfaces/models/List";
-export type { Comment, GifData } from "./interfaces/models/Comment";
+export type {
+  Comment,
+  GifData,
+  CommentInclude,
+  CommentIncludeArray,
+  CommentIncludeParam,
+} from "./interfaces/models/Comment";
 export type { Mention } from "./interfaces/models/Mention";
 export type {
   Space,
