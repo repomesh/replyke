@@ -1,5 +1,6 @@
 import { baseApi } from "./baseApi";
 import type { Collection } from "../../interfaces/models/Collection";
+import type { Entity } from "../../interfaces/models/Entity";
 
 // API parameters types
 interface FetchRootCollectionParams {
@@ -9,6 +10,27 @@ interface FetchRootCollectionParams {
 interface FetchSubCollectionsParams {
   projectId: string;
   collectionId: string;
+}
+
+interface FetchCollectionEntitiesParams {
+  projectId: string;
+  collectionId: string;
+  page?: number;
+  limit?: number;
+  sortBy?: "new" | "top" | "hot" | "added";
+  sortDir?: "asc" | "desc";
+  include?: string | string[];
+}
+
+interface FetchCollectionEntitiesResponse {
+  data: Entity[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalPages: number;
+    totalItems: number;
+    hasMore: boolean;
+  };
 }
 
 interface CreateCollectionParams {
@@ -34,10 +56,26 @@ interface AddToCollectionParams {
   entityId: string;
 }
 
+interface AddToCollectionResponse {
+  success: boolean;
+  collection: {
+    id: string;
+    entityCount: number;
+  };
+}
+
 interface RemoveFromCollectionParams {
   projectId: string;
   collectionId: string;
   entityId: string;
+}
+
+interface RemoveFromCollectionResponse {
+  success: boolean;
+  collection: {
+    id: string;
+    entityCount: number;
+  };
 }
 
 // Extended API with collections endpoints
@@ -67,6 +105,24 @@ export const collectionsApi = baseApi.injectEndpoints({
           type: "Collection" as const,
           id,
         })) ?? []),
+      ],
+    }),
+
+    // Fetch paginated entities in a collection
+    fetchCollectionEntities: builder.query<FetchCollectionEntitiesResponse, FetchCollectionEntitiesParams>({
+      query: ({ projectId, collectionId, page, limit, sortBy, sortDir, include }) => ({
+        url: `/${projectId}/collections/${collectionId}/entities`,
+        method: "GET",
+        params: {
+          page,
+          limit,
+          sortBy,
+          sortDir,
+          include: Array.isArray(include) ? include.join(',') : include,
+        },
+      }),
+      providesTags: (result, error, { collectionId }) => [
+        { type: "CollectionEntities" as const, id: collectionId },
       ],
     }),
 
@@ -142,87 +198,28 @@ export const collectionsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Add entity to collection
-    addToCollection: builder.mutation<Collection, AddToCollectionParams>({
+    // Add entity to collection (POST - create relationship)
+    addToCollection: builder.mutation<AddToCollectionResponse, AddToCollectionParams>({
       query: ({ projectId, collectionId, entityId }) => ({
-        url: `/${projectId}/collections/${collectionId}/add-entity`,
-        method: "PATCH",
+        url: `/${projectId}/collections/${collectionId}/entities`,
+        method: "POST",
         body: { entityId },
       }),
-      // Optimistically update the cache
-      async onQueryStarted(
-        { projectId, collectionId, entityId },
-        { dispatch, queryFulfilled }
-      ) {
-        const patches: any[] = [];
-
-        // Update root collection if it's the target
-        patches.push(
-          dispatch(
-            collectionsApi.util.updateQueryData(
-              "fetchRootCollection",
-              { projectId },
-              (draft) => {
-                if (draft && draft.id === collectionId) {
-                  if (!draft.entityIds.includes(entityId)) {
-                    draft.entityIds.push(entityId);
-                  }
-                }
-              }
-            )
-          )
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          // Revert optimistic update on failure
-          patches.forEach((patch) => patch.undo());
-        }
-      },
       invalidatesTags: (result, error, { collectionId }) => [
         { type: "Collection" as const, id: collectionId },
+        { type: "CollectionEntities" as const, id: collectionId },
       ],
     }),
 
-    // Remove entity from collection
-    removeFromCollection: builder.mutation<Collection, RemoveFromCollectionParams>({
+    // Remove entity from collection (DELETE - remove relationship)
+    removeFromCollection: builder.mutation<RemoveFromCollectionResponse, RemoveFromCollectionParams>({
       query: ({ projectId, collectionId, entityId }) => ({
-        url: `/${projectId}/collections/${collectionId}/remove-entity`,
-        method: "PATCH",
-        body: { entityId },
+        url: `/${projectId}/collections/${collectionId}/entities/${entityId}`,
+        method: "DELETE",
       }),
-      // Optimistically update the cache
-      async onQueryStarted(
-        { projectId, collectionId, entityId },
-        { dispatch, queryFulfilled }
-      ) {
-        const patches: any[] = [];
-
-        // Update root collection if it's the target
-        patches.push(
-          dispatch(
-            collectionsApi.util.updateQueryData(
-              "fetchRootCollection",
-              { projectId },
-              (draft) => {
-                if (draft && draft.id === collectionId) {
-                  draft.entityIds = draft.entityIds.filter(id => id !== entityId);
-                }
-              }
-            )
-          )
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          // Revert optimistic update on failure
-          patches.forEach((patch) => patch.undo());
-        }
-      },
       invalidatesTags: (result, error, { collectionId }) => [
         { type: "Collection" as const, id: collectionId },
+        { type: "CollectionEntities" as const, id: collectionId },
       ],
     }),
   }),
@@ -234,6 +231,8 @@ export const {
   useLazyFetchRootCollectionQuery,
   useFetchSubCollectionsQuery,
   useLazyFetchSubCollectionsQuery,
+  useFetchCollectionEntitiesQuery,
+  useLazyFetchCollectionEntitiesQuery,
   useCreateCollectionMutation,
   useUpdateCollectionMutation,
   useDeleteCollectionMutation,
@@ -245,6 +244,7 @@ export const {
 export const {
   fetchRootCollection,
   fetchSubCollections,
+  fetchCollectionEntities,
   createCollection,
   updateCollection,
   deleteCollection,

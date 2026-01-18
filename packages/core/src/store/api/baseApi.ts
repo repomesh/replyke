@@ -32,6 +32,7 @@ export const baseApi = createApi({
   tagTypes: [
     'AppNotification',
     'Collection',
+    'CollectionEntities',
     'User',
     'Entity',
     'Space',

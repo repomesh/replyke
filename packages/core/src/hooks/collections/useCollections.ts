@@ -13,6 +13,7 @@ import {
 import { useCollectionsActions } from "./useCollectionsActions";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 import type { Collection } from "../../interfaces/models/Collection";
 
 export interface UseCollectionsProps {}
@@ -26,7 +27,14 @@ export interface UseCollectionsValues {
   goBack: () => void;
   goToRoot: () => void;
 
-  isEntityInCollection: (selectedEntityId: string, collectionId?: string) => boolean;
+  isEntityInCollection: (
+    selectedEntityId: string,
+    collectionId?: string
+  ) => Promise<{
+    saved: boolean;
+    inSpecificCollection?: boolean;
+    collections: Array<{ id: string; name: string }>;
+  }>;
 
   createCollection: (props: { collectionName: string }) => Promise<void>;
   updateCollection: (props: {
@@ -44,6 +52,7 @@ export interface UseCollectionsValues {
  */
 function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   const dispatch = useDispatch<AppDispatch>();
+  const axios = useAxiosPrivate();
 
   // Get external context
   const { projectId } = useProject();
@@ -109,12 +118,47 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
     fetchSubCollections(projectId, currentCollection.id);
   }, [fetchSubCollections, user, projectId, currentCollection, subCollectionsMap]);
 
-  // Entity membership checker - checks if entity is in specified collection (or current collection if not specified)
-  const isEntityInCollection = useCallback((selectedEntityId: string, collectionId?: string): boolean => {
-    const targetCollection = collectionId ? collectionsById[collectionId] : currentCollection;
-    if (!targetCollection) return false;
-    return targetCollection.entityIds.some(entityId => entityId === selectedEntityId);
-  }, [currentCollection, collectionsById]);
+  // Entity membership checker - checks if entity is in any collection (or specific collection if provided)
+  const isEntityInCollection = useCallback(
+    async (selectedEntityId: string, collectionId?: string) => {
+      if (!projectId || !selectedEntityId) {
+        return {
+          saved: false,
+          inSpecificCollection: collectionId ? false : undefined,
+          collections: [],
+        };
+      }
+
+      try {
+        const response = await axios.get<{
+          saved: boolean;
+          collections: Array<{ id: string; name: string }>;
+        }>(`/${projectId}/collections/is-entity-saved`, {
+          params: { entityId: selectedEntityId },
+          withCredentials: true,
+        });
+
+        // If specific collection ID provided, check if entity is in that collection
+        const inSpecificCollection = collectionId
+          ? response.data.collections.some((col) => col.id === collectionId)
+          : undefined;
+
+        return {
+          saved: response.data.saved,
+          inSpecificCollection,
+          collections: response.data.collections,
+        };
+      } catch (err) {
+        console.error("Error checking if entity is in collection:", err);
+        return {
+          saved: false,
+          inSpecificCollection: collectionId ? false : undefined,
+          collections: [],
+        };
+      }
+    },
+    [projectId, axios]
+  );
 
   // Wrapped CRUD operations that match the original interface
   const handleCreateCollection = useCallback(

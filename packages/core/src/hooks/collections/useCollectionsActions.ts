@@ -8,7 +8,6 @@ import {
   goToRoot,
   setCurrentCollection,
   setSubCollections,
-  updateCurrentCollection,
   updateCollectionInSubCollections,
   addNewCollectionAndNavigate,
   handleCollectionDeletion,
@@ -189,19 +188,17 @@ export function useCollectionsActions() {
     }
 
     try {
-      const result = await addToCollectionMutation({
+      await addToCollectionMutation({
         projectId,
         collectionId,
         entityId,
       }).unwrap();
-
-      if (result) {
-        dispatch(updateCurrentCollection(result));
-      }
+      // Note: Entity data is no longer stored in collections.
+      // RTK Query will handle cache invalidation for CollectionEntities.
     } catch (err) {
       handleErrorUtil(err, "Failed to add entity to collection");
     }
-  }, [addToCollectionMutation, dispatch]);
+  }, [addToCollectionMutation]);
 
   // Remove entity from collection
   const removeFromCollection = useCallback(async (
@@ -215,19 +212,17 @@ export function useCollectionsActions() {
     }
 
     try {
-      const result = await removeFromCollectionMutation({
+      await removeFromCollectionMutation({
         projectId,
         collectionId,
         entityId,
       }).unwrap();
-
-      if (result) {
-        dispatch(updateCurrentCollection(result));
-      }
+      // Note: Entity data is no longer stored in collections.
+      // RTK Query will handle cache invalidation for CollectionEntities.
     } catch (err) {
       handleErrorUtil(err, "Failed to remove entity from collection");
     }
-  }, [removeFromCollectionMutation, dispatch]);
+  }, [removeFromCollectionMutation]);
 
   // Reset collections
   const resetCollectionsAction = useCallback(() => {

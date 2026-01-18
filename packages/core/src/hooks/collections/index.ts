@@ -6,3 +6,8 @@ export {
   type UseCollectionsValues,
 } from "./useCollections";
 export { default as useIsEntityInCollection } from "./useIsEntitySaved";
+export {
+  default as useCollectionEntitiesWrapper,
+  type UseCollectionEntitiesWrapperProps,
+  type UseCollectionEntitiesWrapperValues,
+} from "./useCollectionEntitiesWrapper";
