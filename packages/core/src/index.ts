@@ -53,8 +53,11 @@ export {
   useCollections,
   useCollectionsActions,
   useIsEntityInCollection,
+  useCollectionEntitiesWrapper,
   type UseCollectionsProps,
   type UseCollectionsValues,
+  type UseCollectionEntitiesWrapperProps,
+  type UseCollectionEntitiesWrapperValues,
 } from "./hooks/collections";
 
 // -- entities
