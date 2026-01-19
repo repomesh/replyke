@@ -61,7 +61,7 @@ export interface UseCommentSectionDataValues {
   setShowReplyBanner: (newState: boolean) => void;
   addCommentsToTree: (
     newComments: Comment[] | undefined,
-    newlyAdded?: boolean
+    newlyAdded?: boolean,
   ) => void;
   removeCommentFromTree: (commentId: string) => void;
   handleDeepReply: (comment: Comment) => void;
@@ -81,7 +81,7 @@ export interface UseCommentSectionDataValues {
 }
 
 function useCommentSectionData(
-  props: UseCommentSectionDataProps
+  props: UseCommentSectionDataProps,
 ): UseCommentSectionDataValues {
   const {
     entity: entityProp,
@@ -102,7 +102,7 @@ function useCommentSectionData(
   const { entity: entityFromContext, setEntity: setContextEntity } =
     useEntity();
   const [entity, setEntity] = useState<Entity | null | undefined>(
-    entityProp ?? entityFromContext
+    entityProp ?? entityFromContext,
   );
 
   const { user } = useUser();
@@ -168,7 +168,7 @@ function useCommentSectionData(
       setRepliedToComment!(comment);
       setShowReplyBanner(true);
     },
-    [setRepliedToComment]
+    [setRepliedToComment],
   );
 
   // For replies that appear at the same level as the comment they are replying to. Includes a mention (e.g. @username).
@@ -178,7 +178,7 @@ function useCommentSectionData(
 
       if (comment.user) setPushMention(comment.user);
     },
-    [setRepliedToComment]
+    [setRepliedToComment],
   );
 
   const handleCreateComment = useCallback(
@@ -249,6 +249,16 @@ function useCommentSectionData(
         } as User,
         upvotes: [],
         downvotes: [],
+        reactionCounts: {
+          upvote: 0,
+          downvote: 0,
+          like: 0,
+          love: 0,
+          wow: 0,
+          sad: 0,
+          angry: 0,
+          funny: 0,
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -296,7 +306,7 @@ function useCommentSectionData(
       createComment,
       repliedToComment,
       callbacks,
-    ]
+    ],
   );
 
   const handleDeleteComment = useCallback(
@@ -313,7 +323,7 @@ function useCommentSectionData(
         handleError(err, "Failed to delete comment");
       }
     },
-    [deleteComment, removeCommentFromTree]
+    [deleteComment, removeCommentFromTree],
   );
 
   const handleUpdateComment = useCallback(
@@ -328,7 +338,7 @@ function useCommentSectionData(
         handleError(err, "Failed to update comment");
       }
     },
-    [updateComment]
+    [updateComment],
   );
 
   useEffect(() => {
@@ -365,7 +375,7 @@ function useCommentSectionData(
         });
 
         addCommentsToTree?.(
-          parentComment ? [targetComment, parentComment] : [targetComment]
+          parentComment ? [targetComment, parentComment] : [targetComment],
         );
       } catch (err) {
         handleError(err, "Fetching single comment failed");
