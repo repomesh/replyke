@@ -3,8 +3,6 @@ export { default as useEntityData } from "./useEntityData";
 
 export { default as useCreateEntity } from "./useCreateEntity";
 export { default as useDeleteEntity } from "./useDeleteEntity";
-export { default as useDownvoteEntity } from "./useDownvoteEntity";
-export { default as useEntityVotes } from "./useEntityVotes";
 export { default as useFetchEntity } from "./useFetchEntity";
 export { default as useFetchEntityByForeignId } from "./useFetchEntityByForeignId";
 export { default as useFetchEntityByShortId } from "./useFetchEntityByShortId";
@@ -15,8 +13,5 @@ export type {
   UseFetchManyEntitiesWrapperProps,
   UseFetchManyEntitiesWrapperValues,
 } from "./useFetchManyEntitiesWrapper";
-export { default as useRemoveEntityDownvote } from "./useRemoveEntityDownvote";
-export { default as useRemoveEntityUpvote } from "./useRemoveEntityUpvote";
 export { default as useUpdateEntity } from "./useUpdateEntity";
-export { default as useUpvoteEntity } from "./useUpvoteEntity";
 

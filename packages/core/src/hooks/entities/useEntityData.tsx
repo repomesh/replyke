@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import useEntityVotes from "./useEntityVotes";
 import useFetchEntity from "./useFetchEntity";
 import useFetchEntityByForeignId from "./useFetchEntityByForeignId";
 import useFetchEntityByShortId from "./useFetchEntityByShortId";
@@ -21,12 +20,6 @@ export interface UseEntityDataProps {
 export interface UseEntityDataValues {
   entity: Entity | null | undefined;
   setEntity: React.Dispatch<React.SetStateAction<Entity | null | undefined>>;
-  userUpvotedEntity: boolean;
-  userDownvotedEntity: boolean;
-  upvoteEntity: () => void;
-  removeEntityUpvote: () => void;
-  downvoteEntity: () => void;
-  removeEntityDownvote: () => void;
   updateEntity(
     props: Pick<UpdateEntityProps, "update">
   ): Promise<Entity | undefined>;
@@ -51,18 +44,6 @@ function useEntityData({
   const fetchEntity = useFetchEntity();
   const fetchEntityByForeignId = useFetchEntityByForeignId();
   const fetchEntityByShortId = useFetchEntityByShortId();
-
-  const {
-    userUpvotedEntity,
-    userDownvotedEntity,
-    upvoteEntity,
-    removeEntityUpvote,
-    downvoteEntity,
-    removeEntityDownvote,
-  } = useEntityVotes({
-    entity,
-    setEntity,
-  });
 
   const updateEntity = useUpdateEntity();
   const incrementEntityViews = useIncrementEntityViews();
@@ -172,12 +153,6 @@ function useEntityData({
   return {
     entity,
     setEntity,
-    userUpvotedEntity,
-    userDownvotedEntity,
-    upvoteEntity,
-    removeEntityUpvote,
-    downvoteEntity,
-    removeEntityDownvote,
     updateEntity: handleUpdateEntity,
     incrementEntityViews: handleIncrementEntityViews,
     deleteEntity: handleDeleteEntity,

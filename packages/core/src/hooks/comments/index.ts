@@ -6,7 +6,6 @@ export { default as useFetchComment } from "./useFetchComment";
 export { default as useFetchCommentByForeignId } from "./useFetchCommentByForeignId";
 export { default as useReplies } from "./useReplies";
 export { default as useUpdateComment } from "./useUpdateComment";
-export { default as useCommentVotes } from "./useCommentVotes";
 export { default as useDeleteComment } from "./useDeleteComment";
 export { default as useEntityComments } from "./useEntityComments";
 export { default as useFetchManyCommentsWrapper } from "./useFetchManyCommentsWrapper";
