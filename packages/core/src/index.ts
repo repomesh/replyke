@@ -66,18 +66,13 @@ export {
   useEntityData,
   useCreateEntity,
   useDeleteEntity,
-  useDownvoteEntity,
-  useEntityVotes,
   useFetchEntity,
   useFetchEntityByForeignId,
   useFetchEntityByShortId,
   useFetchManyEntities,
   useIncrementEntityViews,
   useFetchManyEntitiesWrapper,
-  useRemoveEntityDownvote,
-  useRemoveEntityUpvote,
   useUpdateEntity,
-  useUpvoteEntity,
   type UseFetchManyEntitiesWrapperProps,
   type UseFetchManyEntitiesWrapperValues,
 } from "./hooks/entities";
@@ -140,13 +135,28 @@ export {
   useFetchCommentByForeignId,
   useReplies,
   useUpdateComment,
-  useCommentVotes,
   useDeleteComment,
   useEntityComments,
   useFetchManyCommentsWrapper,
   type UseFetchManyCommentsWrapperProps,
   type UseFetchManyCommentsWrapperValues,
 } from "./hooks/comments";
+
+// -- reactions
+export {
+  useFetchEntityReactions,
+  useFetchCommentReactions,
+  useFetchEntityReactionsWrapper,
+  useFetchCommentReactionsWrapper,
+  useAddReaction,
+  useRemoveReaction,
+  useReactionToggle,
+  type UseFetchEntityReactionsWrapperProps,
+  type UseFetchEntityReactionsWrapperValues,
+  type UseFetchCommentReactionsWrapperProps,
+  type UseFetchCommentReactionsWrapperValues,
+  type UseReactionToggleValues,
+} from "./hooks/reactions";
 
 // -- users
 export {
@@ -232,6 +242,11 @@ export type {
   CommentIncludeArray,
   CommentIncludeParam,
 } from "./interfaces/models/Comment";
+export type {
+  Reaction,
+  ReactionType,
+  ReactionCounts,
+} from "./interfaces/models/Reaction";
 export type { Mention } from "./interfaces/models/Mention";
 export type {
   Space,
