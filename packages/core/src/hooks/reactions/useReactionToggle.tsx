@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
-import { ReactionType } from "../../interfaces/models/Reaction";
+import { ReactionType, ReactionCounts } from "../../interfaces/models/Reaction";
 import useAddReaction from "./useAddReaction";
 import useRemoveReaction from "./useRemoveReaction";
 import { handleError } from "../../utils/handleError";
@@ -10,12 +10,12 @@ export interface UseReactionToggleProps {
   targetType: "Entity" | "Comment";
   targetId: string | undefined;
   initialReaction?: ReactionType | null | undefined;
-  initialReactionCounts?: Record<string, number> | null | undefined;
+  initialReactionCounts?: ReactionCounts | null | undefined;
 }
 
 export interface UseReactionToggleValues {
   currentReaction: ReactionType | null;
-  reactionCounts: Record<string, number>;
+  reactionCounts: Partial<ReactionCounts>;
   toggleReaction: (props: {
     reactionType: ReactionType;
   }) => Promise<Entity | Comment | null>;
@@ -34,7 +34,7 @@ function useReactionToggle({
   const [currentReaction, setCurrentReaction] = useState<ReactionType | null>(
     initialReaction ?? null,
   );
-  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>(
+  const [reactionCounts, setReactionCounts] = useState<Partial<ReactionCounts>>(
     initialReactionCounts ?? {},
   );
   const [loading, setLoading] = useState(false);
