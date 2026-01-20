@@ -44,7 +44,7 @@ function useFetchEntityReactions() {
       }
 
       const response = await axios.get<PaginatedResponse<Reaction>>(
-        `/${projectId}/v7/entities/${entityId}/reactions`,
+        `/${projectId}/entities/${entityId}/reactions`,
         { params }
       );
 

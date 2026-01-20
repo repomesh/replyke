@@ -44,7 +44,7 @@ function useFetchCommentReactions() {
       }
 
       const response = await axios.get<PaginatedResponse<Reaction>>(
-        `/${projectId}/v7/comments/${commentId}/reactions`,
+        `/${projectId}/comments/${commentId}/reactions`,
         { params }
       );
 

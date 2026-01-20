@@ -32,8 +32,8 @@ function useAddReaction() {
       // Determine endpoint based on targetType
       const endpoint =
         targetType === "Entity"
-          ? `/${projectId}/v7/entities/${targetId}/reactions`
-          : `/${projectId}/v7/comments/${targetId}/reactions`;
+          ? `/${projectId}/entities/${targetId}/reactions`
+          : `/${projectId}/comments/${targetId}/reactions`;
 
       const response = await axios.post(endpoint, { reactionType });
 
