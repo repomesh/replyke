@@ -16,4 +16,7 @@ export type {
   UseFetchCommentReactionsWrapperValues,
 } from "./useFetchCommentReactionsWrapper";
 
-export type { UseReactionToggleValues } from "./useReactionToggle";
+export type {
+  UseReactionToggleProps,
+  UseReactionToggleValues,
+} from "./useReactionToggle";
