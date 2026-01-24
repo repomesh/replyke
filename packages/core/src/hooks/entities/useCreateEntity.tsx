@@ -3,6 +3,37 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { Entity } from "../../interfaces/models/Entity";
 import useProject from "../projects/useProject";
 import { Mention } from "../../interfaces/models/Mention";
+import { ImageSizeConfig } from "../../interfaces/models/Image";
+
+// Type guards (reused from useUploadImage pattern)
+type BrowserFile = File;
+type RNFile = { uri: string; name: string; type?: string };
+type UniversalFile = BrowserFile | RNFile;
+
+function isBrowserFile(file: UniversalFile): file is BrowserFile {
+  return typeof File !== "undefined" && file instanceof File;
+}
+
+// Image upload configuration
+interface ImageUploadConfig {
+  files: UniversalFile[];
+  options?: {
+    sizes?: ImageSizeConfig;  // [150, 400, 800] or { thumb: 150, card: 400 }
+    quality?: number;         // 1-100 (default: 80)
+    format?: "webp" | "jpeg" | "png" | "original";
+    pathParts?: string[];     // Storage path segments
+    stripExif?: boolean;      // default: true
+    fit?: "cover" | "contain" | "inside" | "outside";
+  };
+}
+
+// File upload configuration
+interface FileUploadConfig {
+  files: UniversalFile[];
+  options?: {
+    pathParts?: string[];
+  };
+}
 
 function useCreateEntity() {
   const axios = useAxiosPrivate();
@@ -10,6 +41,7 @@ function useCreateEntity() {
 
   const createEntity = useCallback(
     async (props: {
+      // Existing props (unchanged)
       foreignId?: string;
       sourceId?: string;
       spaceId?: string;
@@ -24,6 +56,10 @@ function useCreateEntity() {
       };
       metadata?: Record<string, any>;
       excludeUserId?: boolean;
+
+      // NEW: File upload support
+      images?: ImageUploadConfig;
+      files?: FileUploadConfig;
     }) => {
       const {
         foreignId,
@@ -37,31 +73,106 @@ function useCreateEntity() {
         location,
         metadata,
         excludeUserId,
+        images,  // NEW
+        files,   // NEW
       } = props;
 
       if (!projectId) {
         throw new Error("No projectId available.");
       }
 
-      const response = await axios.post<Entity>(
-        `/${projectId}/entities`,
-        {
-          foreignId,
-          sourceId,
-          spaceId,
-          title,
-          content,
-          attachments,
-          keywords,
-          mentions,
-          location,
-          metadata,
-          excludeUserId,
-        },
-        { withCredentials: true }
-      );
+      // DECISION POINT: JSON vs FormData
+      const hasImages = images && images.files.length > 0;
+      const hasFiles = files && files.files.length > 0;
 
-      return response.data as Entity;
+      if (hasImages || hasFiles) {
+        // NEW PATH: Multipart FormData request
+        const formData = new FormData();
+
+        // Append standard entity fields
+        if (foreignId !== undefined) formData.append("foreignId", foreignId);
+        if (sourceId !== undefined) formData.append("sourceId", sourceId);
+        if (spaceId !== undefined) formData.append("spaceId", spaceId);
+        if (title !== undefined) formData.append("title", title);
+        if (content !== undefined) formData.append("content", content);
+        if (attachments !== undefined) formData.append("attachments", JSON.stringify(attachments));
+        if (keywords !== undefined) formData.append("keywords", JSON.stringify(keywords));
+        if (mentions !== undefined) formData.append("mentions", JSON.stringify(mentions));
+        if (location !== undefined) formData.append("location", JSON.stringify(location));
+        if (metadata !== undefined) formData.append("metadata", JSON.stringify(metadata));
+        if (excludeUserId !== undefined) formData.append("excludeUserId", excludeUserId.toString());
+
+        // Append images
+        if (hasImages) {
+          images!.files.forEach((file) => {
+            if (isBrowserFile(file)) {
+              formData.append("images.files", file, file.name);
+            } else {
+              formData.append("images.files", {
+                uri: file.uri,
+                type: file.type || "image/jpeg",
+                name: file.name,
+              } as any);
+            }
+          });
+
+          if (images!.options) {
+            formData.append("images.options", JSON.stringify(images!.options));
+          }
+        }
+
+        // Append files
+        if (hasFiles) {
+          files!.files.forEach((file) => {
+            if (isBrowserFile(file)) {
+              formData.append("files.files", file, file.name);
+            } else {
+              formData.append("files.files", {
+                uri: file.uri,
+                type: file.type || "application/octet-stream",
+                name: file.name,
+              } as any);
+            }
+          });
+
+          if (files!.options) {
+            formData.append("files.options", JSON.stringify(files!.options));
+          }
+        }
+
+        // Make multipart request
+        const response = await axios.post<Entity>(
+          `/${projectId}/entities`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+
+        return response.data as Entity;
+      } else {
+        // EXISTING PATH: JSON request (unchanged)
+        const response = await axios.post<Entity>(
+          `/${projectId}/entities`,
+          {
+            foreignId,
+            sourceId,
+            spaceId,
+            title,
+            content,
+            attachments,
+            keywords,
+            mentions,
+            location,
+            metadata,
+            excludeUserId,
+          },
+          { withCredentials: true }
+        );
+
+        return response.data as Entity;
+      }
     },
     [projectId, axios]
   );

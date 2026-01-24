@@ -11,6 +11,50 @@ export interface TopComment {
   createdAt: string;
 }
 
+// Image variant structure (matches backend Image model)
+export interface EntityImageVariant {
+  path: string;           // Relative storage path
+  publicPath: string;     // Proxy URL for client access
+  width: number;
+  height: number;
+  size: number;           // Bytes
+  format: string;         // webp, jpeg, png
+}
+
+// Image extension data (populated for type: "image" files)
+export interface EntityImage {
+  fileId: string;
+  originalWidth: number;
+  originalHeight: number;
+  variants: Record<string, EntityImageVariant>;  // thumbnail, small, medium, large, etc.
+  processingStatus: "completed" | "failed";
+  processingError: string | null;
+  format: string;         // User-requested format
+  quality: number;        // User-requested quality (1-100)
+  exifStripped: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// File record (base table)
+export interface EntityFile {
+  id: string;
+  projectId: string;
+  userId: string | null;
+  entityId: string | null;
+  commentId: string | null;
+  spaceId: string | null;
+  type: "image" | "video" | "document" | "other";
+  originalPath: string;       // Relative storage path
+  originalSize: number;        // Bytes
+  originalMimeType: string;
+  position: number;            // Upload order (0-indexed)
+  metadata: Record<string, any>;
+  image?: EntityImage;         // Optional - only for type: "image"
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Entity {
   id: string; // Unique entity ID
   foreignId: string | null; // If integrated on top of existing data, this would be the id of the item in your system. Could also accept static values such as "about-page"
@@ -24,6 +68,7 @@ export interface Entity {
   content: string | null;
   mentions: Mention[]; // Array of mentions of other users
   attachments: Record<string, any>[]; // Array of JSON objects representing information about media items (e.g. url, size, format etc). Flexible structure.
+  files?: EntityFile[]; // Optional - System-managed file associations (populated when entity created with files or when include contains "files")
   keywords: string[]; // An array of keywords/tags. These could be used to filter the feed
   upvotes: string[]; // An array of ids of users that upvoted the entity (v6 legacy - v7 uses reactionCounts)
   downvotes: string[]; // An array of ids of users that downvoted the entity (v6 legacy - v7 uses reactionCounts)
@@ -46,6 +91,6 @@ export interface Entity {
   deletedAt: Date | null; // Use camelCase for `updated_at`
 }
 
-export type EntityInclude = "space" | "user" | "topComment" | "saved";
+export type EntityInclude = "space" | "user" | "topComment" | "saved" | "files";
 export type EntityIncludeArray = EntityInclude[];
 export type EntityIncludeParam = string | EntityIncludeArray;

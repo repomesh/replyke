@@ -213,7 +213,7 @@ export { useHandleSpaceCommentReport } from "./hooks/reports";
 export { useGetMetadata } from "./hooks/utils";
 
 // -- storage
-export { useUploadFile } from "./hooks/storage";
+export { useUploadFile, useUploadImage } from "./hooks/storage";
 
 // Interfaces
 export type {
@@ -304,3 +304,9 @@ export type {
   ConnectionStatusResponse,
   ConnectionStatus,
 } from "./interfaces/models/Connection";
+export type {
+  Image,
+  ImageVariant,
+  ImageSizeConfig,
+  UploadImageOptions,
+} from "./interfaces/models/Image";
