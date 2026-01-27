@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { SpaceDetailed } from "../../interfaces/models/Space";
+import { SpaceDetailed, SpaceIncludeParam } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchSpaceBySlug() {
@@ -8,7 +8,13 @@ function useFetchSpaceBySlug() {
   const axios = useAxiosPrivate();
 
   const fetchSpaceBySlug = useCallback(
-    async ({ slug }: { slug: string }) => {
+    async ({
+      slug,
+      include,
+    }: {
+      slug: string;
+      include?: SpaceIncludeParam;
+    }) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -17,9 +23,18 @@ function useFetchSpaceBySlug() {
         throw new Error("Please pass a slug");
       }
 
-      const response = await axios.get(
-        `/${projectId}/spaces/by-slug?slug=${slug}`
-      );
+      const includeParam = include
+        ? Array.isArray(include)
+          ? include.join(",")
+          : include
+        : undefined;
+
+      const response = await axios.get(`/${projectId}/spaces/by-slug`, {
+        params: {
+          slug,
+          ...(includeParam ? { include: includeParam } : {}),
+        },
+      });
 
       return response.data as SpaceDetailed;
     },

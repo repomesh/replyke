@@ -2,13 +2,19 @@ import { useCallback } from "react";
 
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
-import { User } from "../../interfaces/models/User";
+import { User, UserIncludeParam } from "../../interfaces/models/User";
 
 function useFetchUser() {
   const { projectId } = useProject();
 
   const fetchUser = useCallback(
-    async ({ userId }: { userId: string }) => {
+    async ({
+      userId,
+      include,
+    }: {
+      userId: string;
+      include?: UserIncludeParam;
+    }) => {
       if (!projectId) {
         throw new Error("No project specified");
       }
@@ -17,7 +23,15 @@ function useFetchUser() {
         throw new Error("Please specify a user ID");
       }
 
-      const response = await axios.get(`/${projectId}/users/${userId}`);
+      const includeParam = include
+        ? Array.isArray(include)
+          ? include.join(",")
+          : include
+        : undefined;
+
+      const response = await axios.get(`/${projectId}/users/${userId}`, {
+        params: includeParam ? { include: includeParam } : undefined,
+      });
 
       return response.data as User;
     },
