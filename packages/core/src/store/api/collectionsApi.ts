@@ -139,12 +139,12 @@ export const collectionsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Update collection properties
+    // Update collection properties (flat structure - matches space update pattern)
     updateCollection: builder.mutation<Collection, UpdateCollectionParams>({
       query: ({ projectId, collectionId, update }) => ({
         url: `/${projectId}/collections/${collectionId}`,
         method: "PATCH",
-        body: { update },
+        body: update,
       }),
       // Optimistically update the cache
       async onQueryStarted(

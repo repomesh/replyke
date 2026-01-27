@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import { useLazyFetchCollectionEntitiesQuery } from "../../store/api/collectionsApi";
 import { handleError } from "../../utils/handleError";
@@ -42,6 +42,12 @@ function useCollectionEntitiesWrapper(
 
   // Use passed collectionId if provided, otherwise default to current collection
   const effectiveCollectionId = passedCollectionId ?? currentCollection?.id;
+
+  // Serialize include to stable string to prevent infinite loops from array reference changes
+  const includeString = useMemo(
+    () => (Array.isArray(include) ? include.join(",") : include),
+    [include]
+  );
 
   const loading = useRef(false);
   const [loadingState, setLoadingState] = useState(false);
@@ -100,7 +106,7 @@ function useCollectionEntitiesWrapper(
     limit,
     sortBy,
     sortDir,
-    include,
+    includeString,
   ]);
 
   // Load more entities
@@ -161,7 +167,7 @@ function useCollectionEntitiesWrapper(
     limit,
     sortBy,
     sortDir,
-    include,
+    includeString,
   ]);
 
   return {
