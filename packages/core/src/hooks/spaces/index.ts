@@ -34,3 +34,19 @@ export { default as useRemoveMember } from "./useRemoveMember";
 // Helper hooks
 export { default as useSpacePermissions } from "./useSpacePermissions";
 export { default as useCheckSlugAvailability } from "./useCheckSlugAvailability";
+
+// Rule management hooks
+export {
+  useCreateRule,
+  useUpdateRule,
+  useDeleteRule,
+  useFetchRule,
+  useFetchManyRules,
+} from "./rules";
+export type {
+  CreateRuleProps,
+  UpdateRuleProps,
+  DeleteRuleProps,
+  FetchRuleProps,
+  FetchManyRulesProps,
+} from "./rules";
