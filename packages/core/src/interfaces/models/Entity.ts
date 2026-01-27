@@ -2,6 +2,7 @@ import { Mention } from "./Mention";
 import { User } from "./User";
 import { Space } from "./Space";
 import { ReactionCounts, ReactionType } from "./Reaction";
+import { File } from "./File";
 
 export interface TopComment {
   id: string;
@@ -11,49 +12,8 @@ export interface TopComment {
   createdAt: string;
 }
 
-// Image variant structure (matches backend Image model)
-export interface EntityImageVariant {
-  path: string;           // Relative storage path
-  publicPath: string;     // Proxy URL for client access
-  width: number;
-  height: number;
-  size: number;           // Bytes
-  format: string;         // webp, jpeg, png
-}
-
-// Image extension data (populated for type: "image" files)
-export interface EntityImage {
-  fileId: string;
-  originalWidth: number;
-  originalHeight: number;
-  variants: Record<string, EntityImageVariant>;  // thumbnail, small, medium, large, etc.
-  processingStatus: "completed" | "failed";
-  processingError: string | null;
-  format: string;         // User-requested format
-  quality: number;        // User-requested quality (1-100)
-  exifStripped: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// File record (base table)
-export interface EntityFile {
-  id: string;
-  projectId: string;
-  userId: string | null;
-  entityId: string | null;
-  commentId: string | null;
-  spaceId: string | null;
-  type: "image" | "video" | "document" | "other";
-  originalPath: string;       // Relative storage path
-  originalSize: number;        // Bytes
-  originalMimeType: string;
-  position: number;            // Upload order (0-indexed)
-  metadata: Record<string, any>;
-  image?: EntityImage;         // Optional - only for type: "image"
-  createdAt: string;
-  updatedAt: string;
-}
+// Alias for backward compatibility - EntityFile is now just File
+export type EntityFile = File;
 
 export interface Entity {
   id: string; // Unique entity ID

@@ -38,6 +38,7 @@ export {
   useUserActions,
   type UseUserProps,
   type UseUserValues,
+  type UpdateUserParams,
 } from "./hooks/user";
 
 // -- app notifications
@@ -166,7 +167,6 @@ export {
   useCheckUsernameAvailability,
   useFetchUserSuggestions,
   useMentions,
-  useUpdateUser,
 } from "./hooks/users";
 
 // -- follows
@@ -226,6 +226,9 @@ export type {
   User,
   AuthUser,
   UserRole,
+  UserInclude,
+  UserIncludeArray,
+  UserIncludeParam,
 } from "./interfaces/models/User";
 export * as AppNotification from "./interfaces/models/AppNotification";
 export type {
@@ -264,6 +267,9 @@ export type {
   ApproveMemberResponse,
   DeclineMemberResponse,
   DeleteSpaceResponse,
+  SpaceInclude,
+  SpaceIncludeArray,
+  SpaceIncludeParam,
 } from "./interfaces/models/Space";
 export type {
   SpaceMember,
@@ -307,6 +313,6 @@ export type {
 export type {
   Image,
   ImageVariant,
-  ImageSizeConfig,
   UploadImageOptions,
 } from "./interfaces/models/Image";
+export type { File } from "./interfaces/models/File";
