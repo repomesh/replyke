@@ -22,32 +22,59 @@ export interface Image {
   createdAt: string;      // ISO 8601 timestamp
 }
 
-export type ImageSizeConfig =
-  | number[]                    // Array format: [150, 400, 800]
-  | Record<string, number>;     // Object format: { thumb: 150, small: 400 }
-
-export interface UploadImageOptions {
-  // Size configuration (optional)
-  sizes?: ImageSizeConfig;
-
-  // Quality and format (optional)
-  quality?: number;             // 1-100 (default: 80)
+// Common properties across all modes
+interface BaseImageOptions {
+  quality?: number; // 1-100, default: 85
   format?: "webp" | "jpeg" | "png" | "original"; // default: "webp"
-
-  // Processing options (optional)
-  stripExif?: boolean;          // default: true
-  fit?: "cover" | "contain" | "inside" | "outside"; // default: "cover"
-
-  // Storage path (optional)
-  // pathParts: ['avatars'] → {projectId}/avatars/{fileId}/filename
-  // pathParts: [] → {projectId}/{fileId}/filename
-  pathParts?: string[];
-
-  // Optional associations (for cascade deletes)
-  entityId?: string;
-  commentId?: string;
-  spaceId?: string;
-
-  // Callbacks
-  onProgress?: (progress: number) => void;
+  stripExif?: boolean; // default: true
+  pathParts?: string[]; // Storage path
+  entityId?: string; // Optional association for cascade delete
+  commentId?: string; // Optional association for cascade delete
+  spaceId?: string; // Optional association for cascade delete
+  onProgress?: (progress: number) => void; // Callback for upload progress
 }
+
+// Mode 1: Exact Dimensions
+export interface ExactDimensionsMode extends BaseImageOptions {
+  mode: "exact-dimensions";
+  dimensions: Record<string, { width: number; height: number }>;
+  fit?: "cover" | "contain" | "inside" | "outside";
+}
+
+// Mode 2a: Aspect Ratio (Width-Based)
+export interface AspectRatioWidthMode extends BaseImageOptions {
+  mode: "aspect-ratio-width-based";
+  aspectRatio: { width: number; height: number };
+  widths: Record<string, number>;
+  fit?: "cover" | "contain" | "inside" | "outside";
+}
+
+// Mode 2b: Aspect Ratio (Height-Based)
+export interface AspectRatioHeightMode extends BaseImageOptions {
+  mode: "aspect-ratio-height-based";
+  aspectRatio: { width: number; height: number };
+  heights: Record<string, number>;
+  fit?: "cover" | "contain" | "inside" | "outside";
+}
+
+// Mode 3: Original Aspect Ratio
+export interface OriginalAspectMode extends BaseImageOptions {
+  mode: "original-aspect";
+  sizes: Record<string, number>;
+  fit?: "inside" | "outside";
+}
+
+// Mode 4: Multi Aspect Ratio
+export interface MultiAspectRatioMode extends BaseImageOptions {
+  mode: "multi-aspect-ratio";
+  aspectRatios: Array<{ width: number; height: number }>;
+  sizes: Record<string, number>;
+  fit?: "cover" | "contain" | "inside" | "outside";
+}
+
+export type UploadImageOptions =
+  | ExactDimensionsMode
+  | AspectRatioWidthMode
+  | AspectRatioHeightMode
+  | OriginalAspectMode
+  | MultiAspectRatioMode;

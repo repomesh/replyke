@@ -246,6 +246,8 @@ function useCommentSectionData(
           birthdate: new Date(),
           location: null,
           createdAt: new Date(),
+          avatarFileId: null,
+          bannerFileId: null,
         } as User,
         upvotes: [],
         downvotes: [],

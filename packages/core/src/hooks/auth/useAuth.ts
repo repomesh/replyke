@@ -36,6 +36,10 @@ export interface UseAuthValues {
     birthdate?: Date;
     metadata?: Record<string, any>;
     secureMetadata?: Record<string, any>;
+    avatarFile?: File | Blob;
+    avatarOptions?: any;
+    bannerFile?: File | Blob;
+    bannerOptions?: any;
   }) => Promise<void>;
   signInWithEmailAndPassword: (props: {
     email: string;
@@ -74,6 +78,10 @@ export default function useAuth(): UseAuthValues {
       birthdate?: Date;
       metadata?: Record<string, any>;
       secureMetadata?: Record<string, any>;
+      avatarFile?: File | Blob;
+      avatarOptions?: any;
+      bannerFile?: File | Blob;
+      bannerOptions?: any;
     }) => {
       if (!projectId) {
         throw new Error("No projectId available.");
@@ -83,7 +91,7 @@ export default function useAuth(): UseAuthValues {
         projectId,
         ...props,
       }));
-      
+
       if (signUpWithEmailAndPasswordThunk.rejected.match(result)) {
         throw new Error(result.payload as string);
       }

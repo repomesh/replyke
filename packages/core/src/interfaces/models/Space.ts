@@ -1,4 +1,5 @@
 import { PaginatedResponse, PaginationMetadata } from "../IPaginatedResponse";
+import { File } from "./File";
 
 export type ReadingPermission = "anyone" | "members";
 export type PostingPermission = "anyone" | "members" | "admins";
@@ -22,10 +23,13 @@ export interface SpacePreview {
   shortId: string;
   name: string;
   slug: string | null;
-  avatar: string | null;
+  avatarFileId: string | null;
   readingPermission?: ReadingPermission;
   parentSpaceId?: string | null;
   depth?: number;
+
+  // File associations (populated via joins)
+  avatarFile?: File;
 }
 
 export interface Space {
@@ -38,8 +42,8 @@ export interface Space {
   // Display info
   name: string;
   description: string | null;
-  avatar: string | null;
-  banner: string | null;
+  avatarFileId: string | null;
+  bannerFileId: string | null;
 
   // Ownership & permissions
   userId: string;
@@ -63,6 +67,10 @@ export interface Space {
   membersCount: number;
   childSpacesCount: number;
   isMember?: boolean; // Optional: only present when user is authenticated
+
+  // File associations (populated via joins)
+  avatarFile?: File;
+  bannerFile?: File;
 }
 
 // Extended space with detailed information (returned from single space fetch endpoints)
@@ -161,3 +169,8 @@ export interface DeleteSpaceResponse {
     childSpaces: number;
   };
 }
+
+// Space include types (following Entity/User pattern)
+export type SpaceInclude = "files";
+export type SpaceIncludeArray = SpaceInclude[];
+export type SpaceIncludeParam = string | SpaceIncludeArray;

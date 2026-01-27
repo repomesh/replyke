@@ -1,3 +1,5 @@
+import { File } from "./File";
+
 export type UserRole = "admin" | "moderator" | "visitor";
 export type UserFull = {
   id: string;
@@ -8,6 +10,10 @@ export type UserFull = {
   name: string | null;
   username: string | null;
   avatar: string | null;
+  avatarFileId: string | null;
+  bannerFileId: string | null;
+  avatarFile?: File | null;
+  bannerFile?: File | null;
   bio: string | null; // limited to 300 characters
   birthdate: Date | null;
   location: {
@@ -26,25 +32,7 @@ export type UserFull = {
 };
 
 // These are the details the get delivered to the authenticated user's client (about themselves)
-export type AuthUser = Pick<
-  UserFull,
-  | "id"
-  | "projectId"
-  | "foreignId"
-  | "role"
-  | "email"
-  | "name"
-  | "username"
-  | "avatar"
-  | "bio"
-  | "birthdate"
-  | "metadata"
-  | "reputation"
-  | "isVerified"
-  | "isActive"
-  | "lastActive"
-  | "createdAt"
-> & {
+export type AuthUser = Omit<UserFull, "secureMetadata" | "deletedAt"> & {
   suspensions: {
     reason: string | null;
     startDate: Date;
@@ -63,3 +51,8 @@ export type User = Omit<
   | "updatedAt"
   | "deletedAt"
 >;
+
+// User include types (following Entity pattern)
+export type UserInclude = "files";
+export type UserIncludeArray = UserInclude[];
+export type UserIncludeParam = string | UserIncludeArray;

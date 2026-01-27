@@ -21,7 +21,7 @@ function useUploadImage() {
   const uploadImage = useCallback(
     async (
       file: UniversalFile,
-      options: UploadImageOptions = {}
+      options: UploadImageOptions
     ): Promise<Image> => {
       // Validate required inputs
       if (!projectId) {
@@ -49,13 +49,25 @@ function useUploadImage() {
           } as any);
         }
 
-        // Append all optional configuration fields
-        if (options.pathParts) {
-          formData.append("pathParts", JSON.stringify(options.pathParts));
+        // Append mode (required)
+        formData.append("mode", options.mode);
+
+        // Append mode-specific fields
+        if (options.mode === "exact-dimensions") {
+          formData.append("dimensions", JSON.stringify(options.dimensions));
+        } else if (options.mode === "aspect-ratio-width-based") {
+          formData.append("aspectRatio", JSON.stringify(options.aspectRatio));
+          formData.append("widths", JSON.stringify(options.widths));
+        } else if (options.mode === "aspect-ratio-height-based") {
+          formData.append("aspectRatio", JSON.stringify(options.aspectRatio));
+          formData.append("heights", JSON.stringify(options.heights));
+        } else if (options.mode === "original-aspect") {
+          formData.append("sizes", JSON.stringify(options.sizes));
         }
 
-        if (options.sizes) {
-          formData.append("sizes", JSON.stringify(options.sizes));
+        // Append common optional fields
+        if (options.pathParts) {
+          formData.append("pathParts", JSON.stringify(options.pathParts));
         }
 
         if (options.quality !== undefined) {

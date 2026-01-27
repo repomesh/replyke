@@ -55,8 +55,24 @@ export function useUserActions() {
       // Store original user state for potential reversion
       const originalUser = currentUser;
 
+      // Build optimistic update excluding fields that require server transformation:
+      // - File uploads (avatar/banner as File) - we don't know the final URL
+      // - Location - server transforms { latitude, longitude } to GeoJSON format
+      const optimisticUpdate: Partial<AuthUser> = {};
+      if (update.name !== undefined) optimisticUpdate.name = update.name;
+      if (update.username !== undefined) optimisticUpdate.username = update.username;
+      if (update.bio !== undefined) optimisticUpdate.bio = update.bio;
+      if (update.birthdate !== undefined) optimisticUpdate.birthdate = update.birthdate;
+      if (update.metadata !== undefined) optimisticUpdate.metadata = update.metadata;
+      // Only apply avatar optimistically if it's a string URL (not a file upload)
+      if (typeof update.avatar === 'string' || update.avatar === null) {
+        optimisticUpdate.avatar = update.avatar;
+      }
+
       // OPTIMISTIC UPDATE: Apply changes immediately for instant UI feedback
-      dispatch(updateUserOptimistic(update));
+      if (Object.keys(optimisticUpdate).length > 0) {
+        dispatch(updateUserOptimistic(optimisticUpdate));
+      }
 
       try {
         const result = await updateUserMutation({ 

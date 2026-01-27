@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { Entity } from "../../interfaces/models/Entity";
 import useProject from "../projects/useProject";
 import { Mention } from "../../interfaces/models/Mention";
-import { ImageSizeConfig } from "../../interfaces/models/Image";
+import { UploadImageOptions } from "../../interfaces/models/Image";
 
 // Type guards (reused from useUploadImage pattern)
 type BrowserFile = File;
@@ -17,14 +17,7 @@ function isBrowserFile(file: UniversalFile): file is BrowserFile {
 // Image upload configuration
 interface ImageUploadConfig {
   files: UniversalFile[];
-  options?: {
-    sizes?: ImageSizeConfig;  // [150, 400, 800] or { thumb: 150, card: 400 }
-    quality?: number;         // 1-100 (default: 80)
-    format?: "webp" | "jpeg" | "png" | "original";
-    pathParts?: string[];     // Storage path segments
-    stripExif?: boolean;      // default: true
-    fit?: "cover" | "contain" | "inside" | "outside";
-  };
+  options?: UploadImageOptions;
 }
 
 // File upload configuration

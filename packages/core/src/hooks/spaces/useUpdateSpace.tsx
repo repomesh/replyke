@@ -5,7 +5,15 @@ import {
   ReadingPermission,
   PostingPermission,
 } from "../../interfaces/models/Space";
+import { UploadImageOptions } from "../../interfaces/models/Image";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
+import useSpace from "./useSpace";
+
+// Image upload configuration (similar to useCreateEntity pattern)
+interface ImageUploadConfig {
+  file: File | Blob;
+  options: UploadImageOptions;
+}
 
 export interface UpdateSpaceProps {
   spaceId: string;
@@ -13,8 +21,8 @@ export interface UpdateSpaceProps {
     name: string;
     slug: string | null;
     description: string | null;
-    avatar: string | null;
-    banner: string | null;
+    avatar: ImageUploadConfig;
+    banner: ImageUploadConfig;
     readingPermission: ReadingPermission;
     postingPermission: PostingPermission;
     requireJoinApproval: boolean;
@@ -23,8 +31,9 @@ export interface UpdateSpaceProps {
 }
 
 function useUpdateSpace() {
-  const { projectId } = useProject();
   const axios = useAxiosPrivate();
+  const { projectId } = useProject();
+  const { setSpace } = useSpace();
 
   const updateSpace = useCallback(
     async ({ spaceId, update }: UpdateSpaceProps) => {
@@ -36,11 +45,78 @@ function useUpdateSpace() {
         throw new Error("Please pass a spaceId");
       }
 
-      const response = await axios.patch(`/${projectId}/spaces/${spaceId}`, update);
+      // Build FormData if files are present, otherwise use JSON
+      const hasFiles = update.avatar || update.banner;
 
-      return response.data as SpaceDetailed;
+      if (hasFiles) {
+        const formData = new FormData();
+
+        // Append regular fields
+        if (update.name !== undefined) {
+          formData.append("name", update.name);
+        }
+        if (update.slug !== undefined) {
+          formData.append("slug", update.slug || "");
+        }
+        if (update.description !== undefined) {
+          formData.append("description", update.description || "");
+        }
+        if (update.readingPermission !== undefined) {
+          formData.append("readingPermission", update.readingPermission);
+        }
+        if (update.postingPermission !== undefined) {
+          formData.append("postingPermission", update.postingPermission);
+        }
+        if (update.requireJoinApproval !== undefined) {
+          formData.append(
+            "requireJoinApproval",
+            String(update.requireJoinApproval),
+          );
+        }
+        if (update.metadata !== undefined) {
+          formData.append("metadata", JSON.stringify(update.metadata));
+        }
+
+        // Append avatar file and options
+        if (update.avatar) {
+          formData.append("avatarFile", update.avatar.file);
+          formData.append(
+            "avatarFile.options",
+            JSON.stringify(update.avatar.options),
+          );
+        }
+
+        // Append banner file and options
+        if (update.banner) {
+          formData.append("bannerFile", update.banner.file);
+          formData.append(
+            "bannerFile.options",
+            JSON.stringify(update.banner.options),
+          );
+        }
+
+        const response = await axios.patch(
+          `/${projectId}/spaces/${spaceId}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+
+        return response.data as SpaceDetailed;
+      } else {
+        // No files - use JSON request (backward compatibility)
+        const response = await axios.patch(
+          `/${projectId}/spaces/${spaceId}`,
+          update,
+        );
+
+        const updatedSpace = response.data as SpaceDetailed;
+        setSpace?.(updatedSpace);
+        return updatedSpace;
+      }
     },
-    [projectId]
+    [projectId, axios],
   );
 
   return updateSpace;

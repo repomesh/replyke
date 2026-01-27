@@ -30,8 +30,56 @@ const authService = {
       birthdate?: Date;
       metadata?: Record<string, any>;
       secureMetadata?: Record<string, any>;
+      avatarFile?: File | Blob;
+      avatarOptions?: any;
+      bannerFile?: File | Blob;
+      bannerOptions?: any;
     }
   ) {
+    // Check if we need to use FormData (when files are present)
+    if (data.avatarFile || data.bannerFile) {
+      const formData = new FormData();
+
+      // Append regular fields
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      if (data.name?.trim()) formData.append("name", data.name.trim());
+      if (data.username?.trim()) formData.append("username", data.username.trim());
+      if (data.bio?.trim()) formData.append("bio", data.bio.trim());
+      if (data.location) formData.append("location", JSON.stringify(data.location));
+      if (data.birthdate) formData.append("birthdate", data.birthdate.toISOString());
+      if (data.metadata) formData.append("metadata", JSON.stringify(data.metadata));
+      if (data.secureMetadata) formData.append("secureMetadata", JSON.stringify(data.secureMetadata));
+
+      // Append avatar file and options
+      if (data.avatarFile) {
+        formData.append("avatarFile", data.avatarFile);
+        if (data.avatarOptions) {
+          formData.append("avatarFile.options", JSON.stringify(data.avatarOptions));
+        }
+      }
+
+      // Append banner file and options
+      if (data.bannerFile) {
+        formData.append("bannerFile", data.bannerFile);
+        if (data.bannerOptions) {
+          formData.append("bannerFile.options", JSON.stringify(data.bannerOptions));
+        }
+      }
+
+      const response = await axios.post(
+        `/${projectId}/auth/sign-up`,
+        formData,
+        {
+          withCredentials: !isReactNative(),
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      return response.data;
+    }
+
+    // Fallback to regular JSON request (backward compatibility)
     const response = await axios.post(
       `/${projectId}/auth/sign-up`,
       {
@@ -119,6 +167,10 @@ export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
       birthdate?: Date;
       metadata?: Record<string, any>;
       secureMetadata?: Record<string, any>;
+      avatarFile?: File | Blob;
+      avatarOptions?: any;
+      bannerFile?: File | Blob;
+      bannerOptions?: any;
     },
     { dispatch, rejectWithValue }
   ) => {
