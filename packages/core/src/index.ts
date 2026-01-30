@@ -18,10 +18,20 @@ export type { ReportReasonKey } from "./constants/reportReasons";
 // Context providers (Redux-powered by default)
 export {
   ReplykeProvider,
+  ReplykeIntegrationProvider,
   EntityProvider,
   CommentSectionProvider,
   SpaceProvider,
 } from "./context";
+
+// Integration mode exports (for users with their own Redux store)
+export {
+  replykeReducers,
+  replykeApiReducer,
+  replykeMiddleware,
+  replykeApi,
+  type ReplykeState,
+} from "./store/integration";
 
 // -- projects
 export { useProject, useProjectData } from "./hooks/projects";
@@ -106,7 +116,8 @@ export {
   useJoinSpace,
   useLeaveSpace,
   useFetchSpaceMembers,
-  useFetchMySpaces,
+  useFetchSpaceTeam,
+  useFetchUserSpaces,
   useUpdateMemberRole,
   useApproveMember,
   useDeclineMember,
@@ -259,8 +270,8 @@ export type {
   ReadingPermission,
   PostingPermission,
   PaginationMeta,
-  MySpaceItem,
-  MySpacesResponse,
+  UserSpaceItem,
+  UserSpacesResponse,
   JoinSpaceResponse,
   LeaveSpaceResponse,
   UpdateMemberRoleResponse,
@@ -277,6 +288,7 @@ export type {
   SpaceMemberStatus,
   SpaceMemberWithUser,
   SpaceMembersResponse,
+  SpaceTeamResponse,
 } from "./interfaces/models/SpaceMember";
 export type {
   SpaceListSortByOptions,
