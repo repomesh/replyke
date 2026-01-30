@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store";
+import { useReplykeDispatch } from "../../store/hooks";
 import {
   setLoading,
   openCollection,
@@ -31,7 +30,7 @@ import type { Collection } from "../../interfaces/models/Collection";
  * This replaces the individual hooks and provides a centralized way to manage collections
  */
 export function useCollectionsActions() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // RTK Query hooks
   const [fetchRootCollectionQuery] = useLazyFetchRootCollectionQuery();

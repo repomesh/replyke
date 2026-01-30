@@ -247,7 +247,7 @@ export const signOutThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.auth.refreshToken;
+    const refreshToken = state.replyke.auth.refreshToken;
 
     // If React Native and no refresh token, throw error (matches original logic)
     if (isReactNative() && !refreshToken) {
@@ -282,7 +282,7 @@ export const requestNewAccessTokenThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.auth.refreshToken;
+    const refreshToken = state.replyke.auth.refreshToken;
 
     // If React Native and no refresh token, return early
     if (isReactNative() && !refreshToken) {
@@ -350,7 +350,7 @@ export const changePasswordThunk = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
 
-    if (!state.auth.user) {
+    if (!state.replyke.auth.user) {
       throw new Error("No user is authenticated");
     }
 

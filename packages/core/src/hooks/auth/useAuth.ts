@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import type { AppDispatch, RootState } from '../../store';
+import { useReplykeDispatch, useReplykeSelector } from '../../store/hooks';
 import {
   selectAccessToken,
   selectRefreshToken,
@@ -54,13 +53,13 @@ export interface UseAuthValues {
 }
 
 export default function useAuth(): UseAuthValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
-  
+
   // Selectors
-  const initialized = useSelector((state: RootState) => selectInitialized(state));
-  const accessToken = useSelector((state: RootState) => selectAccessToken(state));
-  const refreshToken = useSelector((state: RootState) => selectRefreshToken(state));
+  const initialized = useReplykeSelector(selectInitialized);
+  const accessToken = useReplykeSelector(selectAccessToken);
+  const refreshToken = useReplykeSelector(selectRefreshToken);
 
   // Actions
   const handleSignUpWithEmailAndPassword = useCallback(

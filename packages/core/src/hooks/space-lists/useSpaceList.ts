@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   initializeList,
@@ -71,25 +70,25 @@ export interface UseSpaceListValues {
 }
 
 function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
-  // Get state from Redux
-  const spaceList = useSelector((state: RootState) =>
+  // Get state from Redux (parameterized selectors)
+  const spaceList = useReplykeSelector((state) =>
     selectSpaceList(state, listId)
   );
-  const spaces = useSelector((state: RootState) =>
+  const spaces = useReplykeSelector((state) =>
     selectSpaceListSpaces(state, listId)
   );
-  const loading = useSelector((state: RootState) =>
+  const loading = useReplykeSelector((state) =>
     selectSpaceListLoading(state, listId)
   );
-  const hasMore = useSelector((state: RootState) =>
+  const hasMore = useReplykeSelector((state) =>
     selectSpaceListHasMore(state, listId)
   );
-  const filters = useSelector((state: RootState) =>
+  const filters = useReplykeSelector((state) =>
     selectSpaceListFilters(state, listId)
   );
-  const config = useSelector((state: RootState) =>
+  const config = useReplykeSelector((state) =>
     selectSpaceListConfig(state, listId)
   );
 

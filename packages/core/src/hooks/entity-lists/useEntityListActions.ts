@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store";
+import { useReplykeDispatch } from "../../store/hooks";
 import {
   setEntityListLoading,
   setEntityListEntities,
@@ -77,7 +76,7 @@ interface DeleteEntityOptions {
  * Uses RTK Query for stable function references and proper caching
  */
 export function useEntityListActions() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get project and user context
   const { projectId } = useProject();

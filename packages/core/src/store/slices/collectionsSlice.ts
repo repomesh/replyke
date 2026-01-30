@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import type { Collection } from "../../interfaces/models/Collection";
+import type { ReplykeState } from '../replykeReducers';
 
 // State interface
 export interface CollectionsState {
@@ -243,16 +244,16 @@ export const {
 // Export reducer
 export default collectionsSlice.reducer;
 
-// Selectors
-export const selectCurrentCollection = (state: { collections: CollectionsState }): Collection | null => {
-  const { currentCollectionId, collectionsById } = state.collections;
+// Selectors - use namespaced state for dual-mode support
+export const selectCurrentCollection = (state: { replyke: ReplykeState }): Collection | null => {
+  const { currentCollectionId, collectionsById } = state.replyke.collections;
   return currentCollectionId ? collectionsById[currentCollectionId] || null : null;
 };
 
 export const selectSubCollections = createSelector(
-  [(state: { collections: CollectionsState }) => state.collections.currentCollectionId,
-   (state: { collections: CollectionsState }) => state.collections.subcollectionsMap,
-   (state: { collections: CollectionsState }) => state.collections.collectionsById],
+  [(state: { replyke: ReplykeState }) => state.replyke.collections.currentCollectionId,
+   (state: { replyke: ReplykeState }) => state.replyke.collections.subcollectionsMap,
+   (state: { replyke: ReplykeState }) => state.replyke.collections.collectionsById],
   (currentCollectionId, subcollectionsMap, collectionsById): Collection[] => {
     if (!currentCollectionId || !subcollectionsMap[currentCollectionId]) {
       return [];
@@ -264,12 +265,12 @@ export const selectSubCollections = createSelector(
   }
 );
 
-export const selectCollectionsLoading = (state: { collections: CollectionsState }) =>
-  state.collections.loading;
+export const selectCollectionsLoading = (state: { replyke: ReplykeState }) =>
+  state.replyke.collections.loading;
 
 export const selectCollectionHistory = createSelector(
-  [(state: { collections: CollectionsState }) => state.collections.collectionHistory,
-   (state: { collections: CollectionsState }) => state.collections.collectionsById],
+  [(state: { replyke: ReplykeState }) => state.replyke.collections.collectionHistory,
+   (state: { replyke: ReplykeState }) => state.replyke.collections.collectionsById],
   (collectionHistory, collectionsById): Collection[] => {
     return collectionHistory
       .map(collectionId => collectionsById[collectionId])
@@ -277,17 +278,17 @@ export const selectCollectionHistory = createSelector(
   }
 );
 
-// New selector for the sub-collections mapping
-export const selectSubCollectionsMap = (state: { collections: CollectionsState }) =>
-  state.collections.subcollectionsMap;
+// Selector for the sub-collections mapping
+export const selectSubCollectionsMap = (state: { replyke: ReplykeState }) =>
+  state.replyke.collections.subcollectionsMap;
 
-// New selector for all collections
-export const selectCollectionsById = (state: { collections: CollectionsState }) =>
-  state.collections.collectionsById;
+// Selector for all collections
+export const selectCollectionsById = (state: { replyke: ReplykeState }) =>
+  state.replyke.collections.collectionsById;
 
-export const selectCurrentProjectId = (state: { collections: CollectionsState }) =>
-  state.collections.currentProjectId;
+export const selectCurrentProjectId = (state: { replyke: ReplykeState }) =>
+  state.replyke.collections.currentProjectId;
 
-// New selector for current collection ID
-export const selectCurrentCollectionId = (state: { collections: CollectionsState }) =>
-  state.collections.currentCollectionId;
+// Selector for current collection ID
+export const selectCurrentCollectionId = (state: { replyke: ReplykeState }) =>
+  state.replyke.collections.currentCollectionId;

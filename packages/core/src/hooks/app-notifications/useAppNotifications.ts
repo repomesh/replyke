@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   setProjectContext,
@@ -43,31 +42,19 @@ function useAppNotifications({
   limit = 10,
   notificationTemplates,
 }: UseAppNotificationsProps = {}): UseAppNotificationsValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get external context
   const { projectId } = useProject();
   const { user } = useUser();
 
   // Get Redux state
-  const appNotifications = useSelector((state: RootState) =>
-    selectAppNotifications(state)
-  );
-  const unreadAppNotificationsCount = useSelector((state: RootState) =>
-    selectUnreadCount(state)
-  );
-  const loading = useSelector((state: RootState) =>
-    selectAppNotificationsLoading(state)
-  );
-  const hasMore = useSelector((state: RootState) =>
-    selectAppNotificationsHasMore(state)
-  );
-  const currentPage = useSelector((state: RootState) =>
-    selectAppNotificationsPage(state)
-  );
-  const currentProjectId = useSelector((state: RootState) =>
-    selectCurrentProjectId(state)
-  );
+  const appNotifications = useReplykeSelector(selectAppNotifications);
+  const unreadAppNotificationsCount = useReplykeSelector(selectUnreadCount);
+  const loading = useReplykeSelector(selectAppNotificationsLoading);
+  const hasMore = useReplykeSelector(selectAppNotificationsHasMore);
+  const currentPage = useReplykeSelector(selectAppNotificationsPage);
+  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
 
   // Get actions
   const {
@@ -91,9 +78,7 @@ function useAppNotifications({
   }, [dispatch, limit]);
 
   // Prevent infinite re-renders by comparing current vs new templates
-  const currentTemplates = useSelector((state: RootState) =>
-    selectNotificationTemplates(state)
-  );
+  const currentTemplates = useReplykeSelector(selectNotificationTemplates);
 
   const templatesChanged = useMemo(() => {
     // If no templates provided, skip comparison

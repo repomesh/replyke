@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store";
+import { useReplykeDispatch } from "../../store/hooks";
 import {
   setSpaceListLoading,
   setSpaceListSpaces,
@@ -52,7 +51,7 @@ interface DeleteSpaceOptions {
 }
 
 export function useSpaceListActions() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get project context
   const { projectId } = useProject();

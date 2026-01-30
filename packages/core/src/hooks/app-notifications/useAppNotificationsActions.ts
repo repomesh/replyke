@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 import {
   loadMore as loadMoreAction,
   resetNotifications,
@@ -30,21 +29,13 @@ import { useUser } from "../user";
  * Integrates RTK Query with Redux slice actions
  */
 export function useAppNotificationsActions() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get current state for actions
-  const projectIdFromSlice = useSelector((state: RootState) =>
-    selectCurrentProjectId(state)
-  );
-  const page = useSelector((state: RootState) =>
-    selectAppNotificationsPage(state)
-  );
-  const limit = useSelector((state: RootState) =>
-    selectAppNotificationsLimit(state)
-  );
-  const notificationTemplates = useSelector((state: RootState) =>
-    selectNotificationTemplates(state)
-  );
+  const projectIdFromSlice = useReplykeSelector(selectCurrentProjectId);
+  const page = useReplykeSelector(selectAppNotificationsPage);
+  const limit = useReplykeSelector(selectAppNotificationsLimit);
+  const notificationTemplates = useReplykeSelector(selectNotificationTemplates);
 
   // Get project and user context (fallback to current hooks)
   const { projectId: projectIdFromHook } = useProject();

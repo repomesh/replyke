@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   setProjectContext,
@@ -36,18 +35,18 @@ export interface UseUserValues {
  * This replaces useUserData and provides the same interface with Redux state management
  */
 function useUser(_: UseUserProps = {}): UseUserValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get external context
   const { projectId } = useProject();
 
   // Get Redux state
-  const user = useSelector((state: RootState) => selectUser(state));
-  const authUser = useSelector((state: RootState) => selectAuthUser(state)); // Fallback to auth user
-  const loading = useSelector((state: RootState) => selectUserLoading(state));
-  const updating = useSelector((state: RootState) => selectUserUpdating(state));
-  const error = useSelector((state: RootState) => selectUserError(state));
-  const currentProjectId = useSelector((state: RootState) => selectCurrentProjectId(state));
+  const user = useReplykeSelector(selectUser);
+  const authUser = useReplykeSelector(selectAuthUser); // Fallback to auth user
+  const loading = useReplykeSelector(selectUserLoading);
+  const updating = useReplykeSelector(selectUserUpdating);
+  const error = useReplykeSelector(selectUserError);
+  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
 
   // Get actions
   const {

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import { replykeStore } from "../store";
 import type { ReactNode } from "react";
-import type { AppDispatch } from "../store";
+import { useReplykeDispatch } from "../store/hooks";
 import { initializeAuthThunk } from "../store/slices/authThunks";
 
 export interface ReplykeStoreProviderProps {
@@ -20,7 +20,7 @@ const AuthInitializer: React.FC<{
   projectId: string; 
   signedToken?: string | null; 
 }> = ({ children, projectId, signedToken }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   useEffect(() => {
     // Initialize auth with project and signed token

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   setProjectContext,
@@ -51,7 +50,7 @@ export interface UseCollectionsValues {
  * This is a drop-in replacement for the Context-based hook
  */
 function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
   const axios = useAxiosPrivate();
 
   // Get external context
@@ -59,24 +58,14 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   const { user } = useUser();
 
   // Get Redux state
-  const currentCollection = useSelector((state: RootState) =>
-    selectCurrentCollection(state)
+  const currentCollection = useReplykeSelector(selectCurrentCollection);
+  const subCollections = useReplykeSelector(selectSubCollections);
+  const loading = useReplykeSelector(selectCollectionsLoading);
+  const subCollectionsMap = useReplykeSelector(selectSubCollectionsMap);
+  const collectionsById = useReplykeSelector(
+    (state) => state.replyke.collections.collectionsById
   );
-  const subCollections = useSelector((state: RootState) =>
-    selectSubCollections(state)
-  );
-  const loading = useSelector((state: RootState) =>
-    selectCollectionsLoading(state)
-  );
-  const subCollectionsMap = useSelector((state: RootState) =>
-    selectSubCollectionsMap(state)
-  );
-  const collectionsById = useSelector((state: RootState) =>
-    state.collections.collectionsById
-  );
-  const currentProjectId = useSelector((state: RootState) =>
-    selectCurrentProjectId(state)
-  );
+  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
 
   // Get actions
   const {

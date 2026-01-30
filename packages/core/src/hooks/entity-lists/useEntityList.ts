@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   initializeList,
@@ -94,28 +93,28 @@ function useEntityList({
   listId,
   infuseData,
 }: UseEntityListProps): UseEntityListValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
-  // Get state from Redux
-  const entityList = useSelector((state: RootState) =>
+  // Get state from Redux (parameterized selectors)
+  const entityList = useReplykeSelector((state) =>
     selectEntityList(state, listId)
   );
-  const entities = useSelector((state: RootState) =>
+  const entities = useReplykeSelector((state) =>
     selectEntityListEntities(state, listId)
   );
-  const loading = useSelector((state: RootState) =>
+  const loading = useReplykeSelector((state) =>
     selectEntityListLoading(state, listId)
   );
-  const hasMore = useSelector((state: RootState) =>
+  const hasMore = useReplykeSelector((state) =>
     selectEntityListHasMore(state, listId)
   );
-  const filters = useSelector((state: RootState) =>
+  const filters = useReplykeSelector((state) =>
     selectEntityListFilters(state, listId)
   );
-  const sort = useSelector((state: RootState) =>
+  const sort = useReplykeSelector((state) =>
     selectEntityListSort(state, listId)
   );
-  const config = useSelector((state: RootState) =>
+  const config = useReplykeSelector((state) =>
     selectEntityListConfig(state, listId)
   );
 
