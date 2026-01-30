@@ -23,16 +23,10 @@ function useFetchSpaceBySlug() {
         throw new Error("Please pass a slug");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/spaces/by-slug`, {
         params: {
           slug,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 

@@ -61,18 +61,10 @@ function useFetchSpaceReports() {
         throw new Error("Please pass a spaceId");
       }
 
-      const queryParams = new URLSearchParams();
-      if (targetType) queryParams.append("targetType", targetType);
-      if (sortBy) queryParams.append("sortBy", sortBy);
-      if (page !== undefined) queryParams.append("page", page.toString());
-      if (limit !== undefined) queryParams.append("limit", limit.toString());
-
-      const queryString = queryParams.toString();
-      const url = `/${projectId}/spaces/${spaceId}/reports${
-        queryString ? `?${queryString}` : ""
-      }`;
-
-      const response = await axios.get<PaginatedResponse<Report>>(url);
+      const response = await axios.get<PaginatedResponse<Report>>(
+        `/${projectId}/spaces/${spaceId}/reports`,
+        { params: { targetType, sortBy, page, limit } }
+      );
 
       return response.data;
     },

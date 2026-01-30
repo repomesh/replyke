@@ -23,16 +23,10 @@ function useFetchUserByForeignId() {
         throw new Error("Please specify a foreign ID");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/users/by-foreign-id`, {
         params: {
           foreignId,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 

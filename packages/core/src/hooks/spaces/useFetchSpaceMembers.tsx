@@ -29,16 +29,10 @@ function useFetchSpaceMembers() {
         throw new Error("Please pass a spaceId");
       }
 
-      const queryParams = new URLSearchParams();
-      if (page !== undefined) queryParams.append("page", page.toString());
-      if (limit !== undefined) queryParams.append("limit", limit.toString());
-      if (role) queryParams.append("role", role);
-      if (status) queryParams.append("status", status);
-
-      const queryString = queryParams.toString();
-      const url = `/${projectId}/spaces/${spaceId}/members${queryString ? `?${queryString}` : ""}`;
-
-      const response = await axios.get<SpaceMembersResponse>(url);
+      const response = await axios.get<SpaceMembersResponse>(
+        `/${projectId}/spaces/${spaceId}/members`,
+        { params: { page, limit, role, status } }
+      );
 
       return response.data;
     },

@@ -16,12 +16,10 @@ function useFetchEntity() {
         throw new Error("Please pass an entityId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include) ? include.join(',') : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/entities/${entityId}`, {
-        params: includeParam ? { include: includeParam } : undefined
+        params: {
+          include: Array.isArray(include) ? include.join(",") : include,
+        },
       });
 
       return response.data as Entity;

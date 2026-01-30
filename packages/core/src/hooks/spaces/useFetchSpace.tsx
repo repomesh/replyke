@@ -23,14 +23,10 @@ function useFetchSpace() {
         throw new Error("Please pass a spaceId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/spaces/${spaceId}`, {
-        params: includeParam ? { include: includeParam } : undefined,
+        params: {
+          include: Array.isArray(include) ? include.join(",") : include,
+        },
       });
 
       return response.data as SpaceDetailed;

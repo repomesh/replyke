@@ -23,16 +23,10 @@ function useFetchUserByUsername() {
         throw new Error("Please specify a username");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/users/by-username`, {
         params: {
           username,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 

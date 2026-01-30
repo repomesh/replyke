@@ -16,14 +16,10 @@ function useFetchEntityByShortId() {
         throw new Error("Please pass shortId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include) ? include.join(',') : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/entities/by-short-id`, {
         params: {
           shortId,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 

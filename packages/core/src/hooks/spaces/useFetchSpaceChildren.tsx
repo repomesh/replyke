@@ -24,19 +24,13 @@ function useFetchSpaceChildren() {
         throw new Error("Please pass a spaceId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get<PaginatedResponse<Space>>(
         `/${projectId}/spaces/${spaceId}/children`,
         {
           params: {
             page,
             limit,
-            ...(includeParam ? { include: includeParam } : {}),
+            include: Array.isArray(include) ? include.join(",") : include,
           },
         }
       );

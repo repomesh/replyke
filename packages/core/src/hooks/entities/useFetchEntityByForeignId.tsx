@@ -24,15 +24,11 @@ function useFetchEntityByForeignId() {
         throw new Error("Please pass foreignId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include) ? include.join(',') : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/entities/by-foreign-id`, {
         params: {
           foreignId,
           createIfNotFound,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 

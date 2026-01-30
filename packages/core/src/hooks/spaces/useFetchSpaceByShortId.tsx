@@ -23,16 +23,10 @@ function useFetchSpaceByShortId() {
         throw new Error("Please pass a shortId");
       }
 
-      const includeParam = include
-        ? Array.isArray(include)
-          ? include.join(",")
-          : include
-        : undefined;
-
       const response = await axios.get(`/${projectId}/spaces/by-short-id`, {
         params: {
           shortId,
-          ...(includeParam ? { include: includeParam } : {}),
+          include: Array.isArray(include) ? include.join(",") : include,
         },
       });
 
