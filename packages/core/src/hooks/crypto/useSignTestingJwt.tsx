@@ -1,6 +1,5 @@
-import axios from "axios";
+import axios from "../../config/axios";
 import { handleError } from "../../utils/handleError";
-import { useProject } from "../projects";
 
 const WARNING = `
     WARNING: You are using a testing function to generate JWTs in your client application.
@@ -16,14 +15,14 @@ const WARNING = `
 
 function useSignTestingJwt() {
   const signTestingJwt = async ({
+    projectId,
     privateKey,
-    payload,
+    userData,
   }: {
+    projectId: string;
     privateKey: string;
-    payload: Record<string, any>;
+    userData: { id: string } & Record<string, any>;
   }) => {
-    const { projectId } = useProject();
-
     try {
       if (!projectId) {
         throw new Error("No project specified");
@@ -32,11 +31,12 @@ function useSignTestingJwt() {
       // Warn developers about the security risks
       console.warn(WARNING);
       const response = await axios.post(
-        `/${projectId}/crypto/sign-testing-jwt`,
+        `/${projectId}/crypto/sign-testing-jwt/v2`,
         {
+          projectId,
           privateKey,
-          payload,
-        }
+          userData,
+        },
       );
 
       return response.data as string;
