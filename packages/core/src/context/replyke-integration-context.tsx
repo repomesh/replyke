@@ -1,0 +1,93 @@
+import React, { useEffect } from "react";
+import type { ReactNode } from "react";
+import { useReplykeDispatch } from "../store/hooks";
+import { initializeAuthThunk } from "../store/slices/authThunks";
+import { ReplykeContext } from "./replyke-context";
+import useProjectData from "../hooks/projects/useProjectData";
+
+export interface ReplykeIntegrationProviderProps {
+  children: ReactNode;
+  projectId: string;
+  signedToken?: string | null;
+}
+
+/**
+ * Component that initializes auth state in Redux.
+ * Must be inside a Redux Provider to dispatch actions.
+ */
+const AuthInitializer: React.FC<{
+  children: ReactNode;
+  projectId: string;
+  signedToken?: string | null;
+}> = ({ children, projectId, signedToken }) => {
+  const dispatch = useReplykeDispatch();
+
+  useEffect(() => {
+    dispatch(initializeAuthThunk({ projectId, signedToken }));
+  }, [dispatch, projectId, signedToken]);
+
+  return <>{children}</>;
+};
+
+/**
+ * Integration provider for Replyke (Integration Mode).
+ *
+ * Use this when you HAVE your own Redux store and want to integrate
+ * Replyke's reducers into it. This provider does NOT create a Redux store -
+ * you must wrap your app with your own Redux Provider.
+ *
+ * Prerequisites:
+ * 1. Add replykeReducers under the 'replyke' key in your store
+ * 2. Add replykeApiReducer under the 'replykeApi' key
+ * 3. Add replykeMiddleware to your middleware chain
+ *
+ * @example
+ * ```tsx
+ * import { configureStore } from '@reduxjs/toolkit';
+ * import { Provider } from 'react-redux';
+ * import {
+ *   ReplykeIntegrationProvider,
+ *   replykeReducers,
+ *   replykeApiReducer,
+ *   replykeMiddleware
+ * } from '@replyke/react-js';
+ *
+ * const store = configureStore({
+ *   reducer: {
+ *     replyke: replykeReducers,
+ *     replykeApi: replykeApiReducer,
+ *     ...yourReducers
+ *   },
+ *   middleware: (getDefault) => getDefault().concat(...replykeMiddleware)
+ * });
+ *
+ * function App() {
+ *   return (
+ *     <Provider store={store}>
+ *       <ReplykeIntegrationProvider projectId="..." signedToken={token}>
+ *         <YourApp />
+ *       </ReplykeIntegrationProvider>
+ *     </Provider>
+ *   );
+ * }
+ * ```
+ */
+export const ReplykeIntegrationProvider: React.FC<ReplykeIntegrationProviderProps> = ({
+  children,
+  projectId,
+  signedToken,
+}) => {
+  // Provide projectId via context so hooks can access it
+  const data = useProjectData({ projectId });
+
+  // No Redux Provider here - user provides their own
+  return (
+    <ReplykeContext.Provider value={data}>
+      <AuthInitializer projectId={projectId} signedToken={signedToken}>
+        {children}
+      </AuthInitializer>
+    </ReplykeContext.Provider>
+  );
+};
+
+export default ReplykeIntegrationProvider;
