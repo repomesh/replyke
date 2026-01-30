@@ -86,7 +86,7 @@ export interface SpaceDetailed extends Space {
 }
 
 // My Spaces response types
-export interface MySpaceItem {
+export interface UserSpaceItem {
   space: Space;
   membership: {
     membershipId: string;
@@ -96,7 +96,7 @@ export interface MySpaceItem {
   };
 }
 
-export type MySpacesResponse = PaginatedResponse<MySpaceItem>;
+export type UserSpacesResponse = PaginatedResponse<UserSpaceItem>;
 
 // Mutation response types
 export interface JoinSpaceResponse {

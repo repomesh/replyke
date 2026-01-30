@@ -107,8 +107,13 @@ interface FetchSpaceMembersParams {
   status?: "pending" | "active" | "banned" | "rejected";
 }
 
-interface FetchMySpacesParams {
+interface FetchUserSpacesParams {
   projectId: string;
+  page?: number;
+  limit?: number;
+  status?: "active" | "pending" | "banned";
+  role?: string; // Single role or comma-separated: "admin,moderator"
+  all?: boolean;
 }
 
 interface UpdateMemberRoleParams {
@@ -421,14 +426,25 @@ export const spacesApi = baseApi.injectEndpoints({
       ],
     }),
 
-    // Fetch user's spaces (my spaces)
-    fetchMySpaces: builder.query<Space[], FetchMySpacesParams>({
-      query: ({ projectId }) => ({
-        url: `/${projectId}/spaces/my-spaces`,
-        method: "GET",
-      }),
+    // Fetch user's spaces
+    fetchUserSpaces: builder.query<Space[], FetchUserSpacesParams>({
+      query: ({ projectId, ...params }) => {
+        const queryParams = new URLSearchParams();
+
+        if (params.page !== undefined) queryParams.append("page", params.page.toString());
+        if (params.limit !== undefined) queryParams.append("limit", params.limit.toString());
+        if (params.status) queryParams.append("status", params.status);
+        if (params.role) queryParams.append("role", params.role);
+        if (params.all) queryParams.append("all", "true");
+
+        const queryString = queryParams.toString();
+        return {
+          url: `/${projectId}/spaces/user-spaces${queryString ? `?${queryString}` : ""}`,
+          method: "GET",
+        };
+      },
       providesTags: (result) => [
-        { type: "Space", id: "MY-SPACES" },
+        { type: "Space", id: "USER-SPACES" },
         ...(result?.map(({ id }) => ({ type: "Space" as const, id })) ?? []),
       ],
     }),
@@ -506,8 +522,8 @@ export const {
   useLeaveSpaceMutation,
   useFetchSpaceMembersQuery,
   useLazyFetchSpaceMembersQuery,
-  useFetchMySpacesQuery,
-  useLazyFetchMySpacesQuery,
+  useFetchUserSpacesQuery,
+  useLazyFetchUserSpacesQuery,
   useUpdateMemberRoleMutation,
   useApproveMemberMutation,
   useDeclineMemberMutation,
@@ -528,7 +544,7 @@ export const {
   joinSpace,
   leaveSpace,
   fetchSpaceMembers,
-  fetchMySpaces,
+  fetchUserSpaces,
   updateMemberRole,
   approveMember,
   declineMember,

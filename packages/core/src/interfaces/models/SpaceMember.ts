@@ -31,3 +31,8 @@ export interface SpaceMemberWithUser {
 }
 
 export type SpaceMembersResponse = PaginatedResponse<SpaceMemberWithUser>;
+
+// Response for fetching space team (admins + moderators, no pagination)
+export interface SpaceTeamResponse {
+  team: SpaceMemberWithUser[];
+}
