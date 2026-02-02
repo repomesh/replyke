@@ -7,7 +7,6 @@ export interface CreateRuleProps {
   spaceId: string;
   title: string;
   description?: string | null;
-  order?: number;
 }
 
 function useCreateRule() {
@@ -15,7 +14,7 @@ function useCreateRule() {
   const axios = useAxiosPrivate();
 
   const createRule = useCallback(
-    async ({ spaceId, title, description, order }: CreateRuleProps) => {
+    async ({ spaceId, title, description }: CreateRuleProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -33,7 +32,6 @@ function useCreateRule() {
         {
           title,
           description: description || null,
-          order: order ?? 0,
         }
       );
 

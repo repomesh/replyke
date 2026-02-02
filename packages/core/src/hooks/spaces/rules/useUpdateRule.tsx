@@ -9,7 +9,6 @@ export interface UpdateRuleProps {
   update: Partial<{
     title: string;
     description: string | null;
-    order: number;
   }>;
 }
 
