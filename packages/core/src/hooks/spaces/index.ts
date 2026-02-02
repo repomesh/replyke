@@ -43,6 +43,7 @@ export {
   useDeleteRule,
   useFetchRule,
   useFetchManyRules,
+  useReorderRules,
 } from "./rules";
 export type {
   CreateRuleProps,
@@ -50,4 +51,5 @@ export type {
   DeleteRuleProps,
   FetchRuleProps,
   FetchManyRulesProps,
+  ReorderRulesProps,
 } from "./rules";

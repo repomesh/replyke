@@ -123,10 +123,23 @@ export {
   useDeclineMember,
   useRemoveMember,
   useSpacePermissions,
+  // Rule hooks
+  useCreateRule,
+  useUpdateRule,
+  useDeleteRule,
+  useFetchRule,
+  useFetchManyRules,
+  useReorderRules,
   type UseSpaceDataProps,
   type UseSpaceDataValues,
   type CreateSpaceProps,
   type UpdateSpaceProps,
+  type CreateRuleProps,
+  type UpdateRuleProps,
+  type DeleteRuleProps,
+  type FetchRuleProps,
+  type FetchManyRulesProps,
+  type ReorderRulesProps,
 } from "./hooks/spaces";
 
 // -- space lists
@@ -295,6 +308,11 @@ export type {
   SpaceListFilters,
 } from "./interfaces/SpaceListSortByOptions";
 export type { SpaceBreadcrumb } from "./interfaces/SpaceBreadcrumb";
+export type {
+  Rule,
+  FetchManyRulesResponse,
+  DeleteRuleResponse,
+} from "./interfaces/models/Rule";
 export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
 export type {
   EntityListSortByOptions,

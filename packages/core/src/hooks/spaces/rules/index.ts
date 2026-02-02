@@ -8,3 +8,5 @@ export { default as useFetchRule } from "./useFetchRule";
 export type { FetchRuleProps } from "./useFetchRule";
 export { default as useFetchManyRules } from "./useFetchManyRules";
 export type { FetchManyRulesProps } from "./useFetchManyRules";
+export { default as useReorderRules } from "./useReorderRules";
+export type { ReorderRulesProps } from "./useReorderRules";
