@@ -3,10 +3,11 @@ import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import useProject from "../projects/useProject";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchManyComments() {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const fetchComments = useCallback(
     async (props: {
@@ -65,7 +66,7 @@ function useFetchManyComments() {
       );
       return response.data;
     },
-    [projectId]
+    [projectId, axios]
   );
 
   return fetchComments;
