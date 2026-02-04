@@ -49,6 +49,7 @@ function useCreateEntity() {
       };
       metadata?: Record<string, any>;
       excludeUserId?: boolean;
+      requireUser?: boolean;
 
       // NEW: File upload support
       images?: ImageUploadConfig;
@@ -66,8 +67,9 @@ function useCreateEntity() {
         location,
         metadata,
         excludeUserId,
-        images,  // NEW
-        files,   // NEW
+        requireUser,
+        images,
+        files,
       } = props;
 
       if (!projectId) {
@@ -94,6 +96,7 @@ function useCreateEntity() {
         if (location !== undefined) formData.append("location", JSON.stringify(location));
         if (metadata !== undefined) formData.append("metadata", JSON.stringify(metadata));
         if (excludeUserId !== undefined) formData.append("excludeUserId", excludeUserId.toString());
+        if (requireUser !== undefined) formData.append("requireUser", requireUser.toString());
 
         // Append images
         if (hasImages) {
@@ -160,6 +163,7 @@ function useCreateEntity() {
             location,
             metadata,
             excludeUserId,
+            requireUser,
           },
           { withCredentials: true }
         );
