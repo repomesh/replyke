@@ -42,6 +42,7 @@ const getReplacementVariables = (notification: any) => {
     entityContent: notification.metadata.entityContent || "",
     commentContent: notification.metadata.commentContent || "",
     replyContent: notification.metadata.replyContent || "",
+    reactionType: notification.metadata.reactionType || "",
   };
 };
 
@@ -136,6 +137,38 @@ export default (
           `$initiatorUsername started following you`,
           ``,
           notificationTemplates?.newFollow
+        ));
+        break;
+      case "entity-reaction":
+        ({ title, content } = configureMessage(
+          notification,
+          `$initiatorUsername reacted $reactionType to your post`,
+          ``,
+          notificationTemplates?.entityReaction
+        ));
+        break;
+      case "comment-reaction":
+        ({ title, content } = configureMessage(
+          notification,
+          `$initiatorUsername reacted $reactionType to your comment`,
+          `$commentContent`,
+          notificationTemplates?.commentReaction
+        ));
+        break;
+      case "connection-request":
+        ({ title, content } = configureMessage(
+          notification,
+          `$initiatorUsername sent you a connection request`,
+          ``,
+          notificationTemplates?.connectionRequest
+        ));
+        break;
+      case "connection-accepted":
+        ({ title, content } = configureMessage(
+          notification,
+          `$initiatorUsername accepted your connection request`,
+          ``,
+          notificationTemplates?.connectionAccepted
         ));
         break;
       default:

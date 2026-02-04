@@ -6,6 +6,8 @@ type AppNotificationType =
   | "comment-mention"
   | "entity-upvote"
   | "comment-upvote"
+  | "entity-reaction"
+  | "comment-reaction"
   | "new-follow"
   | "connection-request"
   | "connection-accepted";
@@ -159,6 +161,45 @@ export interface CommentUpvoteNotification extends BaseAppNotification {
   };
 }
 
+export interface EntityReactionNotification extends BaseAppNotification {
+  type: "entity-reaction";
+  action: "open-entity";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    reactionType: string;
+
+    initiatorId: string;
+    initiatorName: string | null | undefined;
+    initiatorUsername: string | null | undefined;
+    initiatorAvatar: string | null | undefined;
+  };
+}
+
+export interface CommentReactionNotification extends BaseAppNotification {
+  type: "comment-reaction";
+  action: "open-comment";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    commentId: string;
+    commentContent: string | null | undefined;
+
+    reactionType: string;
+
+    initiatorId: string;
+    initiatorName: string | null | undefined;
+    initiatorUsername: string | null | undefined;
+    initiatorAvatar: string | null | undefined;
+  };
+}
+
 export interface NewFollowNotification extends BaseAppNotification {
   type: "new-follow";
   action: "open-profile";
@@ -284,6 +325,8 @@ export type UnifiedAppNotification =
   | CommentMentionNotification
   | EntityUpvoteNotification
   | CommentUpvoteNotification
+  | EntityReactionNotification
+  | CommentReactionNotification
   | NewFollowNotification
   | ConnectionRequestNotification
   | ConnectionAcceptedNotification;
@@ -312,6 +355,8 @@ export type NotificationTemplates = {
   commentMention: NotificationTemplate;
   entityUpvote: NotificationTemplate;
   commentUpvote: NotificationTemplate;
+  entityReaction: NotificationTemplate;
+  commentReaction: NotificationTemplate;
   newFollow: NotificationTemplate;
   connectionRequest: NotificationTemplate;
   connectionAccepted: NotificationTemplate;
