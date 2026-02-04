@@ -229,7 +229,7 @@ export {
 
 // -- reports
 export { useCreateReport } from "./hooks/reports";
-export { useFetchSpaceReports } from "./hooks/reports";
+export { useFetchModeratedReports } from "./hooks/reports";
 export { useHandleSpaceEntityReport } from "./hooks/reports";
 export { useHandleSpaceCommentReport } from "./hooks/reports";
 
