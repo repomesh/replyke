@@ -173,4 +173,4 @@ export interface DeleteSpaceResponse {
 // Space include types (following Entity/User pattern)
 export type SpaceInclude = "files";
 export type SpaceIncludeArray = SpaceInclude[];
-export type SpaceIncludeParam = string | SpaceIncludeArray;
+export type SpaceIncludeParam = SpaceInclude | SpaceIncludeArray;

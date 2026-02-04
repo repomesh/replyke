@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import useFetchSpace from "./useFetchSpace";
 import useFetchSpaceByShortId from "./useFetchSpaceByShortId";
@@ -10,7 +10,11 @@ import useJoinSpace from "./useJoinSpace";
 import useLeaveSpace from "./useLeaveSpace";
 import useSpacePermissions from "./useSpacePermissions";
 
-import { SpaceDetailed, SpacePreview } from "../../interfaces/models/Space";
+import {
+  SpaceDetailed,
+  SpaceIncludeParam,
+  SpacePreview,
+} from "../../interfaces/models/Space";
 import { SpaceMemberStatus } from "../../interfaces/models/SpaceMember";
 import { handleError } from "../../utils/handleError";
 
@@ -19,6 +23,7 @@ export interface UseSpaceDataProps {
   spaceId?: string | undefined | null;
   shortId?: string | undefined | null;
   slug?: string | undefined | null;
+  include?: SpaceIncludeParam;
 }
 
 export interface UseSpaceDataValues {
@@ -58,6 +63,7 @@ function useSpaceData({
   shortId,
   slug,
   space: spaceProp,
+  include,
 }: UseSpaceDataProps): UseSpaceDataValues {
   const [space, setSpace] = useState<SpaceDetailed | undefined | null>(spaceProp);
   const [loading, setLoading] = useState<boolean>(false);
@@ -78,6 +84,13 @@ function useSpaceData({
   const deleteSpaceHook = useDeleteSpace();
   const joinSpaceHook = useJoinSpace();
   const leaveSpaceHook = useLeaveSpace();
+
+  // Stabilize include param to prevent infinite loops when passed as inline array
+  const stableInclude = useMemo(
+    () => include,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(include)]
+  );
 
   // Compute permissions
   const permissions = useSpacePermissions({
@@ -197,11 +210,11 @@ function useSpaceData({
         let fetchedSpace: SpaceDetailed | null = null;
 
         if (spaceId) {
-          fetchedSpace = await fetchSpace({ spaceId });
+          fetchedSpace = await fetchSpace({ spaceId, include: stableInclude });
         } else if (shortId) {
-          fetchedSpace = await fetchSpaceByShortId({ shortId });
+          fetchedSpace = await fetchSpaceByShortId({ shortId, include: stableInclude });
         } else if (slug) {
-          fetchedSpace = await fetchSpaceBySlug({ slug });
+          fetchedSpace = await fetchSpaceBySlug({ slug, include: stableInclude });
         }
 
         if (fetchedSpace) {
@@ -229,6 +242,7 @@ function useSpaceData({
     shortId,
     slug,
     space,
+    stableInclude,
   ]);
 
   // Fetch breadcrumb effect
