@@ -4,9 +4,9 @@ import useEntityData, {
   UseEntityDataValues,
 } from "../hooks/entities/useEntityData";
 
-export interface EntityContextProps extends UseEntityDataProps {
+export type EntityContextProps = UseEntityDataProps & {
   children: React.ReactNode;
-}
+};
 export interface EntityContextValues extends UseEntityDataValues {}
 
 export const EntityContext = createContext<Partial<EntityContextValues>>({});
@@ -18,10 +18,10 @@ export const EntityProvider: React.FC<EntityContextProps> = ({
   const data = useEntityData(restOfProps);
 
   if (
-    !restOfProps.foreignId &&
-    !restOfProps.entityId &&
-    !restOfProps.shortId &&
-    !restOfProps.entity?.id
+    !('foreignId' in restOfProps && restOfProps.foreignId) &&
+    !('entityId' in restOfProps && restOfProps.entityId) &&
+    !('shortId' in restOfProps && restOfProps.shortId) &&
+    !('entity' in restOfProps && restOfProps.entity?.id)
   ) {
     // console.warn(
     //   "Please pass an entity ID, reference ID, short ID or a complete entity object to the EntityProvider"

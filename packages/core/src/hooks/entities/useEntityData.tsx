@@ -10,18 +10,40 @@ import useIncrementEntityViews from "./useIncrementEntityViews";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
 
-export interface UseEntityDataProps {
-  entity?: Entity;
-  entityId?: string | undefined | null;
-  foreignId?: string | undefined | null;
-  shortId?: string | undefined | null;
-  createIfNotFound?: boolean;
-}
+export type UseEntityDataProps =
+  | {
+      entity: Entity;
+      entityId?: undefined;
+      foreignId?: undefined;
+      shortId?: undefined;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId: string;
+      foreignId?: undefined;
+      shortId?: undefined;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId?: undefined;
+      foreignId?: undefined;
+      shortId: string;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId?: undefined;
+      foreignId: string;
+      shortId?: undefined;
+      createIfNotFound?: boolean;
+    };
 export interface UseEntityDataValues {
   entity: Entity | null | undefined;
   setEntity: React.Dispatch<React.SetStateAction<Entity | null | undefined>>;
   updateEntity(
-    props: Pick<UpdateEntityProps, "update">
+    props: Pick<UpdateEntityProps, "update">,
   ): Promise<Entity | undefined>;
   incrementEntityViews: () => Promise<void>;
   deleteEntity: () => Promise<void>;
@@ -64,7 +86,7 @@ function useEntityData({
         handleError(err, "Failed to update entity");
       }
     },
-    [entity, updateEntity]
+    [entity, updateEntity],
   );
 
   const handleIncrementEntityViews = useCallback(async () => {
