@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchEntityByShortId() {
+    const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchEntityByShortId = useCallback(

@@ -1,13 +1,20 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
 function useFetchEntity() {
+  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchEntity = useCallback(
-    async ({ entityId, include }: { entityId: string; include?: EntityIncludeParam }) => {
+    async ({
+      entityId,
+      include,
+    }: {
+      entityId: string;
+      include?: EntityIncludeParam;
+    }) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -24,7 +31,7 @@ function useFetchEntity() {
 
       return response.data as Entity;
     },
-    [projectId]
+    [projectId],
   );
 
   return fetchEntity;
