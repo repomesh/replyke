@@ -11,7 +11,6 @@ import {
   selectCurrentProjectId,
   selectAppNotificationsPage,
   selectAppNotificationsLimit,
-  selectNotificationTemplates,
 } from "../../store/slices/appNotificationsSlice";
 import {
   useLazyFetchAppNotificationsQuery,
@@ -20,13 +19,15 @@ import {
   useLazyCountUnreadNotificationsQuery,
 } from "../../store/api/appNotificationsApi";
 import { handleError } from "../../utils/handleError";
-import addNotificationsMessages from "../../helpers/addNotificationsMessages";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
 /**
  * Hook that provides Redux-powered actions for app notifications
  * Integrates RTK Query with Redux slice actions
+ *
+ * Note: Templates are applied at display time in useAppNotifications, not here.
+ * This ensures templates are always fresh and avoids race conditions.
  */
 export function useAppNotificationsActions() {
   const dispatch = useReplykeDispatch();
@@ -35,7 +36,6 @@ export function useAppNotificationsActions() {
   const projectIdFromSlice = useReplykeSelector(selectCurrentProjectId);
   const page = useReplykeSelector(selectAppNotificationsPage);
   const limit = useReplykeSelector(selectAppNotificationsLimit);
-  const notificationTemplates = useReplykeSelector(selectNotificationTemplates);
 
   // Get project and user context (fallback to current hooks)
   const { projectId: projectIdFromHook } = useProject();
@@ -98,15 +98,10 @@ export function useAppNotificationsActions() {
 
       if (response) {
         const { data: notifications, pagination } = response;
-        // Apply notification templates
-        const completeNotifications = addNotificationsMessages(
-          notifications,
-          notificationTemplates
-        );
-
+        // Store raw notifications - templates applied at display time
         dispatch(
           addNotifications({
-            notifications: completeNotifications,
+            notifications,
             hasMore: pagination.hasMore,
             isFirstPage: true,
           })
@@ -122,7 +117,6 @@ export function useAppNotificationsActions() {
     user,
     triggerFetchNotifications,
     limit,
-    notificationTemplates,
   ]);
 
   // Fetch more notifications (internal action triggered by page changes)
@@ -141,14 +135,10 @@ export function useAppNotificationsActions() {
 
         if (response) {
           const { data: notifications, pagination } = response;
-          const completeNotifications = addNotificationsMessages(
-            notifications,
-            notificationTemplates
-          );
-
+          // Store raw notifications - templates applied at display time
           dispatch(
             addNotifications({
-              notifications: completeNotifications,
+              notifications,
               hasMore: pagination.hasMore,
             })
           );
@@ -165,7 +155,6 @@ export function useAppNotificationsActions() {
       user,
       triggerFetchNotifications,
       limit,
-      notificationTemplates,
     ]
   );
 
