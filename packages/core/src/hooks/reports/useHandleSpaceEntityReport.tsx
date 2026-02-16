@@ -6,7 +6,7 @@ interface HandleSpaceEntityReportParams {
   spaceId: string;
   reportId: string;
   entityId: string;
-  actions: Array<"delete-entity" | "ban-user" | "dismiss">;
+  actions: Array<"remove-entity" | "ban-user" | "dismiss">;
   summary: string;
   userId?: string;
   reason?: string;
@@ -19,7 +19,7 @@ interface HandleReportResponse {
 
 /**
  * Hook to handle entity reports at the space level
- * Space moderators can: delete entity, ban user from space, dismiss
+ * Space moderators can: remove entity, ban user from space, dismiss
  *
  * @example
  * const handleSpaceEntityReport = useHandleSpaceEntityReport();
@@ -28,7 +28,7 @@ interface HandleReportResponse {
  *   spaceId: "space-uuid",
  *   reportId: "report-uuid",
  *   entityId: "entity-uuid",
- *   actions: ["delete-entity", "ban-user"],
+ *   actions: ["remove-entity", "ban-user"],
  *   summary: "Removed spam content and banned user",
  *   userId: "user-uuid",
  *   reason: "Spamming"

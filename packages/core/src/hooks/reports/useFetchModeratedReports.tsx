@@ -15,19 +15,26 @@ interface FetchModeratedReportsParams {
   limit?: number;
 }
 
+interface ReportUserReport {
+  id: string;
+  userId: string;
+  reason: string;
+  details: string | null;
+  createdAt: Date;
+}
+
 interface Report {
   id: string;
   projectId: string;
   spaceId: string | null;
-  reporters: string[];
   targetId: string;
   targetType: "Comment" | "Entity";
-  reason: string;
-  details: string | null;
+  reporterCount: number;
+  userReports: ReportUserReport[];
   status: "Pending" | "On Hold" | "Escalated" | "Dismissed" | "Actioned";
   actionTaken: string | null;
-  target: Entity | Comment | null; // The reported entity or comment (includes user)
-  space: Space | null; // The space where the report was made
+  target: Entity | Comment | null;
+  space: Space | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

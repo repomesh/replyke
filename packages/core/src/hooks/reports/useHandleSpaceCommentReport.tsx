@@ -6,7 +6,7 @@ interface HandleSpaceCommentReportParams {
   spaceId: string;
   reportId: string;
   commentId: string;
-  actions: Array<"delete-comment" | "ban-user" | "dismiss">;
+  actions: Array<"remove-comment" | "ban-user" | "dismiss">;
   summary: string;
   userId?: string;
   reason?: string;
@@ -19,7 +19,7 @@ interface HandleReportResponse {
 
 /**
  * Hook to handle comment reports at the space level
- * Space moderators can: delete comment, ban user from space, dismiss
+ * Space moderators can: remove comment, ban user from space, dismiss
  *
  * @example
  * const handleSpaceCommentReport = useHandleSpaceCommentReport();
@@ -28,7 +28,7 @@ interface HandleReportResponse {
  *   spaceId: "space-uuid",
  *   reportId: "report-uuid",
  *   commentId: "comment-uuid",
- *   actions: ["delete-comment"],
+ *   actions: ["remove-comment"],
  *   summary: "Removed inappropriate comment"
  * });
  */
