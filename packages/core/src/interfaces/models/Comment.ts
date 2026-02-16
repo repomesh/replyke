@@ -35,6 +35,11 @@ export interface Comment {
   updatedAt: Date; // Timestamp for updating
   deletedAt: Date | null; // Timestamp for updating
   parentDeletedAt: Date | null; // Timestamp for updating
+  moderationStatus: "approved" | "removed" | null;
+  moderatedAt: Date | null;
+  moderatedById: string | null;
+  moderatedByType: "client" | "user" | null;
+  moderationReason: string | null;
 }
 
 export type CommentInclude = "user" | "entity" | "space" | "parent";

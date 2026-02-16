@@ -49,6 +49,11 @@ export interface Entity {
   createdAt: Date; // Use camelCase for `created_at`
   updatedAt: Date; // Use camelCase for `updated_at`
   deletedAt: Date | null; // Use camelCase for `updated_at`
+  moderationStatus: "approved" | "removed" | null;
+  moderatedAt: Date | null;
+  moderatedById: string | null;
+  moderatedByType: "client" | "user" | null;
+  moderationReason: string | null;
 }
 
 export type EntityInclude = "space" | "user" | "topComment" | "saved" | "files";
