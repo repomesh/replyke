@@ -267,6 +267,11 @@ function useCommentSectionData(
         parentDeletedAt: null,
         repliesCount: 0,
         metadata: {},
+        moderationStatus: null,
+        moderatedAt: null,
+        moderatedById: null,
+        moderatedByType: null,
+        moderationReason: null,
       };
 
       setRepliedToComment(null);
