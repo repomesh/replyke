@@ -32,6 +32,10 @@ export { default as useApproveMember } from "./useApproveMember";
 export { default as useDeclineMember } from "./useDeclineMember";
 export { default as useRemoveMember } from "./useRemoveMember";
 
+// Moderation hooks
+export { default as useModerateSpaceEntity } from "./useModerateSpaceEntity";
+export { default as useModerateSpaceComment } from "./useModerateSpaceComment";
+
 // Helper hooks
 export { default as useSpacePermissions } from "./useSpacePermissions";
 export { default as useCheckSlugAvailability } from "./useCheckSlugAvailability";

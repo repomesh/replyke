@@ -122,6 +122,8 @@ export {
   useApproveMember,
   useDeclineMember,
   useRemoveMember,
+  useModerateSpaceEntity,
+  useModerateSpaceComment,
   useSpacePermissions,
   // Rule hooks
   useCreateRule,
