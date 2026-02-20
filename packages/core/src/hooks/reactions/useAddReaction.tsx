@@ -11,7 +11,7 @@ function useAddReaction() {
 
   const addReaction = useCallback(
     async (props: {
-      targetType: "Entity" | "Comment";
+      targetType: "entity" | "comment";
       targetId: string;
       reactionType: ReactionType;
     }): Promise<Entity | Comment> => {
@@ -31,7 +31,7 @@ function useAddReaction() {
 
       // Determine endpoint based on targetType
       const endpoint =
-        targetType === "Entity"
+        targetType === "entity"
           ? `/${projectId}/entities/${targetId}/reactions`
           : `/${projectId}/comments/${targetId}/reactions`;
 

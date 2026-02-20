@@ -27,7 +27,7 @@ export interface ReactionCounts {
 export interface Reaction {
   id: string;
   projectId: string;
-  targetType: "Entity" | "Comment";
+  targetType: "entity" | "comment";
   targetId: string;
   userId: string;
   reactionType: ReactionType;

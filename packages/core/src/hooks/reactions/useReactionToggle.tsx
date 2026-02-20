@@ -7,7 +7,7 @@ import useRemoveReaction from "./useRemoveReaction";
 import { handleError } from "../../utils/handleError";
 
 export interface UseReactionToggleProps {
-  targetType: "Entity" | "Comment";
+  targetType: "entity" | "comment";
   targetId: string | undefined;
   initialReaction?: ReactionType | null | undefined;
   initialReactionCounts?: ReactionCounts | null | undefined;

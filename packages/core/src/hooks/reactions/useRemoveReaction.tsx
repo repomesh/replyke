@@ -10,7 +10,7 @@ function useRemoveReaction() {
 
   const removeReaction = useCallback(
     async (props: {
-      targetType: "Entity" | "Comment";
+      targetType: "entity" | "comment";
       targetId: string;
     }): Promise<Entity | Comment> => {
       const { targetType, targetId } = props;
@@ -25,7 +25,7 @@ function useRemoveReaction() {
 
       // Determine endpoint based on targetType
       const endpoint =
-        targetType === "Entity"
+        targetType === "entity"
           ? `/${projectId}/entities/${targetId}/reactions`
           : `/${projectId}/comments/${targetId}/reactions`;
 
