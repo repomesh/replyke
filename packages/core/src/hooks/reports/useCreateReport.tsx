@@ -15,7 +15,7 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
     details,
   }: {
     targetId: string;
-    targetType: "Comment" | "Entity";
+    targetType: "comment" | "entity";
     reason: ReportReasonKey;
     details?: string;
   }) => {
@@ -50,7 +50,7 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
   }) => {
     await createReport({
       targetId,
-      targetType: "Comment",
+      targetType: "comment",
       reason,
       details,
     });
@@ -67,7 +67,7 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
   }) => {
     await createReport({
       targetId,
-      targetType: "Entity",
+      targetType: "entity",
       reason,
       details,
     });

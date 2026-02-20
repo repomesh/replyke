@@ -8,8 +8,8 @@ import { Space } from "../../interfaces/models/Space";
 
 interface FetchModeratedReportsParams {
   spaceId?: string;
-  targetType?: "Comment" | "Entity";
-  status?: "Pending" | "On Hold" | "Escalated" | "Dismissed" | "Actioned";
+  targetType?: "comment" | "entity";
+  status?: "pending" | "on-hold" | "escalated" | "dismissed" | "actioned";
   sortBy?: "new" | "old";
   page?: number;
   limit?: number;
@@ -28,10 +28,10 @@ interface Report {
   projectId: string;
   spaceId: string | null;
   targetId: string;
-  targetType: "Comment" | "Entity";
+  targetType: "comment" | "entity";
   reporterCount: number;
   userReports: ReportUserReport[];
-  status: "Pending" | "On Hold" | "Escalated" | "Dismissed" | "Actioned";
+  status: "pending" | "on-hold" | "escalated" | "dismissed" | "actioned";
   actionTaken: string | null;
   target: Entity | Comment | null;
   space: Space | null;
@@ -52,7 +52,7 @@ interface Report {
  * // Fetch reports for a specific space
  * const reports = await fetchModeratedReports({
  *   spaceId: "space-uuid",
- *   targetType: "Entity",
+ *   targetType: "entity",
  *   page: 1,
  *   limit: 20
  * });
