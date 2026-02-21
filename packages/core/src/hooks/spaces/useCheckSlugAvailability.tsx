@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface CheckSlugAvailabilityProps {
+  slug: string;
+}
+
 function useCheckSlugAvailability() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const checkSlugAvailability = useCallback(
-    async ({ slug }: { slug: string }) => {
+    async ({ slug }: CheckSlugAvailabilityProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

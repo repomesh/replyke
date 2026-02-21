@@ -3,7 +3,7 @@ import useProject from "../projects/useProject";
 import { DeclineMemberResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface DeclineMemberParams {
+export interface DeclineMemberProps {
   spaceId: string;
   memberId: string;
 }
@@ -13,7 +13,7 @@ function useDeclineMember() {
   const axios = useAxiosPrivate();
 
   const declineMember = useCallback(
-    async ({ spaceId, memberId }: DeclineMemberParams) => {
+    async ({ spaceId, memberId }: DeclineMemberProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

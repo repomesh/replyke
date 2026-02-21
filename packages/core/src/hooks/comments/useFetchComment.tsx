@@ -3,17 +3,16 @@ import useProject from "../projects/useProject";
 import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import axios from "../../config/axios";
 
+export interface FetchCommentProps {
+  commentId: string;
+  include?: CommentIncludeParam;
+}
+
 function useFetchComment() {
   const { projectId } = useProject();
 
   const fetchComment = useCallback(
-    async ({
-      commentId,
-      include,
-    }: {
-      commentId: string;
-      include?: CommentIncludeParam;
-    }) => {
+    async ({ commentId, include }: FetchCommentProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

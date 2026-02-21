@@ -5,6 +5,18 @@ import { Comment, GifData } from "../../interfaces/models/Comment";
 import { Mention } from "../../interfaces/models/Mention";
 import { useUser } from "../user";
 
+export interface CreateCommentProps {
+  entityId: string;
+  foreignId?: string | null | undefined;
+  parentCommentId?: string | null | undefined;
+  content?: string;
+  gif?: GifData;
+  mentions?: Mention[];
+  referencedCommentId?: string | null | undefined;
+  attachments?: Record<string, any>[];
+  metadata?: Record<string, any>;
+}
+
 // Hook for adding a comment
 function useCreateComment() {
   const axios = useAxiosPrivate();
@@ -12,17 +24,7 @@ function useCreateComment() {
   const { user } = useUser();
 
   const createComment = useCallback(
-    async (props: {
-      entityId: string;
-      foreignId?: string | null | undefined;
-      parentCommentId?: string | null | undefined;
-      content?: string;
-      gif?: GifData;
-      mentions?: Mention[];
-      referencedCommentId?: string | null | undefined;
-      attachments?: Record<string, any>[];
-      metadata?: Record<string, any>;
-    }) => {
+    async (props: CreateCommentProps) => {
       const {
         entityId,
         foreignId,

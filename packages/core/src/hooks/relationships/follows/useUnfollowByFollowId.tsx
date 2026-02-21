@@ -3,13 +3,17 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 
+export interface UnfollowByFollowIdProps {
+  followId: string;
+}
+
 function useUnfollowByFollowId() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const unfollowByFollowId = useCallback(
-    async (props: { followId: string }) => {
+    async (props: UnfollowByFollowIdProps) => {
       const { followId } = props;
       if (!projectId) {
         throw new Error("No project specified");

@@ -17,6 +17,27 @@ import type { Collection } from "../../interfaces/models/Collection";
 
 export interface UseCollectionsProps {}
 
+export interface CreateCollectionProps {
+  collectionName: string;
+}
+
+export interface UpdateCollectionProps {
+  collectionId: string;
+  update: Partial<{ name: string }>;
+}
+
+export interface DeleteCollectionProps {
+  collection: Collection;
+}
+
+export interface AddToCollectionProps {
+  entityId: string;
+}
+
+export interface RemoveFromCollectionProps {
+  entityId: string;
+}
+
 export interface UseCollectionsValues {
   currentCollection: Collection | null;
   subCollections: Collection[];
@@ -35,14 +56,11 @@ export interface UseCollectionsValues {
     collections: Array<{ id: string; name: string }>;
   }>;
 
-  createCollection: (props: { collectionName: string }) => Promise<void>;
-  updateCollection: (props: {
-    collectionId: string;
-    update: Partial<{ name: string }>;
-  }) => Promise<void>;
-  deleteCollection: (props: { collection: Collection }) => Promise<void>;
-  addToCollection: (props: { entityId: string }) => Promise<void>;
-  removeFromCollection: (props: { entityId: string }) => Promise<void>;
+  createCollection: (props: CreateCollectionProps) => Promise<void>;
+  updateCollection: (props: UpdateCollectionProps) => Promise<void>;
+  deleteCollection: (props: DeleteCollectionProps) => Promise<void>;
+  addToCollection: (props: AddToCollectionProps) => Promise<void>;
+  removeFromCollection: (props: RemoveFromCollectionProps) => Promise<void>;
 }
 
 /**
@@ -151,7 +169,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
 
   // Wrapped CRUD operations that match the original interface
   const handleCreateCollection = useCallback(
-    async ({ collectionName }: { collectionName: string }) => {
+    async ({ collectionName }: CreateCollectionProps) => {
       if (!collectionName) {
         console.error("No collectionName provided.");
         return;
@@ -173,13 +191,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   );
 
   const handleUpdateCollection = useCallback(
-    async ({
-      collectionId,
-      update,
-    }: {
-      collectionId: string;
-      update: Partial<{ name: string }>;
-    }) => {
+    async ({ collectionId, update }: UpdateCollectionProps) => {
       if (!projectId) {
         console.error("No projectId available.");
         return;
@@ -191,7 +203,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   );
 
   const handleDeleteCollection = useCallback(
-    async ({ collection }: { collection: Collection }) => {
+    async ({ collection }: DeleteCollectionProps) => {
       if (!projectId) {
         console.error("No projectId available.");
         return;
@@ -203,7 +215,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   );
 
   const handleAddToCollection = useCallback(
-    async ({ entityId }: { entityId: string }) => {
+    async ({ entityId }: AddToCollectionProps) => {
       if (!entityId) {
         console.error("No entityId provided.");
         return;
@@ -225,7 +237,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   );
 
   const handleRemoveFromCollection = useCallback(
-    async ({ entityId }: { entityId: string }) => {
+    async ({ entityId }: RemoveFromCollectionProps) => {
       if (!currentCollection) {
         console.error("No current collection.");
         return;

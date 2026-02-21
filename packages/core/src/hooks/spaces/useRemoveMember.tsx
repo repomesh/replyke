@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface RemoveMemberParams {
+export interface RemoveMemberProps {
   spaceId: string;
   memberId: string;
 }
@@ -16,7 +16,7 @@ function useRemoveMember() {
   const axios = useAxiosPrivate();
 
   const removeMember = useCallback(
-    async ({ spaceId, memberId }: RemoveMemberParams) => {
+    async ({ spaceId, memberId }: RemoveMemberProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

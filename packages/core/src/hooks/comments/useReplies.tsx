@@ -6,13 +6,12 @@ import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { isUUID } from "../../utils/isUUID";
 
-function useReplies({
-  commentId,
-  sortBy,
-}: {
+export interface UseRepliesProps {
   commentId: string;
   sortBy: CommentsSortByOptions;
-}) {
+}
+
+function useReplies({ commentId, sortBy }: UseRepliesProps) {
   const fetchManyComments = useFetchManyComments();
   const { addCommentsToTree, entityCommentsTree } = useCommentSection();
 

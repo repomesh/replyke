@@ -7,7 +7,13 @@ import { UploadImageOptions } from "../../interfaces/models/Image";
 
 // Type guards (reused from useUploadImage pattern)
 type BrowserFile = File;
-type RNFile = { uri: string; name: string; type?: string };
+
+interface RNFile {
+  uri: string;
+  name: string;
+  type?: string;
+}
+
 type UniversalFile = BrowserFile | RNFile;
 
 function isBrowserFile(file: UniversalFile): file is BrowserFile {

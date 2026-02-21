@@ -3,7 +3,7 @@ import useProject from "../projects/useProject";
 import { SpaceTeamResponse } from "../../interfaces/models/SpaceMember";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface FetchSpaceTeamParams {
+export interface FetchSpaceTeamProps {
   spaceId: string;
 }
 
@@ -13,7 +13,7 @@ function useFetchSpaceTeam() {
   const axios = useAxiosPrivate();
 
   const fetchSpaceTeam = useCallback(
-    async ({ spaceId }: FetchSpaceTeamParams) => {
+    async ({ spaceId }: FetchSpaceTeamProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

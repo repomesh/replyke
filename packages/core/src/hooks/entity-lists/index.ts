@@ -2,6 +2,8 @@ export { default as useEntityList } from "./useEntityList";
 export type {
   UseEntityListProps,
   UseEntityListValues,
+  EntityListCreateEntityProps,
+  EntityListDeleteEntityProps,
 } from "./useEntityList";
 export { default as useEntityListActions } from "./useEntityListActions";
 

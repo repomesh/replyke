@@ -1,6 +1,24 @@
-export { default as useFetchUser } from "./useFetchUser";
-export { default as useFetchUserByForeignId } from "./useFetchUserByForeignId";
-export { default as useFetchUserByUsername } from "./useFetchUserByUsername";
-export { default as useCheckUsernameAvailability } from "./useCheckUsernameAvailability";
-export { default as useFetchUserSuggestions } from "./useFetchUserSuggestions";
-export { default as useMentions } from "./useMentions";
+export {
+  default as useFetchUser,
+  type FetchUserProps,
+} from "./useFetchUser";
+export {
+  default as useFetchUserByForeignId,
+  type FetchUserByForeignIdProps,
+} from "./useFetchUserByForeignId";
+export {
+  default as useFetchUserByUsername,
+  type FetchUserByUsernameProps,
+} from "./useFetchUserByUsername";
+export {
+  default as useCheckUsernameAvailability,
+  type CheckUsernameAvailabilityProps,
+} from "./useCheckUsernameAvailability";
+export {
+  default as useFetchUserSuggestions,
+  type FetchUserSuggestionsProps,
+} from "./useFetchUserSuggestions";
+export {
+  default as useMentions,
+  type UseMentionsProps,
+} from "./useMentions";

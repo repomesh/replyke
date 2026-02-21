@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface ModerateSpaceCommentParams {
+export interface ModerateSpaceCommentProps {
   spaceId: string;
   commentId: string;
   action: "approve" | "remove";
@@ -38,7 +38,7 @@ function useModerateSpaceComment() {
       commentId,
       action,
       reason,
-    }: ModerateSpaceCommentParams) => {
+    }: ModerateSpaceCommentProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

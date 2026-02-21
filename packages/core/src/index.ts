@@ -37,10 +37,16 @@ export {
 export { useProject, useProjectData } from "./hooks/projects";
 
 // -- crypto
-export { useSignTestingJwt } from "./hooks/crypto";
+export { useSignTestingJwt, type SignTestingJwtProps } from "./hooks/crypto";
 
 // -- authentication
-export { useAuth, type UseAuthValues } from "./hooks/auth";
+export {
+  useAuth,
+  type UseAuthValues,
+  type SignUpWithEmailAndPasswordProps,
+  type SignInWithEmailAndPasswordProps,
+  type ChangePasswordProps,
+} from "./hooks/auth";
 
 // -- (current) user
 export {
@@ -67,6 +73,11 @@ export {
   useCollectionEntitiesWrapper,
   type UseCollectionsProps,
   type UseCollectionsValues,
+  type CreateCollectionProps,
+  type UpdateCollectionProps,
+  type DeleteCollectionProps,
+  type AddToCollectionProps,
+  type RemoveFromCollectionProps,
   type UseCollectionEntitiesWrapperProps,
   type UseCollectionEntitiesWrapperValues,
 } from "./hooks/collections";
@@ -84,6 +95,14 @@ export {
   useIncrementEntityViews,
   useFetchManyEntitiesWrapper,
   useUpdateEntity,
+  useFetchDrafts,
+  usePublishDraft,
+  type CreateEntityProps,
+  type DeleteEntityProps,
+  type FetchEntityProps,
+  type FetchEntityByForeignIdProps,
+  type FetchEntityByShortIdProps,
+  type PublishDraftProps,
   type UseFetchManyEntitiesWrapperProps,
   type UseFetchManyEntitiesWrapperValues,
 } from "./hooks/entities";
@@ -94,6 +113,8 @@ export {
   useEntityListActions,
   type UseEntityListProps,
   type UseEntityListValues,
+  type EntityListCreateEntityProps,
+  type EntityListDeleteEntityProps,
   type EntityListFilters,
   type EntityListSort,
   type EntityListFetchOptions,
@@ -125,6 +146,7 @@ export {
   useModerateSpaceEntity,
   useModerateSpaceComment,
   useSpacePermissions,
+  useCheckMyMembership,
   // Rule hooks
   useCreateRule,
   useUpdateRule,
@@ -134,8 +156,30 @@ export {
   useReorderRules,
   type UseSpaceDataProps,
   type UseSpaceDataValues,
+  type FetchSpaceProps,
+  type FetchSpaceByShortIdProps,
+  type FetchSpaceBySlugProps,
+  type FetchSpaceBreadcrumbProps,
+  type FetchSpaceChildrenProps,
+  type FetchManySpacesProps,
+  type CheckSlugAvailabilityProps,
   type CreateSpaceProps,
   type UpdateSpaceProps,
+  type DeleteSpaceProps,
+  type JoinSpaceProps,
+  type LeaveSpaceProps,
+  type FetchSpaceMembersProps,
+  type FetchSpaceTeamProps,
+  type FetchUserSpacesProps,
+  type CheckMyMembershipProps,
+  type UpdateMemberRoleProps,
+  type ApproveMemberProps,
+  type DeclineMemberProps,
+  type RemoveMemberProps,
+  type ModerateSpaceEntityProps,
+  type ModerateSpaceCommentProps,
+  type UseSpacePermissionsProps,
+  type UseSpacePermissionsValues,
   type CreateRuleProps,
   type UpdateRuleProps,
   type DeleteRuleProps,
@@ -150,6 +194,11 @@ export {
   useSpaceListActions,
   type UseSpaceListProps,
   type UseSpaceListValues,
+  type SpaceListCreateSpaceProps,
+  type SpaceListDeleteSpaceProps,
+  type FetchSpacesOptions,
+  type CreateSpaceOptions,
+  type DeleteSpaceOptions,
 } from "./hooks/space-lists";
 
 // -- comments
@@ -165,6 +214,16 @@ export {
   useDeleteComment,
   useEntityComments,
   useFetchManyCommentsWrapper,
+  type CommentSectionCreateCommentProps,
+  type CommentSectionUpdateCommentProps,
+  type CommentSectionDeleteCommentProps,
+  type CreateCommentProps,
+  type FetchManyCommentsProps,
+  type FetchCommentProps,
+  type FetchCommentByForeignIdProps,
+  type UseRepliesProps,
+  type UpdateCommentProps,
+  type DeleteCommentProps,
   type UseFetchManyCommentsWrapperProps,
   type UseFetchManyCommentsWrapperValues,
 } from "./hooks/comments";
@@ -182,7 +241,13 @@ export {
   type UseFetchEntityReactionsWrapperValues,
   type UseFetchCommentReactionsWrapperProps,
   type UseFetchCommentReactionsWrapperValues,
+  type UseReactionToggleProps,
   type UseReactionToggleValues,
+  type ToggleReactionProps,
+  type AddReactionProps,
+  type RemoveReactionProps,
+  type FetchEntityReactionsProps,
+  type FetchCommentReactionsProps,
 } from "./hooks/reactions";
 
 // -- users
@@ -193,6 +258,12 @@ export {
   useCheckUsernameAvailability,
   useFetchUserSuggestions,
   useMentions,
+  type FetchUserProps,
+  type FetchUserByForeignIdProps,
+  type FetchUserByUsernameProps,
+  type CheckUsernameAvailabilityProps,
+  type FetchUserSuggestionsProps,
+  type UseMentionsProps,
 } from "./hooks/users";
 
 // -- follows
@@ -210,6 +281,20 @@ export {
   useFollowUser,
   useUnfollowByFollowId,
   useUnfollowUserByUserId,
+  type FollowUserProps,
+  type UnfollowByFollowIdProps,
+  type UnfollowUserByUserIdProps,
+  type FetchFollowStatusProps,
+  type FollowStatusResponse,
+  type FollowerWithFollowInfo,
+  type FetchFollowersParams,
+  type FetchFollowersByUserIdParams,
+  type FetchFollowersCountByUserIdProps,
+  type FollowingWithFollowInfo,
+  type FetchFollowingParams,
+  type FetchFollowingByUserIdParams,
+  type FetchFollowingCountByUserIdProps,
+  type UseFollowToggleProps,
 } from "./hooks/relationships/follows";
 
 // -- connections
@@ -227,19 +312,49 @@ export {
   useFetchConnectionsByUserId,
   useFetchConnectionsCountByUserId,
   useConnectionManager,
+  type AcceptConnectionProps,
+  type DeclineConnectionProps,
+  type RemoveConnectionProps,
+  type RemoveConnectionByUserIdProps,
+  type FetchConnectionStatusProps,
+  type FetchConnectionsParams,
+  type FetchConnectionsByUserIdParams,
+  type FetchConnectionsCountByUserIdParams,
+  type FetchSentPendingConnectionsParams,
+  type FetchReceivedPendingConnectionsParams,
+  type UseConnectionManagerProps,
+  type ConnectionData,
 } from "./hooks/relationships/connections";
 
 // -- reports
-export { useCreateReport } from "./hooks/reports";
-export { useFetchModeratedReports } from "./hooks/reports";
-export { useHandleSpaceEntityReport } from "./hooks/reports";
-export { useHandleSpaceCommentReport } from "./hooks/reports";
+export {
+  useCreateReport,
+  useFetchModeratedReports,
+  useHandleSpaceEntityReport,
+  useHandleSpaceCommentReport,
+  type UseCreateReportProps,
+  type CreateReportProps,
+  type CreateCommentReportProps,
+  type CreateEntityReportProps,
+  type FetchModeratedReportsParams,
+  type ReportUserReport,
+  type Report,
+  type HandleSpaceEntityReportParams,
+  type HandleReportResponse,
+  type HandleSpaceCommentReportParams,
+} from "./hooks/reports";
 
 // -- general
-export { useGetMetadata } from "./hooks/utils";
+export { useGetMetadata, type GetMetadataProps } from "./hooks/utils";
 
 // -- storage
-export { useUploadFile, useUploadImage } from "./hooks/storage";
+export {
+  useUploadFile,
+  useUploadImage,
+  type RNFile,
+  type UploadFileOptions,
+  type UploadResponse,
+} from "./hooks/storage";
 
 // Interfaces
 export type {

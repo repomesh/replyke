@@ -3,11 +3,15 @@ import axios from "../../config/axios";
 import useProject from "../projects/useProject";
 import { isAbsoluteUrl } from "../../utils/isAbsoluteUrl";
 
+export interface GetMetadataProps {
+  url: string;
+}
+
 function useGetMetadata() {
   const { projectId } = useProject();
 
   const getMetadata = useCallback(
-    async ({ url }: { url: string }) => {
+    async ({ url }: GetMetadataProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

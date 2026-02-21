@@ -3,12 +3,16 @@ import useProject from "../projects/useProject";
 import { DeleteSpaceResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface DeleteSpaceProps {
+  spaceId: string;
+}
+
 function useDeleteSpace() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const deleteSpace = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: DeleteSpaceProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

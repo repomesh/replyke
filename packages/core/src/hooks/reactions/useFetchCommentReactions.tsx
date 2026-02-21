@@ -4,17 +4,19 @@ import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
 
+export interface FetchCommentReactionsProps {
+  commentId: string;
+  page: number;
+  limit?: number;
+  reactionType?: ReactionType;
+  sortDir?: "asc" | "desc";
+}
+
 function useFetchCommentReactions() {
   const { projectId } = useProject();
 
   const fetchCommentReactions = useCallback(
-    async (props: {
-      commentId: string;
-      page: number;
-      limit?: number;
-      reactionType?: ReactionType;
-      sortDir?: "asc" | "desc";
-    }): Promise<PaginatedResponse<Reaction>> => {
+    async (props: FetchCommentReactionsProps): Promise<PaginatedResponse<Reaction>> => {
       const { commentId, page, limit = 20, reactionType, sortDir = "desc" } = props;
 
       if (page === 0) {

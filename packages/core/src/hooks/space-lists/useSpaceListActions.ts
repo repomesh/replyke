@@ -22,7 +22,7 @@ import type {
 } from "../../interfaces/models/Space";
 import type { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
-interface FetchSpacesOptions {
+export interface FetchSpacesOptions {
   page: number;
   sortBy: SpaceListSortByOptions;
   search?: string | null;
@@ -32,7 +32,7 @@ interface FetchSpacesOptions {
   limit: number;
 }
 
-interface CreateSpaceOptions {
+export interface CreateSpaceOptions {
   name: string;
   slug?: string | null;
   description?: string | null;
@@ -46,7 +46,7 @@ interface CreateSpaceOptions {
   insertPosition?: "first" | "last";
 }
 
-interface DeleteSpaceOptions {
+export interface DeleteSpaceOptions {
   spaceId: string;
 }
 

@@ -5,21 +5,23 @@ import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface FetchManyCommentsProps {
+  entityId?: string | null | undefined;
+  userId?: string | null | undefined;
+  parentId?: string | null | undefined;
+  sortBy?: CommentsSortByOptions;
+  page: number;
+  limit?: number;
+  include?: CommentIncludeParam;
+  sourceId?: string | null | undefined;
+}
+
 function useFetchManyComments() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const fetchComments = useCallback(
-    async (props: {
-      entityId?: string | null | undefined;
-      userId?: string | null | undefined;
-      parentId?: string | null | undefined;
-      sortBy?: CommentsSortByOptions;
-      page: number;
-      limit?: number;
-      include?: CommentIncludeParam;
-      sourceId?: string | null | undefined;
-    }): Promise<PaginatedResponse<Comment>> => {
+    async (props: FetchManyCommentsProps): Promise<PaginatedResponse<Comment>> => {
       const {
         entityId,
         userId,

@@ -7,7 +7,7 @@ import {
 } from "../../interfaces/models/SpaceMember";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface FetchSpaceMembersParams {
+export interface FetchSpaceMembersProps {
   spaceId: string;
   page?: number;
   limit?: number;
@@ -20,7 +20,7 @@ function useFetchSpaceMembers() {
   const axios = useAxiosPrivate();
 
   const fetchSpaceMembers = useCallback(
-    async ({ spaceId, page, limit, role, status }: FetchSpaceMembersParams) => {
+    async ({ spaceId, page, limit, role, status }: FetchSpaceMembersProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

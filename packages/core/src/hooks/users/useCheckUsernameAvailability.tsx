@@ -3,11 +3,15 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
 
+export interface CheckUsernameAvailabilityProps {
+  username: string;
+}
+
 function useCheckUsernameAvailability() {
   const { projectId } = useProject();
 
   const checkUsernameAvailability = useCallback(
-    async ({ username }: { username: string }) => {
+    async ({ username }: CheckUsernameAvailabilityProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

@@ -4,7 +4,7 @@ import { Space, SpaceIncludeParam } from "../../interfaces/models/Space";
 import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import axios from "../../config/axios";
 
-interface FetchSpaceChildrenParams {
+export interface FetchSpaceChildrenProps {
   spaceId: string;
   page?: number;
   limit?: number;
@@ -15,7 +15,7 @@ function useFetchSpaceChildren() {
   const { projectId } = useProject();
 
   const fetchSpaceChildren = useCallback(
-    async ({ spaceId, page = 1, limit = 20, include }: FetchSpaceChildrenParams) => {
+    async ({ spaceId, page = 1, limit = 20, include }: FetchSpaceChildrenProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

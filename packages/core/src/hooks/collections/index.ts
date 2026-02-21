@@ -4,6 +4,11 @@ export {
   default as useCollections,
   type UseCollectionsProps,
   type UseCollectionsValues,
+  type CreateCollectionProps,
+  type UpdateCollectionProps,
+  type DeleteCollectionProps,
+  type AddToCollectionProps,
+  type RemoveFromCollectionProps,
 } from "./useCollections";
 export { default as useIsEntityInCollection } from "./useIsEntitySaved";
 export {

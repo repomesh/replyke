@@ -6,7 +6,7 @@ import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
 import { Space } from "../../interfaces/models/Space";
 
-interface FetchModeratedReportsParams {
+export interface FetchModeratedReportsParams {
   spaceId?: string;
   targetType?: "comment" | "entity";
   status?: "pending" | "on-hold" | "escalated" | "dismissed" | "actioned";
@@ -15,7 +15,7 @@ interface FetchModeratedReportsParams {
   limit?: number;
 }
 
-interface ReportUserReport {
+export interface ReportUserReport {
   id: string;
   userId: string;
   reason: string;
@@ -23,7 +23,7 @@ interface ReportUserReport {
   createdAt: Date;
 }
 
-interface Report {
+export interface Report {
   id: string;
   projectId: string;
   spaceId: string | null;

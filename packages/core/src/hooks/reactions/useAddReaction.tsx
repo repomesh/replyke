@@ -5,16 +5,18 @@ import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
 import { ReactionType } from "../../interfaces/models/Reaction";
 
+export interface AddReactionProps {
+  targetType: "entity" | "comment";
+  targetId: string;
+  reactionType: ReactionType;
+}
+
 function useAddReaction() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const addReaction = useCallback(
-    async (props: {
-      targetType: "entity" | "comment";
-      targetId: string;
-      reactionType: ReactionType;
-    }): Promise<Entity | Comment> => {
+    async (props: AddReactionProps): Promise<Entity | Comment> => {
       const { targetType, targetId, reactionType } = props;
 
       if (!targetId) {

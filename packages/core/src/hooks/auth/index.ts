@@ -1,1 +1,1 @@
-export { default as useAuth, type UseAuthValues } from './useAuth';
+export { default as useAuth, type UseAuthValues, type SignUpWithEmailAndPasswordProps, type SignInWithEmailAndPasswordProps, type ChangePasswordProps } from './useAuth';

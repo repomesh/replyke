@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface HandleSpaceEntityReportParams {
+export interface HandleSpaceEntityReportParams {
   spaceId: string;
   reportId: string;
   entityId: string;
@@ -12,7 +12,7 @@ interface HandleSpaceEntityReportParams {
   reason?: string;
 }
 
-interface HandleReportResponse {
+export interface HandleReportResponse {
   message: string;
   code: string;
 }

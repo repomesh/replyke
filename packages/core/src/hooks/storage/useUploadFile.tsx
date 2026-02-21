@@ -8,20 +8,24 @@ function isBrowserFile(file: UniversalFile): file is BrowserFile {
 }
 
 type BrowserFile = File;
-type RNFile = { uri: string; name: string; type?: string };
+
+export interface RNFile {
+  uri: string;
+  name: string;
+  type?: string;
+}
+
 type UniversalFile = BrowserFile | RNFile;
 
-// Optional associations and metadata for file uploads
-type UploadFileOptions = {
+export interface UploadFileOptions {
   entityId?: string;
   commentId?: string;
   spaceId?: string;
   position?: number;
   metadata?: Record<string, any>;
-};
+}
 
-// Enhanced response with file type and more metadata
-type UploadResponse = {
+export interface UploadResponse {
   fileId: string;
   type: "image" | "video" | "document" | "other";
   relativePath: string;
@@ -29,7 +33,7 @@ type UploadResponse = {
   size: number;
   mimeType: string;
   createdAt: string;
-};
+}
 
 function useUploadFile() {
   const axios = useAxiosPrivate();

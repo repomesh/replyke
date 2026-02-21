@@ -19,4 +19,10 @@ export type {
 export type {
   UseReactionToggleProps,
   UseReactionToggleValues,
+  ToggleReactionProps,
 } from "./useReactionToggle";
+
+export type { AddReactionProps } from "./useAddReaction";
+export type { RemoveReactionProps } from "./useRemoveReaction";
+export type { FetchEntityReactionsProps } from "./useFetchEntityReactions";
+export type { FetchCommentReactionsProps } from "./useFetchCommentReactions";

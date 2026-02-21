@@ -3,12 +3,16 @@ import useProject from "../projects/useProject";
 import { CheckMyMembershipResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface CheckMyMembershipProps {
+  spaceId: string;
+}
+
 function useCheckMyMembership() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const checkMyMembership = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: CheckMyMembershipProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

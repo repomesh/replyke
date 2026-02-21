@@ -4,19 +4,21 @@ import { Mention } from "../../interfaces/models/Mention";
 import useFetchUserSuggestions from "./useFetchUserSuggestions";
 import { handleError } from "../../utils/handleError";
 
+export interface UseMentionsProps {
+  content: string;
+  setContent: (value: string) => void;
+  focus: () => void;
+  cursorPosition: number;
+  isSelectionActive: boolean;
+}
+
 const useMentions = ({
   content,
   setContent,
   focus,
   cursorPosition,
   isSelectionActive,
-}: {
-  content: string;
-  setContent: (value: string) => void;
-  focus: () => void;
-  cursorPosition: number;
-  isSelectionActive: boolean;
-}) => {
+}: UseMentionsProps) => {
   const fetchMentionSuggestions = useFetchUserSuggestions();
 
   // const loading = useRef(false);

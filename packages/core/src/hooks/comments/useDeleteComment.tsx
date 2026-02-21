@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 
+export interface DeleteCommentProps {
+  commentId: string;
+}
+
 function useDeleteComment() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const deleteComment = useCallback(
-    async ({ commentId }: { commentId: string }) => {
+    async ({ commentId }: DeleteCommentProps) => {
       if (!commentId) {
         throw new Error("No comment ID passed");
       }

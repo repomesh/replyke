@@ -6,13 +6,12 @@ import { handleError } from "../../utils/handleError";
 
 // export type InfusedEntity = Entity & Record<string, any>;
 
-const useInfusedData = ({
-  entities,
-  infuseData,
-}: {
+export interface UseInfusedDataProps {
   entities: Entity[];
   infuseData?: (foreignId: string) => Promise<Record<string, any> | null>;
-}) => {
+}
+
+const useInfusedData = ({ entities, infuseData }: UseInfusedDataProps) => {
   const [infusedEntities, setInfusedEntities] = useState<
     (Entity & { infusion: Record<string, any> })[]
   >([]);

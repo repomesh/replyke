@@ -1,0 +1,47 @@
+import { useCallback } from "react";
+import useProject from "../projects/useProject";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
+import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+
+interface FetchDraftsParams {
+  page?: number;
+  limit?: number;
+  include?: EntityIncludeParam;
+}
+
+function useFetchDrafts() {
+  const { projectId } = useProject();
+  const axios = useAxiosPrivate();
+
+  const fetchDrafts = useCallback(
+    async (params?: FetchDraftsParams) => {
+      if (!projectId) {
+        throw new Error("No projectId available.");
+      }
+
+      const queryParams: Record<string, any> = {};
+
+      if (params?.page !== undefined) queryParams.page = params.page;
+      if (params?.limit !== undefined) queryParams.limit = params.limit;
+
+      if (params?.include) {
+        queryParams.include = Array.isArray(params.include)
+          ? params.include.join(",")
+          : params.include;
+      }
+
+      const response = await axios.get<PaginatedResponse<Entity>>(
+        `/${projectId}/entities/drafts`,
+        { params: queryParams }
+      );
+
+      return response.data;
+    },
+    [projectId, axios]
+  );
+
+  return fetchDrafts;
+}
+
+export default useFetchDrafts;

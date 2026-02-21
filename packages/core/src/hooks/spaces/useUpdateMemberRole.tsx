@@ -4,7 +4,7 @@ import { SpaceMemberRole } from "../../interfaces/models/SpaceMember";
 import { UpdateMemberRoleResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface UpdateMemberRoleParams {
+export interface UpdateMemberRoleProps {
   spaceId: string;
   memberId: string;
   role: SpaceMemberRole;
@@ -15,7 +15,7 @@ function useUpdateMemberRole() {
   const axios = useAxiosPrivate();
 
   const updateMemberRole = useCallback(
-    async ({ spaceId, memberId, role }: UpdateMemberRoleParams) => {
+    async ({ spaceId, memberId, role }: UpdateMemberRoleProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

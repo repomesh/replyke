@@ -4,13 +4,17 @@ import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import { ConnectionStatusResponse } from "../../../interfaces/models/Connection";
 
+export interface FetchConnectionStatusProps {
+  userId: string;
+}
+
 function useFetchConnectionStatus() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const getConnectionStatus = useCallback(
-    async (props: { userId: string }): Promise<ConnectionStatusResponse> => {
+    async (props: FetchConnectionStatusProps): Promise<ConnectionStatusResponse> => {
       const { userId } = props;
       if (!projectId) {
         throw new Error("No project specified");

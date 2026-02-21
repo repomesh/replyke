@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 
+export interface DeleteEntityProps {
+  entityId: string;
+}
+
 function useDeleteEntity() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const deleteEntity = useCallback(
-    async ({ entityId }: { entityId: string }) => {
+    async ({ entityId }: DeleteEntityProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

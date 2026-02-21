@@ -34,6 +34,24 @@ export interface UseSpaceListProps {
   listId: string;
 }
 
+export interface SpaceListCreateSpaceProps {
+  name: string;
+  slug?: string | null;
+  description?: string | null;
+  avatar?: string | null;
+  banner?: string | null;
+  readingPermission?: ReadingPermission;
+  postingPermission?: PostingPermission;
+  requireJoinApproval?: boolean;
+  metadata?: Record<string, any>;
+  parentSpaceId?: string | null;
+  insertPosition?: "first" | "last";
+}
+
+export interface SpaceListDeleteSpaceProps {
+  spaceId: string;
+}
+
 export interface UseSpaceListValues {
   spaces: Space[];
   loading: boolean;
@@ -53,20 +71,8 @@ export interface UseSpaceListValues {
     options?: SpaceListFetchOptions
   ) => void;
   loadMore: () => void;
-  createSpace: (props: {
-    name: string;
-    slug?: string | null;
-    description?: string | null;
-    avatar?: string | null;
-    banner?: string | null;
-    readingPermission?: ReadingPermission;
-    postingPermission?: PostingPermission;
-    requireJoinApproval?: boolean;
-    metadata?: Record<string, any>;
-    parentSpaceId?: string | null;
-    insertPosition?: "first" | "last";
-  }) => Promise<Space | undefined>;
-  deleteSpace: (props: { spaceId: string }) => Promise<void>;
+  createSpace: (props: SpaceListCreateSpaceProps) => Promise<Space | undefined>;
+  deleteSpace: (props: SpaceListDeleteSpaceProps) => Promise<void>;
 }
 
 function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
@@ -247,19 +253,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
     async ({
       insertPosition,
       ...restOfProps
-    }: {
-      name: string;
-      slug?: string | null;
-      description?: string | null;
-      avatar?: string | null;
-      banner?: string | null;
-      readingPermission?: ReadingPermission;
-      postingPermission?: PostingPermission;
-      requireJoinApproval?: boolean;
-      metadata?: Record<string, any>;
-      parentSpaceId?: string | null;
-      insertPosition?: "first" | "last";
-    }) => {
+    }: SpaceListCreateSpaceProps) => {
       try {
         const newSpace = await spaceActions.createSpace(listId, {
           ...restOfProps,
@@ -276,7 +270,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
 
   // Delete space function
   const deleteSpace = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: SpaceListDeleteSpaceProps) => {
       try {
         await spaceActions.deleteSpace(listId, { spaceId });
       } catch (err) {

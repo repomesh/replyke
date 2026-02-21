@@ -13,16 +13,18 @@ const WARNING = `
     Failure to follow these practices can lead to security vulnerabilities.
   `;
 
+export interface SignTestingJwtProps {
+  projectId: string;
+  privateKey: string;
+  userData: { id: string } & Record<string, any>;
+}
+
 function useSignTestingJwt() {
   const signTestingJwt = async ({
     projectId,
     privateKey,
     userData,
-  }: {
-    projectId: string;
-    privateKey: string;
-    userData: { id: string } & Record<string, any>;
-  }) => {
+  }: SignTestingJwtProps) => {
     try {
       if (!projectId) {
         throw new Error("No project specified");

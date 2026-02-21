@@ -40,6 +40,24 @@ export interface UseEntityListProps {
   infuseData?: (foreignId: string) => Promise<Record<string, any> | null>;
 }
 
+export interface EntityListCreateEntityProps {
+  foreignId?: string;
+  title?: string;
+  content?: string;
+  attachments?: Record<string, any>[];
+  keywords?: string[];
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  metadata?: Record<string, any>;
+  insertPosition?: "first" | "last";
+}
+
+export interface EntityListDeleteEntityProps {
+  entityId: string;
+}
+
 export interface UseEntityListValues {
   entities: Entity[];
   // setEntities: React.Dispatch<React.SetStateAction<Entity[]>>;
@@ -73,20 +91,8 @@ export interface UseEntityListValues {
   ) => void;
 
   loadMore: () => void;
-  createEntity: (props: {
-    foreignId?: string;
-    title?: string;
-    content?: string;
-    attachments?: Record<string, any>[];
-    keywords?: string[];
-    location?: {
-      latitude: number;
-      longitude: number;
-    };
-    metadata?: Record<string, any>;
-    insertPosition?: "first" | "last";
-  }) => Promise<Entity | undefined>;
-  deleteEntity: (props: { entityId: string }) => Promise<void>;
+  createEntity: (props: EntityListCreateEntityProps) => Promise<Entity | undefined>;
+  deleteEntity: (props: EntityListDeleteEntityProps) => Promise<void>;
 }
 
 function useEntityList({
@@ -340,19 +346,7 @@ function useEntityList({
     async ({
       insertPosition,
       ...restOfProps
-    }: {
-      foreignId?: string;
-      title?: string;
-      content?: string;
-      attachments?: any[];
-      keywords?: string[];
-      location?: {
-        latitude: number;
-        longitude: number;
-      };
-      metadata?: Record<string, any>;
-      insertPosition?: "first" | "last";
-    }) => {
+    }: EntityListCreateEntityProps) => {
       try {
         const newEntity = await entityActions.createEntity(listId, {
           ...restOfProps,
@@ -372,7 +366,7 @@ function useEntityList({
 
   // Delete entity function
   const deleteEntity = useCallback(
-    async ({ entityId }: { entityId: string }) => {
+    async ({ entityId }: EntityListDeleteEntityProps) => {
       try {
         await entityActions.deleteEntity(listId, { entityId });
       } catch (err) {

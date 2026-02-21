@@ -3,12 +3,16 @@ import useProject from "../projects/useProject";
 import { SpaceBreadcrumb } from "../../interfaces/SpaceBreadcrumb";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface FetchSpaceBreadcrumbProps {
+  spaceId: string;
+}
+
 function useFetchSpaceBreadcrumb() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const fetchSpaceBreadcrumb = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: FetchSpaceBreadcrumbProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

@@ -4,15 +4,17 @@ import useProject from "../projects/useProject";
 import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
 
+export interface RemoveReactionProps {
+  targetType: "entity" | "comment";
+  targetId: string;
+}
+
 function useRemoveReaction() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const removeReaction = useCallback(
-    async (props: {
-      targetType: "entity" | "comment";
-      targetId: string;
-    }): Promise<Entity | Comment> => {
+    async (props: RemoveReactionProps): Promise<Entity | Comment> => {
       const { targetType, targetId } = props;
 
       if (!targetId) {

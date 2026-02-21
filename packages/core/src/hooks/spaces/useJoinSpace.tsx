@@ -3,12 +3,16 @@ import useProject from "../projects/useProject";
 import { JoinSpaceResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface JoinSpaceProps {
+  spaceId: string;
+}
+
 function useJoinSpace() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const joinSpace = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: JoinSpaceProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

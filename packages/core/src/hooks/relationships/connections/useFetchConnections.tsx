@@ -5,7 +5,7 @@ import { useUser } from "../../user";
 import { EstablishedConnection } from "../../../interfaces/models/Connection";
 import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 
-interface FetchConnectionsParams {
+export interface FetchConnectionsParams {
   page?: number;
   limit?: number;
 }

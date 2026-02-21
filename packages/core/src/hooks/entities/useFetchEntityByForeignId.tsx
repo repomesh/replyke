@@ -3,20 +3,18 @@ import useProject from "../projects/useProject";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface FetchEntityByForeignIdProps {
+  foreignId: string;
+  createIfNotFound?: boolean;
+  include?: EntityIncludeParam;
+}
+
 function useFetchEntityByForeignId() {
     const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchEntityByForeignId = useCallback(
-    async ({
-      foreignId,
-      createIfNotFound,
-      include,
-    }: {
-      foreignId: string;
-      createIfNotFound?: boolean;
-      include?: EntityIncludeParam;
-    }) => {
+    async ({ foreignId, createIfNotFound, include }: FetchEntityByForeignIdProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

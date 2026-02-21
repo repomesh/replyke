@@ -4,7 +4,7 @@ import { UserSpacesResponse, SpaceIncludeParam } from "../../interfaces/models/S
 import { SpaceMemberRole } from "../../interfaces/models/SpaceMember";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface FetchUserSpacesParams {
+export interface FetchUserSpacesProps {
   page?: number;
   limit?: number;
   status?: "active" | "pending" | "banned";
@@ -18,7 +18,7 @@ function useFetchUserSpaces() {
   const axios = useAxiosPrivate();
 
   const fetchUserSpaces = useCallback(
-    async (params: FetchUserSpacesParams = {}) => {
+    async (params: FetchUserSpacesProps = {}) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

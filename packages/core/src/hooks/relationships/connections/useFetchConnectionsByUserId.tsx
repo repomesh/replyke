@@ -4,7 +4,7 @@ import { EstablishedConnection } from "../../../interfaces/models/Connection";
 import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 import axios from "../../../config/axios";
 
-interface FetchConnectionsByUserIdParams {
+export interface FetchConnectionsByUserIdParams {
   userId: string;
   page?: number;
   limit?: number;

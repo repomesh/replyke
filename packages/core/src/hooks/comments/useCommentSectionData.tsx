@@ -36,6 +36,22 @@ export interface UseCommentSectionDataProps {
   highlightedCommentId?: string | null;
 }
 
+export interface CommentSectionCreateCommentProps {
+  parentId?: string;
+  content?: string;
+  gif?: GifData;
+  mentions?: Mention[];
+}
+
+export interface CommentSectionUpdateCommentProps {
+  commentId: string;
+  content: string;
+}
+
+export interface CommentSectionDeleteCommentProps {
+  commentId: string;
+}
+
 export interface UseCommentSectionDataValues {
   entity: Entity | null | undefined;
   callbacks?: Record<string, (...args: any[]) => void> | undefined;
@@ -67,17 +83,9 @@ export interface UseCommentSectionDataValues {
   handleDeepReply: (comment: Comment) => void;
   handleShallowReply: (comment: Comment) => void;
 
-  createComment: (props: {
-    parentId?: string;
-    content?: string;
-    gif?: GifData;
-    mentions: Mention[];
-  }) => Promise<void>;
-  updateComment: (props: {
-    commentId: string;
-    content: string;
-  }) => Promise<void>;
-  deleteComment: (props: { commentId: string }) => Promise<void>;
+  createComment: (props: CommentSectionCreateCommentProps) => Promise<void>;
+  updateComment: (props: CommentSectionUpdateCommentProps) => Promise<void>;
+  deleteComment: (props: CommentSectionDeleteCommentProps) => Promise<void>;
 }
 
 function useCommentSectionData(
@@ -182,12 +190,7 @@ function useCommentSectionData(
   );
 
   const handleCreateComment = useCallback(
-    async (props: {
-      parentId?: string;
-      content?: string;
-      gif?: GifData;
-      mentions?: Mention[];
-    }) => {
+    async (props: CommentSectionCreateCommentProps) => {
       const { parentId, content, gif, mentions } = props;
 
       if (submittingComment.current) return;
@@ -317,7 +320,7 @@ function useCommentSectionData(
   );
 
   const handleDeleteComment = useCallback(
-    async ({ commentId }: { commentId: string }) => {
+    async ({ commentId }: CommentSectionDeleteCommentProps) => {
       if (!isUUID(commentId)) return;
       try {
         removeCommentFromTree(commentId);
@@ -334,7 +337,7 @@ function useCommentSectionData(
   );
 
   const handleUpdateComment = useCallback(
-    async ({ commentId, content }: { commentId: string; content: string }) => {
+    async ({ commentId, content }: CommentSectionUpdateCommentProps) => {
       try {
         const updatedComment = await updateComment({ commentId, content });
 

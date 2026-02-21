@@ -5,13 +5,13 @@ import {
   ReadingPermission,
 } from "../../interfaces/models/Space";
 
-interface UseSpacePermissionsProps {
+export interface UseSpacePermissionsProps {
   memberPermissions: SpaceMemberPermissions | null | undefined;
   postingPermission: PostingPermission;
   readingPermission?: ReadingPermission;
 }
 
-interface UseSpacePermissionsValues {
+export interface UseSpacePermissionsValues {
   isMember: boolean;
   isAdmin: boolean;
   isModerator: boolean;

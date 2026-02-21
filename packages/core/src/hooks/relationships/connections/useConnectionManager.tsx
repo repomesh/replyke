@@ -11,11 +11,11 @@ import {
   ConnectionStatusResponse,
 } from "../../../interfaces/models/Connection";
 
-interface UseConnectionManagerProps {
+export interface UseConnectionManagerProps {
   userId: string;
 }
 
-interface ConnectionData {
+export interface ConnectionData {
   connectionId: string | null;
   connectedAt?: string;
   requestedAt?: string;

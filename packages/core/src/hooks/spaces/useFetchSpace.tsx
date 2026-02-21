@@ -3,6 +3,11 @@ import useProject from "../projects/useProject";
 import { SpaceDetailed, SpaceIncludeParam } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface FetchSpaceProps {
+  spaceId: string;
+  include?: SpaceIncludeParam;
+}
+
 function useFetchSpace() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
@@ -11,10 +16,7 @@ function useFetchSpace() {
     async ({
       spaceId,
       include,
-    }: {
-      spaceId: string;
-      include?: SpaceIncludeParam;
-    }) => {
+    }: FetchSpaceProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

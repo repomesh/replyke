@@ -3,7 +3,7 @@ import useProject from "../projects/useProject";
 import { ApproveMemberResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface ApproveMemberParams {
+export interface ApproveMemberProps {
   spaceId: string;
   memberId: string;
 }
@@ -13,7 +13,7 @@ function useApproveMember() {
   const axios = useAxiosPrivate();
 
   const approveMember = useCallback(
-    async ({ spaceId, memberId }: ApproveMemberParams) => {
+    async ({ spaceId, memberId }: ApproveMemberProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

@@ -4,7 +4,7 @@ import useUnfollowUserByUserId from "./useUnfollowUserByUserId";
 import useFetchFollowStatus from "./useFetchFollowStatus";
 import useUser from "../../user/useUser";
 
-interface UseFollowToggleProps {
+export interface UseFollowToggleProps {
   userId: string;
 }
 

@@ -13,12 +13,14 @@ export interface UseReactionToggleProps {
   initialReactionCounts?: ReactionCounts | null | undefined;
 }
 
+export interface ToggleReactionProps {
+  reactionType: ReactionType;
+}
+
 export interface UseReactionToggleValues {
   currentReaction: ReactionType | null;
   reactionCounts: Partial<ReactionCounts>;
-  toggleReaction: (props: {
-    reactionType: ReactionType;
-  }) => Promise<Entity | Comment | null>;
+  toggleReaction: (props: ToggleReactionProps) => Promise<Entity | Comment | null>;
   loading: boolean;
 }
 
@@ -46,9 +48,7 @@ function useReactionToggle({
   }, [targetId, initialReaction, initialReactionCounts]);
 
   const toggleReaction = useCallback(
-    async (props: {
-      reactionType: ReactionType;
-    }): Promise<Entity | Comment | null> => {
+    async (props: ToggleReactionProps): Promise<Entity | Comment | null> => {
       const { reactionType } = props;
       // Guard: prevent concurrent operations
       if (loading) return null;

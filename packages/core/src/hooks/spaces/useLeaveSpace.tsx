@@ -3,12 +3,16 @@ import useProject from "../projects/useProject";
 import { LeaveSpaceResponse } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface LeaveSpaceProps {
+  spaceId: string;
+}
+
 function useLeaveSpace() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const leaveSpace = useCallback(
-    async ({ spaceId }: { spaceId: string }) => {
+    async ({ spaceId }: LeaveSpaceProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

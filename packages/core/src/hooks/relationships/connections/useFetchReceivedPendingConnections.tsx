@@ -5,7 +5,7 @@ import { useUser } from "../../user";
 import { PendingConnection } from "../../../interfaces/models/Connection";
 import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
 
-interface FetchReceivedPendingConnectionsParams {
+export interface FetchReceivedPendingConnectionsParams {
   page?: number;
   limit?: number;
 }

@@ -3,6 +3,11 @@ import useProject from "../projects/useProject";
 import { SpaceDetailed, SpaceIncludeParam } from "../../interfaces/models/Space";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
+export interface FetchSpaceByShortIdProps {
+  shortId: string;
+  include?: SpaceIncludeParam;
+}
+
 function useFetchSpaceByShortId() {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
@@ -11,10 +16,7 @@ function useFetchSpaceByShortId() {
     async ({
       shortId,
       include,
-    }: {
-      shortId: string;
-      include?: SpaceIncludeParam;
-    }) => {
+    }: FetchSpaceByShortIdProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

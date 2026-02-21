@@ -4,6 +4,11 @@ import useProject from "../projects/useProject";
 import axios from "../../config/axios";
 import { User, UserIncludeParam } from "../../interfaces/models/User";
 
+export interface FetchUserProps {
+  userId: string;
+  include?: UserIncludeParam;
+}
+
 function useFetchUser() {
   const { projectId } = useProject();
 
@@ -11,10 +16,7 @@ function useFetchUser() {
     async ({
       userId,
       include,
-    }: {
-      userId: string;
-      include?: UserIncludeParam;
-    }) => {
+    }: FetchUserProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

@@ -5,7 +5,7 @@ import { Space, SpaceIncludeParam } from "../../interfaces/models/Space";
 import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 import { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
-interface FetchManySpacesParams {
+export interface FetchManySpacesProps {
   page?: number;
   limit?: number;
   sortBy?: SpaceListSortByOptions;
@@ -20,7 +20,7 @@ function useFetchManySpaces() {
   const axios = useAxiosPrivate();
 
   const fetchManySpaces = useCallback(
-    async (params?: FetchManySpacesParams) => {
+    async (params?: FetchManySpacesProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

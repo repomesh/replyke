@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-interface ModerateSpaceEntityParams {
+export interface ModerateSpaceEntityProps {
   spaceId: string;
   entityId: string;
   action: "approve" | "remove";
@@ -38,7 +38,7 @@ function useModerateSpaceEntity() {
       entityId,
       action,
       reason,
-    }: ModerateSpaceEntityParams) => {
+    }: ModerateSpaceEntityProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

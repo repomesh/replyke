@@ -9,7 +9,13 @@ function isBrowserFile(file: UniversalFile): file is BrowserFile {
 }
 
 type BrowserFile = File;
-type RNFile = { uri: string; name: string; type?: string };
+
+interface RNFile {
+  uri: string;
+  name: string;
+  type?: string;
+}
+
 type UniversalFile = BrowserFile | RNFile;
 
 function useUploadImage() {
