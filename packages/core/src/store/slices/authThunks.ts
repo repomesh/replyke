@@ -371,7 +371,7 @@ export const changePasswordThunk = createAsyncThunk(
   }
 );
 
-// Initialize auth - handles the startup flow from useAuthData
+// Initialize auth - handles the startup flow
 export const initializeAuthThunk = createAsyncThunk(
   "auth/initialize",
   async (
@@ -389,16 +389,14 @@ export const initializeAuthThunk = createAsyncThunk(
         );
       }
 
-      // Step 2: Try to refresh access token (matches original setTimeout logic)
-      setTimeout(async () => {
-        await dispatch(
-          requestNewAccessTokenThunk({ projectId: data.projectId })
-        );
-        dispatch(setInitialized(true));
-      }, 0);
+      // Step 2: Try to refresh access token
+      await dispatch(
+        requestNewAccessTokenThunk({ projectId: data.projectId })
+      );
     } catch (error) {
-      dispatch(setInitialized(true));
       handleError(error, "Auth initialization failed:");
+    } finally {
+      dispatch(setInitialized(true));
     }
   }
 );
