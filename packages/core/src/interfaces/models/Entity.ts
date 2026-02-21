@@ -49,6 +49,7 @@ export interface Entity {
   createdAt: Date; // Use camelCase for `created_at`
   updatedAt: Date; // Use camelCase for `updated_at`
   deletedAt: Date | null; // Use camelCase for `updated_at`
+  isDraft: boolean | null;
   moderationStatus: "approved" | "removed" | null;
   moderatedAt: Date | null;
   moderatedById: string | null;

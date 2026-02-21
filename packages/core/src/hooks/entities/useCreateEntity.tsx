@@ -28,33 +28,33 @@ interface FileUploadConfig {
   };
 }
 
+export interface CreateEntityProps {
+  foreignId?: string;
+  sourceId?: string;
+  spaceId?: string;
+  title?: string;
+  content?: string;
+  attachments?: Record<string, any>[];
+  keywords?: string[];
+  mentions?: Mention[];
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  metadata?: Record<string, any>;
+  excludeUserId?: boolean;
+  requireUser?: boolean;
+  isDraft?: boolean;
+  images?: ImageUploadConfig;
+  files?: FileUploadConfig;
+}
+
 function useCreateEntity() {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const createEntity = useCallback(
-    async (props: {
-      // Existing props (unchanged)
-      foreignId?: string;
-      sourceId?: string;
-      spaceId?: string;
-      title?: string;
-      content?: string;
-      attachments?: Record<string, any>[];
-      keywords?: string[];
-      mentions?: Mention[];
-      location?: {
-        latitude: number;
-        longitude: number;
-      };
-      metadata?: Record<string, any>;
-      excludeUserId?: boolean;
-      requireUser?: boolean;
-
-      // NEW: File upload support
-      images?: ImageUploadConfig;
-      files?: FileUploadConfig;
-    }) => {
+    async (props: CreateEntityProps) => {
       const {
         foreignId,
         sourceId,
@@ -68,6 +68,7 @@ function useCreateEntity() {
         metadata,
         excludeUserId,
         requireUser,
+        isDraft,
         images,
         files,
       } = props;
@@ -97,6 +98,7 @@ function useCreateEntity() {
         if (metadata !== undefined) formData.append("metadata", JSON.stringify(metadata));
         if (excludeUserId !== undefined) formData.append("excludeUserId", excludeUserId.toString());
         if (requireUser !== undefined) formData.append("requireUser", requireUser.toString());
+        if (isDraft !== undefined) formData.append("isDraft", isDraft.toString());
 
         // Append images
         if (hasImages) {
@@ -164,6 +166,7 @@ function useCreateEntity() {
             metadata,
             excludeUserId,
             requireUser,
+            isDraft,
           },
           { withCredentials: true }
         );
