@@ -346,6 +346,15 @@ export {
 
 // -- general
 export { useGetMetadata, type GetMetadataProps } from "./hooks/utils";
+export type {
+  UrlMetadata,
+  UrlMetadataImage,
+  UrlMetadataVideo,
+  UrlMetadataAudio,
+  UrlMetadataTwitter,
+  UrlMetadataArticle,
+  UrlMetadataAppLinks,
+} from "./interfaces/UrlMetadata";
 
 // -- storage
 export {
