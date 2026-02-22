@@ -7,6 +7,8 @@ import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
 interface FetchDraftsParams {
   page?: number;
   limit?: number;
+  sourceId?: string;
+  spaceId?: string;
   include?: EntityIncludeParam;
 }
 
@@ -24,6 +26,8 @@ function useFetchDrafts() {
 
       if (params?.page !== undefined) queryParams.page = params.page;
       if (params?.limit !== undefined) queryParams.limit = params.limit;
+      if (params?.sourceId) queryParams.sourceId = params.sourceId;
+      if (params?.spaceId) queryParams.spaceId = params.spaceId;
 
       if (params?.include) {
         queryParams.include = Array.isArray(params.include)
