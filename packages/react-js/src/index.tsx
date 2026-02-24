@@ -1,22 +1,22 @@
 import React from "react";
-import { ReplykeProvider as OriginalReplykeProvider } from "@replyke/core";
+import { ReplykeProvider as CoreReplykeProvider } from "@replyke/core";
+import AccountManager from "./AccountManager";
 
 // Re-export all exports from @replyke/core
 export * from "@replyke/core";
-import AccountManager from "./AccountManager";
 
-// Override ReplykeProvider
+// Override ReplykeProvider to inject AccountManager
 export const ReplykeProvider: React.FC<{
   projectId: string;
   signedToken?: string | null | undefined;
   children: React.ReactNode;
 }> = ({ projectId, signedToken, children }) => {
   return (
-    <OriginalReplykeProvider projectId={projectId} signedToken={signedToken}>
+    <CoreReplykeProvider projectId={projectId} signedToken={signedToken}>
       <>
         <AccountManager />
         {children}
       </>
-    </OriginalReplykeProvider>
+    </CoreReplykeProvider>
   );
 };

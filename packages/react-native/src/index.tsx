@@ -3,7 +3,7 @@ import { ReplykeProvider as OriginalReplykeProvider } from "@replyke/core";
 
 // Re-export all exports from @replyke/core
 export * from "@replyke/core";
-import TokenManager from "./TokenManager";
+import AccountManager from "./AccountManager";
 
 // Override ReplykeProvider
 export const ReplykeProvider: React.FC<{
@@ -14,7 +14,7 @@ export const ReplykeProvider: React.FC<{
   return (
     <OriginalReplykeProvider projectId={projectId} signedToken={signedToken}>
       <>
-        <TokenManager />
+        <AccountManager />
         {children}
       </>
     </OriginalReplykeProvider>
