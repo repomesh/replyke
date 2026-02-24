@@ -55,7 +55,7 @@ export interface UseAuthValues {
   signInWithEmailAndPassword: (props: SignInWithEmailAndPasswordProps) => Promise<void>;
   signOut: () => Promise<void>;
   changePassword: (props: ChangePasswordProps) => Promise<void>;
-  requestNewAccessToken: () => Promise<void>;
+  requestNewAccessToken: () => Promise<string | undefined>;
 }
 
 export default function useAuth(): UseAuthValues {
