@@ -1,9 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { replykeStore } from "../store";
 import type { ReactNode } from "react";
-import { useReplykeDispatch } from "../store/hooks";
+import { useReplykeDispatch, useReplykeSelector } from "../store/hooks";
 import { initializeAuthThunk } from "../store/slices/authThunks";
+import {
+  selectAccountsReady,
+  selectAccountManagerRegistered,
+} from "../store/slices/accountsSlice";
 
 export interface ReplykeStoreProviderProps {
   children: ReactNode;
@@ -15,20 +19,31 @@ export interface ReplykeStoreProviderProps {
  * Component that initializes auth state in Redux
  * Must be inside the Redux Provider to dispatch actions
  */
-const AuthInitializer: React.FC<{ 
-  children: ReactNode; 
-  projectId: string; 
-  signedToken?: string | null; 
+const AuthInitializer: React.FC<{
+  children: ReactNode;
+  projectId: string;
+  signedToken?: string | null;
 }> = ({ children, projectId, signedToken }) => {
   const dispatch = useReplykeDispatch();
+  const accountsReady = useReplykeSelector(selectAccountsReady);
+  const accountManagerRegistered = useReplykeSelector(selectAccountManagerRegistered);
+  const [hasWaitedForManager, setHasWaitedForManager] = useState(false);
+
+  // Give AccountManager one microtask to register itself
+  useEffect(() => {
+    Promise.resolve().then(() => setHasWaitedForManager(true));
+  }, []);
 
   useEffect(() => {
-    // Initialize auth with project and signed token
-    dispatch(initializeAuthThunk({ 
-      projectId, 
-      signedToken 
-    }));
-  }, [dispatch, projectId, signedToken]);
+    // Still waiting for the microtask check
+    if (!hasWaitedForManager) return;
+
+    // If an AccountManager registered, wait until it signals ready
+    if (accountManagerRegistered && !accountsReady) return;
+
+    // Either: no AccountManager (core-only user) OR AccountManager is ready
+    dispatch(initializeAuthThunk({ projectId, signedToken }));
+  }, [dispatch, projectId, signedToken, hasWaitedForManager, accountManagerRegistered, accountsReady]);
 
   return <>{children}</>;
 };

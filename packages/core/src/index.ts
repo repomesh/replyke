@@ -42,11 +42,37 @@ export { useSignTestingJwt, type SignTestingJwtProps } from "./hooks/crypto";
 // -- authentication
 export {
   useAuth,
+  useRequestPasswordReset,
   type UseAuthValues,
   type SignUpWithEmailAndPasswordProps,
   type SignInWithEmailAndPasswordProps,
   type ChangePasswordProps,
+  type RequestPasswordResetProps,
 } from "./hooks/auth";
+
+// -- authentication (accounts)
+export {
+  useAccountSync,
+  useAccounts,
+  useSwitchAccount,
+  useAddAccount,
+  useRemoveAccount,
+  useSignOutAll,
+  type UseAccountsReturn,
+  type UseSwitchAccountReturn,
+  type UseAddAccountReturn,
+  type UseRemoveAccountReturn,
+  type UseSignOutAllReturn,
+} from "./hooks/auth";
+
+// -- account storage
+export type { IAccountStorage } from "./interfaces/IAccountStorage";
+export {
+  MAX_ACCOUNTS,
+  type AccountSummary,
+  type AccountEntry,
+  type AccountMap,
+} from "./store/slices/accountsSlice";
 
 // -- (current) user
 export {
