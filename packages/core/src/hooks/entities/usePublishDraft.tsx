@@ -23,8 +23,7 @@ function usePublishDraft() {
 
       const response = await axios.patch<Entity>(
         `/${projectId}/entities/${entityId}/publish`,
-        {},
-        { withCredentials: true }
+        {}
       );
 
       return response.data;

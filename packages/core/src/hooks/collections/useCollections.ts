@@ -142,7 +142,6 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
           collections: Array<{ id: string; name: string }>;
         }>(`/${projectId}/collections/is-entity-saved`, {
           params: { entityId: selectedEntityId },
-          withCredentials: true,
         });
 
         // If specific collection ID provided, check if entity is in that collection

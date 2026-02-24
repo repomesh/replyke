@@ -29,8 +29,7 @@ function useRemoveConnection() {
       }
 
       const response = await axios.delete(
-        `/connections/${connectionId}`,
-        { withCredentials: true }
+        `/connections/${connectionId}`
       );
 
       return response.data as ConnectionWithdrawResponse;

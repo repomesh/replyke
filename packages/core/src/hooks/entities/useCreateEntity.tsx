@@ -150,7 +150,6 @@ function useCreateEntity() {
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
           }
         );
 
@@ -174,7 +173,6 @@ function useCreateEntity() {
             requireUser,
             isDraft,
           },
-          { withCredentials: true }
         );
 
         return response.data as Entity;

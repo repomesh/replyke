@@ -15,7 +15,6 @@ interface StateWithReplyke {
 const createBaseQuery = () => {
   return fetchBaseQuery({
     baseUrl: getApiBaseUrl(),
-    credentials: 'include', // Equivalent to withCredentials: true
     prepareHeaders: (headers, { getState }) => {
       // Add Content-Type header
       headers.set('Content-Type', 'application/json');

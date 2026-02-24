@@ -53,7 +53,6 @@ function useCreateReport({ type }: UseCreateReportProps) {
         reason,
         details,
       },
-      { withCredentials: true }
     );
   };
 

@@ -20,8 +20,7 @@ function useFetchConnectionsCount() {
       }
 
       const response = await axios.get(
-        "/connections/count",
-        { withCredentials: true }
+        "/connections/count"
       );
 
       return response.data as ConnectionCountResponse;

@@ -31,9 +31,7 @@ function useUnfollowUserByUserId() {
         throw new Error("Users can't unfollow themselves");
       }
 
-      await axios.delete(`/${projectId}/users/${userId}/follow`, {
-        withCredentials: true,
-      });
+      await axios.delete(`/${projectId}/users/${userId}/follow`);
     },
     [axios, projectId, user]
   );

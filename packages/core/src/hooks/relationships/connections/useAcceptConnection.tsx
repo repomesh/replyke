@@ -30,8 +30,7 @@ function useAcceptConnection() {
 
       const response = await axios.patch(
         `/connections/${connectionId}/accept`,
-        {},
-        { withCredentials: true }
+        {}
       );
 
       return response.data as ConnectionActionResponse;

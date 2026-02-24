@@ -33,8 +33,7 @@ function useFetchConnectionStatus() {
       }
 
       const response = await axios.get(
-        `/users/${userId}/connection`,
-        { withCredentials: true }
+        `/users/${userId}/connection`
       );
 
       return response.data as ConnectionStatusResponse;

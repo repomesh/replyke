@@ -20,8 +20,7 @@ function useRequestConnection() {
 
       const response = await axios.post(
         `/users/${userId}/connection`,
-        { message },
-        { withCredentials: true }
+        { message }
       );
 
       return response.data as ConnectionActionResponse;

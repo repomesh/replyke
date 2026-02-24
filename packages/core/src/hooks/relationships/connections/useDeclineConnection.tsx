@@ -30,8 +30,7 @@ function useDeclineConnection() {
 
       const response = await axios.patch(
         `/connections/${connectionId}/decline`,
-        {},
-        { withCredentials: true }
+        {}
       );
 
       return response.data as ConnectionActionResponse;

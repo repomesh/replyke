@@ -54,7 +54,6 @@ function useUpdateEntity() {
           metadata,
           mentions,
         },
-        { withCredentials: true },
       );
 
       const updatedEntity = response.data as Entity;

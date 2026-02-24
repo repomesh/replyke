@@ -38,7 +38,6 @@ function useFetchFollowing() {
             page,
             limit,
           },
-          withCredentials: true,
         }
       );
 

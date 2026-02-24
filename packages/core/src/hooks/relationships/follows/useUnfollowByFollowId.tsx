@@ -27,9 +27,7 @@ function useUnfollowByFollowId() {
         throw new Error("No follow ID was provided");
       }
 
-      await axios.delete(`/${projectId}/follows/${followId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(`/${projectId}/follows/${followId}`);
     },
     [axios, projectId, user]
   );

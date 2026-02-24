@@ -35,7 +35,6 @@ function useFetchConnections() {
             page,
             limit,
           },
-          withCredentials: true,
         }
       );
 

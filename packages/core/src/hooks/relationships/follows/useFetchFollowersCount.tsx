@@ -19,8 +19,7 @@ function useFetchFollowersCount() {
       }
 
       const response = await axios.get(
-        `/${projectId}/follows/followers-count`,
-        { withCredentials: true }
+        `/${projectId}/follows/followers-count`
       );
 
       return response.data as { count: number };

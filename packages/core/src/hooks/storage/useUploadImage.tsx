@@ -113,7 +113,6 @@ function useUploadImage() {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-            withCredentials: true,
             onUploadProgress: (progressEvent) => {
               if (progressEvent.total) {
                 const percentCompleted = Math.round(

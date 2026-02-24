@@ -20,9 +20,7 @@ function useDeleteEntity() {
         throw new Error("No entityId provided.");
       }
 
-      await axios.delete(`/${projectId}/entities/${entityId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(`/${projectId}/entities/${entityId}`);
     },
     [projectId, axios]
   );

@@ -30,7 +30,6 @@ function useIsEntityInCollection() {
         `/${projectId}/collections/is-entity-saved`,
         {
           params: { entityId },
-          withCredentials: true,
         }
       );
 

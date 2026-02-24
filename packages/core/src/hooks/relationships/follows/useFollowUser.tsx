@@ -23,8 +23,7 @@ function useFollowUser() {
 
       await axios.post(
         `/${projectId}/users/${userId}/follow`,
-        {},
-        { withCredentials: true }
+        {}
       );
     },
     [axios, projectId]

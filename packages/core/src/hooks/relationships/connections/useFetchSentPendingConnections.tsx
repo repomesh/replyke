@@ -35,7 +35,6 @@ function useFetchSentPendingConnections() {
             page,
             limit,
           },
-          withCredentials: true,
         }
       );
 

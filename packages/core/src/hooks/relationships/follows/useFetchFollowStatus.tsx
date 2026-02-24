@@ -37,9 +37,7 @@ function useFetchFollowStatus() {
         throw new Error("Users don't follow themselves");
       }
 
-      const response = await axios.get(`/${projectId}/users/${userId}/follow`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`/${projectId}/users/${userId}/follow`);
       return response.data as FollowStatusResponse;
     },
     [axios, projectId, user]

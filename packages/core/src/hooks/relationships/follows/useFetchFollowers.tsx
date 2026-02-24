@@ -35,7 +35,6 @@ function useFetchFollowers() {
         `/${projectId}/follows/followers`,
         {
           params: { page, limit },
-          withCredentials: true,
         }
       );
 
