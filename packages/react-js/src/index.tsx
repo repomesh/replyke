@@ -5,6 +5,9 @@ import AccountManager from "./AccountManager";
 // Re-export all exports from @replyke/core
 export * from "@replyke/core";
 
+// Web-only OAuth hook (uses window.location for redirect-based flow)
+export { default as useOAuthSignIn, type UseOAuthSignInReturn } from "./hooks/useOAuthSignIn";
+
 // Override ReplykeProvider to inject AccountManager
 export const ReplykeProvider: React.FC<{
   projectId: string;
