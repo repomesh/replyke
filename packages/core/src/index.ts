@@ -65,6 +65,17 @@ export {
   type UseSignOutAllReturn,
 } from "./hooks/auth";
 
+// -- authentication (OAuth)
+export {
+  useOAuthIdentities,
+  type OAuthIdentity,
+  type UseOAuthIdentitiesReturn,
+} from "./hooks/auth";
+
+// -- store internals (for platform-specific hooks in react-js / react-native)
+export { useReplykeDispatch, useReplykeSelector } from "./store/hooks";
+export { setTokens, selectAccessToken } from "./store/slices/authSlice";
+
 // -- account storage
 export type { IAccountStorage } from "./interfaces/IAccountStorage";
 export {

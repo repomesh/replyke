@@ -6,3 +6,4 @@ export { default as useAddAccount, type UseAddAccountReturn } from './useAddAcco
 export { default as useRemoveAccount, type UseRemoveAccountReturn } from './useRemoveAccount';
 export { default as useSignOutAll, type UseSignOutAllReturn } from './useSignOutAll';
 export { default as useRequestPasswordReset, type RequestPasswordResetProps } from './useRequestPasswordReset';
+export { default as useOAuthIdentities, type OAuthIdentity, type UseOAuthIdentitiesReturn } from './useOAuthIdentities';
