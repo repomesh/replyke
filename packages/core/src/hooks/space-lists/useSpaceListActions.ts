@@ -25,7 +25,10 @@ import type { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOpt
 export interface FetchSpacesOptions {
   page: number;
   sortBy: SpaceListSortByOptions;
-  search?: string | null;
+  searchSlug?: string | null;
+  searchName?: string | null;
+  searchDescription?: string | null;
+  searchAny?: string | null;
   readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
@@ -83,7 +86,10 @@ export function useSpaceListActions() {
           projectId,
           page: options.page,
           sortBy: options.sortBy,
-          search: options.search,
+          searchSlug: options.searchSlug,
+          searchName: options.searchName,
+          searchDescription: options.searchDescription,
+          searchAny: options.searchAny,
           readingPermission: options.readingPermission,
           memberOf: options.memberOf,
           parentSpaceId: options.parentSpaceId,

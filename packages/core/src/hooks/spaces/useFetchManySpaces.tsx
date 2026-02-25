@@ -9,7 +9,10 @@ export interface FetchManySpacesProps {
   page?: number;
   limit?: number;
   sortBy?: SpaceListSortByOptions;
-  search?: string | null;
+  searchSlug?: string | null;
+  searchName?: string | null;
+  searchDescription?: string | null;
+  searchAny?: string | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
   include?: SpaceIncludeParam;
@@ -30,7 +33,10 @@ function useFetchManySpaces() {
       if (params?.page !== undefined) queryParams.page = params.page;
       if (params?.limit !== undefined) queryParams.limit = params.limit;
       if (params?.sortBy) queryParams.sortBy = params.sortBy;
-      if (params?.search) queryParams.search = params.search;
+      if (params?.searchSlug) queryParams.searchSlug = params.searchSlug;
+      if (params?.searchName) queryParams.searchName = params.searchName;
+      if (params?.searchDescription) queryParams.searchDescription = params.searchDescription;
+      if (params?.searchAny) queryParams.searchAny = params.searchAny;
       if (params?.memberOf !== undefined) queryParams.memberOf = params.memberOf;
       if (params?.parentSpaceId !== undefined) queryParams.parentSpaceId = params.parentSpaceId || "null";
       if (params?.include) {

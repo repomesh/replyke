@@ -25,7 +25,10 @@ interface FetchSpacesParams {
   page?: number;
   limit?: number;
   sortBy?: SpaceListSortByOptions;
-  search?: string | null;
+  searchSlug?: string | null;
+  searchName?: string | null;
+  searchDescription?: string | null;
+  searchAny?: string | null;
   readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
@@ -171,7 +174,10 @@ export const spacesApi = baseApi.injectEndpoints({
         if (params.page !== undefined) queryParams.append("page", params.page.toString());
         if (params.limit !== undefined) queryParams.append("limit", params.limit.toString());
         if (params.sortBy) queryParams.append("sortBy", params.sortBy);
-        if (params.search) queryParams.append("search", params.search);
+        if (params.searchSlug) queryParams.append("searchSlug", params.searchSlug);
+        if (params.searchName) queryParams.append("searchName", params.searchName);
+        if (params.searchDescription) queryParams.append("searchDescription", params.searchDescription);
+        if (params.searchAny) queryParams.append("searchAny", params.searchAny);
         if (params.readingPermission) queryParams.append("readingPermission", params.readingPermission);
         if (params.memberOf !== undefined) queryParams.append("memberOf", params.memberOf.toString());
         if (params.parentSpaceId !== undefined) {

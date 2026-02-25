@@ -59,7 +59,10 @@ export interface UseSpaceListValues {
 
   // Current filters
   sortBy: SpaceListSortByOptions | null;
-  search: string | null;
+  searchSlug: string | null;
+  searchName: string | null;
+  searchDescription: string | null;
+  searchAny: string | null;
   readingPermission: "anyone" | "members" | null;
   memberOf: boolean;
   parentSpaceId: string | null;
@@ -141,7 +144,10 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         // Build final filters by taking current state and applying new filters
         const currentState = spaceList || {
           sortBy: "newest",
-          search: null,
+          searchSlug: null,
+          searchName: null,
+          searchDescription: null,
+          searchAny: null,
           readingPermission: null,
           memberOf: false,
           parentSpaceId: null,
@@ -151,7 +157,10 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         // Apply resetUnspecified logic (only reset filter properties)
         if (options?.resetUnspecified) {
           finalFilters.sortBy = "newest";
-          finalFilters.search = null;
+          finalFilters.searchSlug = null;
+          finalFilters.searchName = null;
+          finalFilters.searchDescription = null;
+          finalFilters.searchAny = null;
           finalFilters.readingPermission = null;
           finalFilters.memberOf = false;
           finalFilters.parentSpaceId = null;
@@ -174,7 +183,10 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
             page: 1,
             // User-controlled filters from Redux state + new filters
             sortBy: finalFilters.sortBy,
-            search: finalFilters.search,
+            searchSlug: finalFilters.searchSlug,
+            searchName: finalFilters.searchName,
+            searchDescription: finalFilters.searchDescription,
+            searchAny: finalFilters.searchAny,
             readingPermission: finalFilters.readingPermission,
             memberOf: finalFilters.memberOf,
             parentSpaceId: finalFilters.parentSpaceId,
@@ -233,7 +245,10 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
         page: nextPage,
         // User-controlled filters from Redux state
         sortBy: spaceList.sortBy,
-        search: spaceList.search,
+        searchSlug: spaceList.searchSlug,
+        searchName: spaceList.searchName,
+        searchDescription: spaceList.searchDescription,
+        searchAny: spaceList.searchAny,
         readingPermission: spaceList.readingPermission,
         memberOf: spaceList.memberOf,
         parentSpaceId: spaceList.parentSpaceId,
@@ -287,7 +302,10 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
       hasMore,
 
       sortBy: filters?.sortBy || null,
-      search: filters?.search || null,
+      searchSlug: filters?.searchSlug || null,
+      searchName: filters?.searchName || null,
+      searchDescription: filters?.searchDescription || null,
+      searchAny: filters?.searchAny || null,
       readingPermission: filters?.readingPermission || null,
       memberOf: filters?.memberOf || false,
       parentSpaceId: filters?.parentSpaceId || null,

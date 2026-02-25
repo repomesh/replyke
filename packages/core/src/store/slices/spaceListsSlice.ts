@@ -17,7 +17,10 @@ export interface SpaceListState {
 
   // Filter/sort state (user-controlled filters only)
   sortBy: SpaceListSortByOptions;
-  search: string | null;
+  searchSlug: string | null;
+  searchName: string | null;
+  searchDescription: string | null;
+  searchAny: string | null;
   readingPermission: "anyone" | "members" | null;
   memberOf: boolean;
   parentSpaceId: string | null;
@@ -42,7 +45,10 @@ const createDefaultSpaceListState = (): SpaceListState => ({
 
   // Default filters (user-controlled only)
   sortBy: "newest",
-  search: null,
+  searchSlug: null,
+  searchName: null,
+  searchDescription: null,
+  searchAny: null,
   readingPermission: null,
   memberOf: false,
   parentSpaceId: undefined as any, // Will be set when fetchSpaces is called
@@ -56,7 +62,10 @@ const initialState: SpaceListsState = {
 // Space list filters interface - used by both Redux slice and hooks
 export interface SpaceListFilters {
   sortBy?: SpaceListSortByOptions;
-  search?: string | null;
+  searchSlug?: string | null;
+  searchName?: string | null;
+  searchDescription?: string | null;
+  searchAny?: string | null;
   readingPermission?: "anyone" | "members" | null;
   memberOf?: boolean;
   parentSpaceId?: string | null;
@@ -140,7 +149,10 @@ export const spaceListsSlice = createSlice({
         const defaultState = createDefaultSpaceListState();
         // Reset all filter properties to defaults
         list.sortBy = defaultState.sortBy;
-        list.search = defaultState.search;
+        list.searchSlug = defaultState.searchSlug;
+        list.searchName = defaultState.searchName;
+        list.searchDescription = defaultState.searchDescription;
+        list.searchAny = defaultState.searchAny;
         list.readingPermission = defaultState.readingPermission;
         list.memberOf = defaultState.memberOf;
         list.parentSpaceId = defaultState.parentSpaceId;
@@ -346,7 +358,10 @@ export const selectSpaceListFilters = createSelector(
 
     return {
       sortBy: spaceList.sortBy,
-      search: spaceList.search,
+      searchSlug: spaceList.searchSlug,
+      searchName: spaceList.searchName,
+      searchDescription: spaceList.searchDescription,
+      searchAny: spaceList.searchAny,
       readingPermission: spaceList.readingPermission,
       memberOf: spaceList.memberOf,
       parentSpaceId: spaceList.parentSpaceId,
