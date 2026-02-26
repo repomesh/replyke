@@ -6,6 +6,7 @@ import {
   selectAccountsReady,
   selectAccountManagerRegistered,
 } from "../store/slices/accountsSlice";
+import { selectInitialized } from "../store/slices/authSlice";
 import { ReplykeContext } from "./replyke-context";
 import useProjectData from "../hooks/projects/useProjectData";
 
@@ -27,6 +28,7 @@ const AuthInitializer: React.FC<{
   const dispatch = useReplykeDispatch();
   const accountsReady = useReplykeSelector(selectAccountsReady);
   const accountManagerRegistered = useReplykeSelector(selectAccountManagerRegistered);
+  const initialized = useReplykeSelector(selectInitialized);
   const [hasWaitedForManager, setHasWaitedForManager] = useState(false);
 
   // Give AccountManager one microtask to register itself
@@ -35,6 +37,9 @@ const AuthInitializer: React.FC<{
   }, []);
 
   useEffect(() => {
+    // Auth already bootstrapped (e.g. by OAuth callback) — skip
+    if (initialized) return;
+
     // Still waiting for the microtask check
     if (!hasWaitedForManager) return;
 
@@ -43,7 +48,7 @@ const AuthInitializer: React.FC<{
 
     // Either: no AccountManager (core-only user) OR AccountManager is ready
     dispatch(initializeAuthThunk({ projectId, signedToken }));
-  }, [dispatch, projectId, signedToken, hasWaitedForManager, accountManagerRegistered, accountsReady]);
+  }, [dispatch, projectId, signedToken, hasWaitedForManager, accountManagerRegistered, accountsReady, initialized]);
 
   return <>{children}</>;
 };

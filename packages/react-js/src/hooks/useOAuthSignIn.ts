@@ -4,7 +4,9 @@ import {
   useReplykeDispatch,
   useReplykeSelector,
   setTokens,
+  setInitialized,
   selectAccessToken,
+  requestNewAccessTokenThunk,
 } from "@replyke/core";
 
 const BASE_URL = "https://api.replyke.com/v7";
@@ -130,6 +132,14 @@ function useOAuthSignIn(): UseOAuthSignInReturn {
       // Store tokens in Redux. The AccountManager (via useAccountSync)
       // will detect the new tokens and persist them to localStorage.
       dispatch(setTokens({ accessToken: fragmentAccessToken, refreshToken }));
+      dispatch(setInitialized(true));
+
+      // Fetch user profile so useAccountSync can persist the account.
+      // The thunk reads the just-set refresh token from Redux, calls the
+      // server, and dispatches setUser + setUserInUserSlice on success.
+      if (projectId) {
+        dispatch(requestNewAccessTokenThunk({ projectId }));
+      }
 
       // Clean URL (remove fragment with tokens)
       window.history.replaceState({}, "", window.location.pathname);
@@ -137,7 +147,7 @@ function useOAuthSignIn(): UseOAuthSignInReturn {
     }
 
     return false;
-  }, [dispatch]);
+  }, [dispatch, projectId]);
 
   return { initiateOAuth, linkOAuthProvider, handleOAuthCallback, isLoading, error };
 }
