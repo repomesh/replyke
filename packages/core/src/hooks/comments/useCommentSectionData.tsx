@@ -83,7 +83,7 @@ export interface UseCommentSectionDataValues {
   handleDeepReply: (comment: Comment) => void;
   handleShallowReply: (comment: Comment) => void;
 
-  createComment: (props: CommentSectionCreateCommentProps) => Promise<void>;
+  createComment: (props: CommentSectionCreateCommentProps) => Promise<Comment | undefined>;
   updateComment: (props: CommentSectionUpdateCommentProps) => Promise<void>;
   deleteComment: (props: CommentSectionDeleteCommentProps) => Promise<void>;
 }
@@ -299,10 +299,12 @@ function useCommentSectionData(
           if (!prevEntity) return prevEntity;
           return { ...prevEntity, repliesCount: prevEntity.repliesCount + 1 };
         });
+        return newCommentData;
       } catch (err: unknown) {
         // TODO: currently we remove the temp comment from the tree but don't offer the user any option to retry. It's as if they've never sent anything and all they typed is gone. We need to add a flag for comment in the tree that says t failed so we can give he user a try again button
         removeCommentFromTree(TEMP_ID);
         handleError(err, "Failed to submit a new comment: ");
+        return undefined;
       } finally {
         submittingComment.current = false;
         setSubmittingCommentState(false);
