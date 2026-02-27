@@ -11,7 +11,7 @@ export interface UseInfusedDataProps {
   infuseData?: (foreignId: string) => Promise<Record<string, any> | null>;
 }
 
-const useInfusedData = ({ entities, infuseData }: UseInfusedDataProps) => {
+const useInfusedData = ({ entities, infuseData }: UseInfusedDataProps): (Entity & { infusion: Record<string, any> })[] => {
   const [infusedEntities, setInfusedEntities] = useState<
     (Entity & { infusion: Record<string, any> })[]
   >([]);

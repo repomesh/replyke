@@ -6,7 +6,7 @@ export interface IncrementEntityViewsProps {
   entityId: string;
 }
 
-function useIncrementEntityViews() {
+function useIncrementEntityViews(): (props: IncrementEntityViewsProps) => Promise<void> {
   const { projectId } = useProject();
 
   const incrementedEntityViewsStatus = useRef<Record<string, boolean>>({}); // Track status by unique key

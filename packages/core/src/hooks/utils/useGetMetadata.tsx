@@ -8,7 +8,7 @@ export interface GetMetadataProps {
   url: string;
 }
 
-function useGetMetadata() {
+function useGetMetadata(): (props: GetMetadataProps) => Promise<UrlMetadata> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

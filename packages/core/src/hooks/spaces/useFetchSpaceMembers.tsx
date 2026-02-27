@@ -15,7 +15,7 @@ export interface FetchSpaceMembersProps {
   status?: SpaceMemberStatus;
 }
 
-function useFetchSpaceMembers() {
+function useFetchSpaceMembers(): (props: FetchSpaceMembersProps) => Promise<SpaceMembersResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

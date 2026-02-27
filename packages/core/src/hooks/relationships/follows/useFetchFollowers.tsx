@@ -16,7 +16,7 @@ export interface FetchFollowersParams {
   limit?: number;
 }
 
-function useFetchFollowers() {
+function useFetchFollowers(): (params?: FetchFollowersParams) => Promise<PaginatedResponse<FollowerWithFollowInfo>> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

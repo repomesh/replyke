@@ -12,7 +12,7 @@ export interface FetchCommentReactionsProps {
   sortDir?: "asc" | "desc";
 }
 
-function useFetchCommentReactions() {
+function useFetchCommentReactions(): (props: FetchCommentReactionsProps) => Promise<PaginatedResponse<Reaction>> {
   const { projectId } = useProject();
 
   const fetchCommentReactions = useCallback(

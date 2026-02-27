@@ -11,7 +11,7 @@ export interface FetchSpaceChildrenProps {
   include?: SpaceIncludeParam;
 }
 
-function useFetchSpaceChildren() {
+function useFetchSpaceChildren(): (props: FetchSpaceChildrenProps) => Promise<PaginatedResponse<Space>> {
   const { projectId } = useProject();
 
   const fetchSpaceChildren = useCallback(

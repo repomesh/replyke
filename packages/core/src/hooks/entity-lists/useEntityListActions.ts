@@ -71,11 +71,17 @@ interface DeleteEntityOptions {
   entityId: string;
 }
 
+export interface UseEntityListActionsValues {
+  fetchEntities: (listId: string, options: FetchEntitiesOptions) => Promise<Entity[] | null>;
+  createEntity: (listId: string, options: CreateEntityOptions) => Promise<Entity | undefined>;
+  deleteEntity: (listId: string, options: DeleteEntityOptions) => Promise<void>;
+}
+
 /**
  * Redux-powered hook that provides all entity list actions
  * Uses RTK Query for stable function references and proper caching
  */
-export function useEntityListActions() {
+export function useEntityListActions(): UseEntityListActionsValues {
   const dispatch = useReplykeDispatch();
 
   // Get project and user context

@@ -4,7 +4,7 @@ import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import { ConnectionCountResponse } from "../../../interfaces/models/Connection";
 
-function useFetchConnectionsCount() {
+function useFetchConnectionsCount(): () => Promise<ConnectionCountResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

@@ -16,7 +16,7 @@ export interface FetchFollowingByUserIdParams {
   limit?: number;
 }
 
-function useFetchFollowingByUserId() {
+function useFetchFollowingByUserId(): (params: FetchFollowingByUserIdParams) => Promise<PaginatedResponse<FollowingWithFollowInfo>> {
   const { projectId } = useProject();
 
   const fetchFollowingByUserId = useCallback(

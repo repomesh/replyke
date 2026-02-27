@@ -8,7 +8,7 @@ export interface RemoveConnectionProps {
   connectionId: string;
 }
 
-function useRemoveConnection() {
+function useRemoveConnection(): (props: RemoveConnectionProps) => Promise<ConnectionWithdrawResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

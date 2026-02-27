@@ -13,7 +13,7 @@ export interface FollowStatusResponse {
   followedAt?: string;
 }
 
-function useFetchFollowStatus() {
+function useFetchFollowStatus(): (props: FetchFollowStatusProps) => Promise<FollowStatusResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

@@ -28,7 +28,7 @@ interface ModerateResponse {
  *   reason: "Violates community guidelines"
  * });
  */
-function useModerateSpaceEntity() {
+function useModerateSpaceEntity(): (props: ModerateSpaceEntityProps) => Promise<ModerateResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

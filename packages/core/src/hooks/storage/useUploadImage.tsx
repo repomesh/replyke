@@ -18,7 +18,13 @@ interface RNFile {
 
 type UniversalFile = BrowserFile | RNFile;
 
-function useUploadImage() {
+export interface UseUploadImageValues {
+  uploadImage: (file: UniversalFile, options: UploadImageOptions) => Promise<Image>;
+  uploading: boolean;
+  progress: number;
+}
+
+function useUploadImage(): UseUploadImageValues {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const [uploading, setUploading] = useState(false);

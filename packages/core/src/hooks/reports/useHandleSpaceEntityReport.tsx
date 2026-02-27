@@ -34,7 +34,7 @@ export interface HandleReportResponse {
  *   reason: "Spamming"
  * });
  */
-function useHandleSpaceEntityReport() {
+function useHandleSpaceEntityReport(): (params: HandleSpaceEntityReportParams) => Promise<HandleReportResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -6,7 +6,7 @@ export interface DeleteEntityProps {
   entityId: string;
 }
 
-function useDeleteEntity() {
+function useDeleteEntity(): (props: DeleteEntityProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

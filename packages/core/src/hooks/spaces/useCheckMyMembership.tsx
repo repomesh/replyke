@@ -7,7 +7,7 @@ export interface CheckMyMembershipProps {
   spaceId: string;
 }
 
-function useCheckMyMembership() {
+function useCheckMyMembership(): (props: CheckMyMembershipProps) => Promise<CheckMyMembershipResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

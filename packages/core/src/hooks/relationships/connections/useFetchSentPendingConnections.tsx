@@ -10,7 +10,7 @@ export interface FetchSentPendingConnectionsParams {
   limit?: number;
 }
 
-function useFetchSentPendingConnections() {
+function useFetchSentPendingConnections(): (props?: FetchSentPendingConnectionsParams) => Promise<PaginatedResponse<PendingConnection>> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

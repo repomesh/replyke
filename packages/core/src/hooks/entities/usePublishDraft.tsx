@@ -7,7 +7,7 @@ export interface PublishDraftProps {
   entityId: string;
 }
 
-function usePublishDraft() {
+function usePublishDraft(): (props: PublishDraftProps) => Promise<Entity> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

@@ -7,7 +7,7 @@ export interface UnfollowByFollowIdProps {
   followId: string;
 }
 
-function useUnfollowByFollowId() {
+function useUnfollowByFollowId(): (props: UnfollowByFollowIdProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

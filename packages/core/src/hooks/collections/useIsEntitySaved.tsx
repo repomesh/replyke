@@ -3,7 +3,12 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
-function useIsEntityInCollection() {
+export interface UseIsEntityInCollectionValues {
+  checkIfEntityIsSaved: (entityId: string) => Promise<boolean>;
+  entityIsSaved: boolean | null;
+}
+
+function useIsEntityInCollection(): UseIsEntityInCollectionValues {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

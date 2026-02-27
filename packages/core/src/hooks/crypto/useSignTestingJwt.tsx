@@ -19,7 +19,7 @@ export interface SignTestingJwtProps {
   userData: { id: string } & Record<string, any>;
 }
 
-function useSignTestingJwt() {
+function useSignTestingJwt(): (props: SignTestingJwtProps) => Promise<string | undefined> {
   const signTestingJwt = async ({
     projectId,
     privateKey,

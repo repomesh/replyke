@@ -11,7 +11,7 @@ interface RemoveMemberResponse {
   message: string;
 }
 
-function useRemoveMember() {
+function useRemoveMember(): (props: RemoveMemberProps) => Promise<RemoveMemberResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

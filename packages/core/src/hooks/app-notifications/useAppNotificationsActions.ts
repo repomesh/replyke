@@ -22,6 +22,15 @@ import { handleError } from "../../utils/handleError";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
+export interface UseAppNotificationsActionsValues {
+  loadMore: () => void;
+  markNotificationAsRead: (notificationId: string) => Promise<void>;
+  markAllNotificationsAsRead: () => Promise<void>;
+  resetAppNotifications: () => Promise<void>;
+  fetchMoreNotifications: (pageToFetch: number) => Promise<void>;
+  updateUnreadCount: () => Promise<void>;
+}
+
 /**
  * Hook that provides Redux-powered actions for app notifications
  * Integrates RTK Query with Redux slice actions
@@ -29,7 +38,7 @@ import { useUser } from "../user";
  * Note: Templates are applied at display time in useAppNotifications, not here.
  * This ensures templates are always fresh and avoids race conditions.
  */
-export function useAppNotificationsActions() {
+export function useAppNotificationsActions(): UseAppNotificationsActionsValues {
   const dispatch = useReplykeDispatch();
 
   // Get current state for actions

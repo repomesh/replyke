@@ -7,7 +7,7 @@ export interface DeleteSpaceProps {
   spaceId: string;
 }
 
-function useDeleteSpace() {
+function useDeleteSpace(): (props: DeleteSpaceProps) => Promise<DeleteSpaceResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

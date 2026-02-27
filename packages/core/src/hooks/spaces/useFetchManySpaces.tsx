@@ -18,7 +18,7 @@ export interface FetchManySpacesProps {
   include?: SpaceIncludeParam;
 }
 
-function useFetchManySpaces() {
+function useFetchManySpaces(): (params?: FetchManySpacesProps) => Promise<PaginatedResponse<Space>> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -12,7 +12,7 @@ export interface UpdateRuleProps {
   }>;
 }
 
-function useUpdateRule() {
+function useUpdateRule(): (props: UpdateRuleProps) => Promise<Rule> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

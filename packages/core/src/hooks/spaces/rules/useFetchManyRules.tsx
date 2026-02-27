@@ -7,7 +7,7 @@ export interface FetchManyRulesProps {
   spaceId: string;
 }
 
-function useFetchManyRules() {
+function useFetchManyRules(): (props: FetchManyRulesProps) => Promise<FetchManyRulesResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

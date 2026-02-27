@@ -9,7 +9,7 @@ export interface RemoveReactionProps {
   targetId: string;
 }
 
-function useRemoveReaction() {
+function useRemoveReaction(): (props: RemoveReactionProps) => Promise<Entity | Comment> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

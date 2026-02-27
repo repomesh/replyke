@@ -26,7 +26,7 @@ export interface CreateEntityReportProps {
   details?: string;
 }
 
-function useCreateReport({ type }: UseCreateReportProps) {
+function useCreateReport({ type }: UseCreateReportProps): ((props: CreateCommentReportProps) => Promise<void>) | ((props: CreateEntityReportProps) => Promise<void>) {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

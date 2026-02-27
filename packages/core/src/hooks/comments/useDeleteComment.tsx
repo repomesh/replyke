@@ -6,7 +6,7 @@ export interface DeleteCommentProps {
   commentId: string;
 }
 
-function useDeleteComment() {
+function useDeleteComment(): (props: DeleteCommentProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

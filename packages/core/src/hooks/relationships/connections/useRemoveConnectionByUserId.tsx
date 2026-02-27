@@ -8,7 +8,7 @@ export interface RemoveConnectionByUserIdProps {
   userId: string;
 }
 
-function useRemoveConnectionByUserId() {
+function useRemoveConnectionByUserId(): (props: RemoveConnectionByUserIdProps) => Promise<RemoveConnectionByUserIdResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

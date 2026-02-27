@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { ConnectionRequestParams, ConnectionActionResponse } from "../../../interfaces/models/Connection";
 
-function useRequestConnection() {
+function useRequestConnection(): (props: ConnectionRequestParams) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

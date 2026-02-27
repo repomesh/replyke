@@ -8,7 +8,7 @@ export interface FetchSpaceByShortIdProps {
   include?: SpaceIncludeParam;
 }
 
-function useFetchSpaceByShortId() {
+function useFetchSpaceByShortId(): (props: FetchSpaceByShortIdProps) => Promise<SpaceDetailed> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

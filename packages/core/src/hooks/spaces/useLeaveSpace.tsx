@@ -7,7 +7,7 @@ export interface LeaveSpaceProps {
   spaceId: string;
 }
 
-function useLeaveSpace() {
+function useLeaveSpace(): (props: LeaveSpaceProps) => Promise<LeaveSpaceResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

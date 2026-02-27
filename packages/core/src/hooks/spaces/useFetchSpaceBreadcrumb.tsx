@@ -7,7 +7,7 @@ export interface FetchSpaceBreadcrumbProps {
   spaceId: string;
 }
 
-function useFetchSpaceBreadcrumb() {
+function useFetchSpaceBreadcrumb(): (props: FetchSpaceBreadcrumbProps) => Promise<SpaceBreadcrumb> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

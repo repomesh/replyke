@@ -8,7 +8,7 @@ export interface FetchSpaceTeamProps {
 }
 
 // Fetches all admins and moderators of a space (no pagination)
-function useFetchSpaceTeam() {
+function useFetchSpaceTeam(): (props: FetchSpaceTeamProps) => Promise<SpaceTeamResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -9,7 +9,7 @@ export interface CreateRuleProps {
   description?: string | null;
 }
 
-function useCreateRule() {
+function useCreateRule(): (props: CreateRuleProps) => Promise<Rule> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

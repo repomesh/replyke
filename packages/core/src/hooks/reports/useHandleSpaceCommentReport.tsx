@@ -32,7 +32,7 @@ export interface HandleReportResponse {
  *   summary: "Removed inappropriate comment"
  * });
  */
-function useHandleSpaceCommentReport() {
+function useHandleSpaceCommentReport(): (params: HandleSpaceCommentReportParams) => Promise<HandleReportResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

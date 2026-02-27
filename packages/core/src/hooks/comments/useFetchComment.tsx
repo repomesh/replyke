@@ -8,7 +8,7 @@ export interface FetchCommentProps {
   include?: CommentIncludeParam;
 }
 
-function useFetchComment() {
+function useFetchComment(): (props: FetchCommentProps) => Promise<{ comment: Comment }> {
   const { projectId } = useProject();
 
   const fetchComment = useCallback(

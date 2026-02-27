@@ -7,7 +7,7 @@ export interface FetchUserSuggestionsProps {
   query: string;
 }
 
-function useFetchUserSuggestions() {
+function useFetchUserSuggestions(): (props: FetchUserSuggestionsProps) => Promise<User[]> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

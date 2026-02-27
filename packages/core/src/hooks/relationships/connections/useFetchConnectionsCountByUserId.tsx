@@ -7,7 +7,7 @@ export interface FetchConnectionsCountByUserIdParams {
   userId: string;
 }
 
-function useFetchConnectionsCountByUserId() {
+function useFetchConnectionsCountByUserId(): (props: FetchConnectionsCountByUserIdParams) => Promise<ConnectionCountResponse> {
   const { projectId } = useProject();
 
   const fetchConnectionsCountByUserId = useCallback(

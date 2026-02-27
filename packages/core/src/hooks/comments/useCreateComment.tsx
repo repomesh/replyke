@@ -18,7 +18,7 @@ export interface CreateCommentProps {
 }
 
 // Hook for adding a comment
-function useCreateComment() {
+function useCreateComment(): (props: CreateCommentProps) => Promise<Comment> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

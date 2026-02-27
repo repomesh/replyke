@@ -8,7 +8,7 @@ export interface DeleteRuleProps {
   ruleId: string;
 }
 
-function useDeleteRule() {
+function useDeleteRule(): (props: DeleteRuleProps) => Promise<DeleteRuleResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

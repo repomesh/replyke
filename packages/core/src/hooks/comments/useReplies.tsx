@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Comment } from "../../interfaces/models/Comment";
 import { handleError } from "../../utils/handleError";
 import useCommentSection from "./useCommentSection";
@@ -11,7 +11,15 @@ export interface UseRepliesProps {
   sortBy: CommentsSortByOptions;
 }
 
-function useReplies({ commentId, sortBy }: UseRepliesProps) {
+export interface UseRepliesValues {
+  replies: (Comment & { new: boolean })[];
+  newReplies: (Comment & { new: boolean })[];
+  loading: boolean;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+}
+
+function useReplies({ commentId, sortBy }: UseRepliesProps): UseRepliesValues {
   const fetchManyComments = useFetchManyComments();
   const { addCommentsToTree, entityCommentsTree } = useCommentSection();
 

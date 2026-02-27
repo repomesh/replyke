@@ -6,7 +6,7 @@ export interface RequestPasswordResetProps {
   email: string;
 }
 
-function useRequestPasswordReset() {
+function useRequestPasswordReset(): (props: RequestPasswordResetProps) => Promise<{ success: boolean; message: string }> {
   const { projectId } = useProject();
 
   const requestPasswordReset = useCallback(

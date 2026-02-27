@@ -30,7 +30,7 @@ export interface UpdateSpaceProps {
   }>;
 }
 
-function useUpdateSpace() {
+function useUpdateSpace(): (props: UpdateSpaceProps) => Promise<SpaceDetailed> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { setSpace } = useSpace();

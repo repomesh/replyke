@@ -8,7 +8,7 @@ export interface ApproveMemberProps {
   memberId: string;
 }
 
-function useApproveMember() {
+function useApproveMember(): (props: ApproveMemberProps) => Promise<ApproveMemberResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

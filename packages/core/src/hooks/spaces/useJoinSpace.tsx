@@ -7,7 +7,7 @@ export interface JoinSpaceProps {
   spaceId: string;
 }
 
-function useJoinSpace() {
+function useJoinSpace(): (props: JoinSpaceProps) => Promise<JoinSpaceResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

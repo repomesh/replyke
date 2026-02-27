@@ -12,7 +12,7 @@ export interface FetchEntityReactionsProps {
   sortDir?: "asc" | "desc";
 }
 
-function useFetchEntityReactions() {
+function useFetchEntityReactions(): (props: FetchEntityReactionsProps) => Promise<PaginatedResponse<Reaction>> {
   const { projectId } = useProject();
 
   const fetchEntityReactions = useCallback(

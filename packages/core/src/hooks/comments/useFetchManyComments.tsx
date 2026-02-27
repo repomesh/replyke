@@ -16,7 +16,7 @@ export interface FetchManyCommentsProps {
   sourceId?: string | null | undefined;
 }
 
-function useFetchManyComments() {
+function useFetchManyComments(): (props: FetchManyCommentsProps) => Promise<PaginatedResponse<Comment>> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

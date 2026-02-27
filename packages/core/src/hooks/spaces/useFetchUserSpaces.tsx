@@ -13,7 +13,7 @@ export interface FetchUserSpacesProps {
   include?: SpaceIncludeParam;
 }
 
-function useFetchUserSpaces() {
+function useFetchUserSpaces(): (params?: FetchUserSpacesProps) => Promise<UserSpacesResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

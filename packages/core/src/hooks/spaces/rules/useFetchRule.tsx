@@ -8,7 +8,7 @@ export interface FetchRuleProps {
   ruleId: string;
 }
 
-function useFetchRule() {
+function useFetchRule(): (props: FetchRuleProps) => Promise<Rule> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

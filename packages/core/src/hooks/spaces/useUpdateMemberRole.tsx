@@ -10,7 +10,7 @@ export interface UpdateMemberRoleProps {
   role: SpaceMemberRole;
 }
 
-function useUpdateMemberRole() {
+function useUpdateMemberRole(): (props: UpdateMemberRoleProps) => Promise<UpdateMemberRoleResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -11,7 +11,7 @@ export interface AddReactionProps {
   reactionType: ReactionType;
 }
 
-function useAddReaction() {
+function useAddReaction(): (props: AddReactionProps) => Promise<Entity | Comment> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

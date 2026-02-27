@@ -12,13 +12,23 @@ export interface UseMentionsProps {
   isSelectionActive: boolean;
 }
 
+export interface UseMentionsValues {
+  isMentionActive: boolean;
+  loading: boolean;
+  mentionSuggestions: User[];
+  handleMentionClick: (user: User) => void;
+  mentions: Mention[];
+  addMention: (user: User) => void;
+  resetMentions: () => void;
+}
+
 const useMentions = ({
   content,
   setContent,
   focus,
   cursorPosition,
   isSelectionActive,
-}: UseMentionsProps) => {
+}: UseMentionsProps): UseMentionsValues => {
   const fetchMentionSuggestions = useFetchUserSuggestions();
 
   // const loading = useRef(false);

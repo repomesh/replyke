@@ -12,7 +12,7 @@ interface FetchDraftsParams {
   include?: EntityIncludeParam;
 }
 
-function useFetchDrafts() {
+function useFetchDrafts(): (params?: FetchDraftsParams) => Promise<PaginatedResponse<Entity>> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

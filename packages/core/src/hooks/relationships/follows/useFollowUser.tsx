@@ -6,7 +6,7 @@ export interface FollowUserProps {
   userId: string;
 }
 
-function useFollowUser() {
+function useFollowUser(): (props: FollowUserProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

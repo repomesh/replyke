@@ -66,7 +66,7 @@ interface FetchManyEntitiesParams {
   include?: EntityIncludeParam;
 }
 
-function useFetchManyEntities() {
+function useFetchManyEntities(): (params?: FetchManyEntitiesParams) => Promise<PaginatedResponse<Entity>> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

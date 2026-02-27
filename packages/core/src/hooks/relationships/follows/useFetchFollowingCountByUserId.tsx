@@ -6,7 +6,7 @@ export interface FetchFollowingCountByUserIdProps {
   userId: string;
 }
 
-function useFetchFollowingCountByUserId() {
+function useFetchFollowingCountByUserId(): (props: FetchFollowingCountByUserIdProps) => Promise<{ count: number }> {
   const { projectId } = useProject();
 
   const fetchFollowingCountByUserId = useCallback(

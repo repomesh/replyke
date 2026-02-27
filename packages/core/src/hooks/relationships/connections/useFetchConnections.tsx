@@ -10,7 +10,7 @@ export interface FetchConnectionsParams {
   limit?: number;
 }
 
-function useFetchConnections() {
+function useFetchConnections(): (props?: FetchConnectionsParams) => Promise<PaginatedResponse<EstablishedConnection>> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

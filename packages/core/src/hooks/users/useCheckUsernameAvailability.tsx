@@ -7,7 +7,7 @@ export interface CheckUsernameAvailabilityProps {
   username: string;
 }
 
-function useCheckUsernameAvailability() {
+function useCheckUsernameAvailability(): (props: CheckUsernameAvailabilityProps) => Promise<{ available: boolean }> {
   const { projectId } = useProject();
 
   const checkUsernameAvailability = useCallback(

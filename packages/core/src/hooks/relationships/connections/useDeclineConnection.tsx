@@ -8,7 +8,7 @@ export interface DeclineConnectionProps {
   connectionId: string;
 }
 
-function useDeclineConnection() {
+function useDeclineConnection(): (props: DeclineConnectionProps) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

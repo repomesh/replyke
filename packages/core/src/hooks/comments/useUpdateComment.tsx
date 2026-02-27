@@ -9,7 +9,7 @@ export interface UpdateCommentProps {
   metadata?: Record<string, any>;
 }
 
-function useUpdateComment() {
+function useUpdateComment(): (props: UpdateCommentProps) => Promise<Comment> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

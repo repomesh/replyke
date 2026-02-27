@@ -10,7 +10,7 @@ export interface FetchConnectionsByUserIdParams {
   limit?: number;
 }
 
-function useFetchConnectionsByUserId() {
+function useFetchConnectionsByUserId(): (props: FetchConnectionsByUserIdParams) => Promise<PaginatedResponse<EstablishedConnection>> {
   const { projectId } = useProject();
 
   const fetchConnectionsByUserId = useCallback(

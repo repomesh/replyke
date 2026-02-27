@@ -6,7 +6,7 @@ export interface CheckSlugAvailabilityProps {
   slug: string;
 }
 
-function useCheckSlugAvailability() {
+function useCheckSlugAvailability(): (props: CheckSlugAvailabilityProps) => Promise<{ available: boolean }> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -9,7 +9,7 @@ export interface FetchEntityByForeignIdProps {
   include?: EntityIncludeParam;
 }
 
-function useFetchEntityByForeignId() {
+function useFetchEntityByForeignId(): (props: FetchEntityByForeignIdProps) => Promise<Entity> {
     const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

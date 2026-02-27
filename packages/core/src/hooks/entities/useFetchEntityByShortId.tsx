@@ -8,7 +8,7 @@ export interface FetchEntityByShortIdProps {
   include?: EntityIncludeParam;
 }
 
-function useFetchEntityByShortId() {
+function useFetchEntityByShortId(): (props: FetchEntityByShortIdProps) => Promise<Entity> {
     const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

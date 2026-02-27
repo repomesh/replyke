@@ -27,7 +27,7 @@ export interface CreateSpaceProps {
   parentSpaceId?: string | null;
 }
 
-function useCreateSpace() {
+function useCreateSpace(): (props: CreateSpaceProps) => Promise<Space> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

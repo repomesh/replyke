@@ -8,7 +8,7 @@ export interface AcceptConnectionProps {
   connectionId: string;
 }
 
-function useAcceptConnection() {
+function useAcceptConnection(): (props: AcceptConnectionProps) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

@@ -8,7 +8,7 @@ export interface FetchSpaceBySlugProps {
   include?: SpaceIncludeParam;
 }
 
-function useFetchSpaceBySlug() {
+function useFetchSpaceBySlug(): (props: FetchSpaceBySlugProps) => Promise<SpaceDetailed> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

@@ -8,7 +8,7 @@ export interface ReorderRulesProps {
   ruleIds: string[];
 }
 
-function useReorderRules() {
+function useReorderRules(): (props: ReorderRulesProps) => Promise<Rule[]> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

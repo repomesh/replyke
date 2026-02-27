@@ -63,7 +63,7 @@ export interface Report {
  *   limit: 20
  * });
  */
-function useFetchModeratedReports() {
+function useFetchModeratedReports(): (params: FetchModeratedReportsParams) => Promise<PaginatedResponse<Report>> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

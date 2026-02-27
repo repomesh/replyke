@@ -21,7 +21,7 @@ export interface UpdateEntityProps {
   };
 }
 
-function useUpdateEntity() {
+function useUpdateEntity(): (props: UpdateEntityProps) => Promise<Entity> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { setEntity } = useEntity();

@@ -8,7 +8,7 @@ export interface FetchConnectionStatusProps {
   userId: string;
 }
 
-function useFetchConnectionStatus() {
+function useFetchConnectionStatus(): (props: FetchConnectionStatusProps) => Promise<ConnectionStatusResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();

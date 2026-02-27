@@ -8,7 +8,7 @@ export interface DeclineMemberProps {
   memberId: string;
 }
 
-function useDeclineMember() {
+function useDeclineMember(): (props: DeclineMemberProps) => Promise<DeclineMemberResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

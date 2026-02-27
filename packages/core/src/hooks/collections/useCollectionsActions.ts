@@ -25,11 +25,25 @@ import {
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import type { Collection } from "../../interfaces/models/Collection";
 
+export interface UseCollectionsActionsValues {
+  openCollection: (collection: Collection) => void;
+  goBack: () => void;
+  goToRoot: () => void;
+  fetchRootCollection: (projectId: string) => Promise<void>;
+  fetchSubCollections: (projectId: string, collectionId: string) => Promise<void>;
+  createCollection: (projectId: string, parentCollectionId: string, collectionName: string) => Promise<void>;
+  updateCollection: (projectId: string, collectionId: string, update: Partial<{ name: string }>) => Promise<void>;
+  deleteCollection: (projectId: string, collection: Collection) => Promise<void>;
+  addToCollection: (projectId: string, collectionId: string, entityId: string) => Promise<void>;
+  removeFromCollection: (projectId: string, collectionId: string, entityId: string) => Promise<void>;
+  resetCollections: () => void;
+}
+
 /**
  * Redux-powered hook that provides all collection actions
  * This replaces the individual hooks and provides a centralized way to manage collections
  */
-export function useCollectionsActions() {
+export function useCollectionsActions(): UseCollectionsActionsValues {
   const dispatch = useReplykeDispatch();
 
   // RTK Query hooks

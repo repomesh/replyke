@@ -28,7 +28,7 @@ interface ModerateResponse {
  *   reason: "Spam content"
  * });
  */
-function useModerateSpaceComment() {
+function useModerateSpaceComment(): (props: ModerateSpaceCommentProps) => Promise<ModerateResponse> {
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

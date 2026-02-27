@@ -8,7 +8,13 @@ export interface UseFollowToggleProps {
   userId: string;
 }
 
-function useFollowManager({ userId }: UseFollowToggleProps) {
+export interface UseFollowManagerValues {
+  isFollowing: boolean | null;
+  isLoading: boolean;
+  toggleFollow: () => Promise<void>;
+}
+
+function useFollowManager({ userId }: UseFollowToggleProps): UseFollowManagerValues {
   const { user } = useUser();
 
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);

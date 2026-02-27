@@ -35,7 +35,7 @@ export interface UploadResponse {
   createdAt: string;
 }
 
-function useUploadFile() {
+function useUploadFile(): (file: UniversalFile, pathParts: string[], options?: UploadFileOptions) => Promise<UploadResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 

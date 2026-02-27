@@ -9,7 +9,7 @@ export interface FetchUserByUsernameProps {
   include?: UserIncludeParam;
 }
 
-function useFetchUserByUsername() {
+function useFetchUserByUsername(): (props: FetchUserByUsernameProps) => Promise<User> {
   const { projectId } = useProject();
 
   const fetchUserByUsername = useCallback(

@@ -55,7 +55,7 @@ export interface CreateEntityProps {
   files?: FileUploadConfig;
 }
 
-function useCreateEntity() {
+function useCreateEntity(): (props: CreateEntityProps) => Promise<Entity> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
