@@ -37,6 +37,7 @@ export type AuthUser = Omit<UserFull, "secureMetadata"> & {
     startDate: Date;
     endDate: Date | null;
   }[];
+  authMethods: string[]; // e.g. ["password", "google", "github"]
 };
 
 // This is used in some places where we need to return a user object to the client, either of themselves or of someone else.
