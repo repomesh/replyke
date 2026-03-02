@@ -3,7 +3,7 @@ import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
-import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
 import { TitleFilters } from "../../interfaces/entity-filters/TitleFilters";
@@ -50,6 +50,7 @@ interface FetchManyEntitiesParams {
   page?: number;
   limit?: number;
   sortBy?: EntityListSortByOptions;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType;
   timeFrame?: TimeFrame | null;
@@ -81,6 +82,7 @@ function useFetchManyEntities(): (params?: FetchManyEntitiesParams) => Promise<P
       if (params?.page !== undefined) queryParams.page = params.page;
       if (params?.limit !== undefined) queryParams.limit = params.limit;
       if (params?.sortBy) queryParams.sortBy = params.sortBy;
+      if (params?.sortByReaction) queryParams.sortByReaction = params.sortByReaction;
       if (params?.sortDir) queryParams.sortDir = params.sortDir;
       if (params?.sortType) queryParams.sortType = params.sortType;
       if (params?.timeFrame) queryParams.timeFrame = params.timeFrame;

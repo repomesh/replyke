@@ -480,6 +480,7 @@ export type {
 export type { CommentsSortByOptions } from "./interfaces/CommentsSortByOptions";
 export type {
   EntityListSortByOptions,
+  SortByReaction,
   SortDirection,
   SortType,
 } from "./interfaces/EntityListSortByOptions";

@@ -24,7 +24,7 @@ import useInfusedData from "./useInfusedData";
 import useEntityListActions from "./useEntityListActions";
 
 import { Entity } from "../../interfaces/models/Entity";
-import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -68,6 +68,7 @@ export interface UseEntityListValues {
 
   // Individual sort properties (flat access for convenience)
   sortBy: EntityListSortByOptions | null;
+  sortByReaction: SortByReaction | null;
   sortDir: SortDirection | null;
   sortType: SortType | null;
 
@@ -180,6 +181,7 @@ function useEntityList({
         // Use entityList if available, otherwise get current state from Redux after our updates
         const currentState = entityList || {
           sortBy: "hot",
+          sortByReaction: "upvote",
           sortDir: null,
           sortType: "auto",
           timeFrame: null,
@@ -210,6 +212,7 @@ function useEntityList({
         // Apply resetSort flag - reset only sort properties
         if (options?.resetSort) {
           finalFilters.sortBy = "hot";
+          finalFilters.sortByReaction = "upvote";
           finalFilters.sortDir = null;
           finalFilters.sortType = "auto";
         }
@@ -225,6 +228,7 @@ function useEntityList({
         // Apply new sort
         if (newSort) {
           if (newSort.sortBy !== undefined) finalFilters.sortBy = newSort.sortBy;
+          if (newSort.sortByReaction !== undefined) finalFilters.sortByReaction = newSort.sortByReaction;
           if (newSort.sortDir !== undefined) finalFilters.sortDir = newSort.sortDir;
           if (newSort.sortType !== undefined) finalFilters.sortType = newSort.sortType;
         }
@@ -238,6 +242,7 @@ function useEntityList({
             page: 1,
             // User-controlled filters from Redux state + new filters
             sortBy: finalFilters.sortBy,
+            sortByReaction: finalFilters.sortByReaction,
             sortDir: finalFilters.sortDir,
             sortType: finalFilters.sortType,
             timeFrame: finalFilters.timeFrame,
@@ -310,6 +315,7 @@ function useEntityList({
         userId: entityList.userId,
         followedOnly: entityList.followedOnly,
         sortBy: entityList.sortBy,
+        sortByReaction: entityList.sortByReaction,
         sortDir: entityList.sortDir,
         sortType: entityList.sortType,
         timeFrame: entityList.timeFrame,
@@ -418,6 +424,7 @@ function useEntityList({
 
       // Individual sort properties (flat access for convenience)
       sortBy: sort?.sortBy || null,
+      sortByReaction: sort?.sortByReaction || null,
       sortDir: sort?.sortDir || null,
       sortType: sort?.sortType || null,
 

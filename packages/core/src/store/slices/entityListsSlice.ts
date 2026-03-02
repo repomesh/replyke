@@ -3,6 +3,7 @@ import type { ReplykeState } from '../replykeReducers';
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import {
   EntityListSortByOptions,
+  SortByReaction,
   SortDirection,
   SortType,
 } from "../../interfaces/EntityListSortByOptions";
@@ -31,6 +32,7 @@ export interface EntityListState {
 
   // Filter/sort state (user-controlled filters only)
   sortBy: EntityListSortByOptions;
+  sortByReaction: SortByReaction;
   sortDir: SortDirection | null;
   sortType: SortType;
   timeFrame: TimeFrame | null;
@@ -66,6 +68,7 @@ const createDefaultEntityListState = (): EntityListState => ({
 
   // Default filters (user-controlled only)
   sortBy: "hot",
+  sortByReaction: "upvote",
   sortDir: null,
   sortType: "auto",
   timeFrame: null,
@@ -87,6 +90,7 @@ const initialState: EntityListsState = {
 // Entity list sort configuration - separated from filters for semantic clarity
 export interface EntityListSort {
   sortBy: EntityListSortByOptions;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType;
 }
@@ -206,6 +210,7 @@ export const entityListsSlice = createSlice({
       if (options?.resetSort) {
         const defaultState = createDefaultEntityListState();
         list.sortBy = defaultState.sortBy;
+        list.sortByReaction = defaultState.sortByReaction;
         list.sortDir = defaultState.sortDir;
         list.sortType = defaultState.sortType;
       }
@@ -220,6 +225,7 @@ export const entityListsSlice = createSlice({
       // Apply specified sort configuration
       if (sort) {
         if (sort.sortBy !== undefined) list.sortBy = sort.sortBy;
+        if (sort.sortByReaction !== undefined) list.sortByReaction = sort.sortByReaction;
         if (sort.sortDir !== undefined) list.sortDir = sort.sortDir;
         if (sort.sortType !== undefined) list.sortType = sort.sortType;
       }
@@ -491,6 +497,7 @@ export const selectEntityListSort = createSelector(
 
     return {
       sortBy: entityList.sortBy,
+      sortByReaction: entityList.sortByReaction,
       sortDir: entityList.sortDir,
       sortType: entityList.sortType,
     };

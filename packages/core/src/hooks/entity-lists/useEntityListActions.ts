@@ -16,7 +16,7 @@ import {
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import useProject from "../projects/useProject";
 import type { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
-import type { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import type { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
 import type { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import type { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -30,6 +30,7 @@ interface FetchEntitiesOptions {
 
   // Sort properties
   sortBy: EntityListSortByOptions;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType;
 
@@ -114,6 +115,7 @@ export function useEntityListActions(): UseEntityListActionsValues {
           projectId,
           page: options.page,
           sortBy: options.sortBy,
+          sortByReaction: options.sortByReaction,
           sortDir: options.sortDir,
           sortType: options.sortType,
           timeFrame: options.timeFrame,

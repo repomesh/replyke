@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFilters";
@@ -19,6 +19,7 @@ export interface UseFetchManyEntitiesWrapperProps {
   followedOnly?: boolean;
   include?: EntityIncludeParam;
   defaultSortBy?: EntityListSortByOptions;
+  defaultSortByReaction?: SortByReaction;
   defaultSortDir?: SortDirection;
   defaultSortType?: SortType;
   timeFrame?: TimeFrame | null;
@@ -35,9 +36,11 @@ export interface UseFetchManyEntitiesWrapperValues {
   loading: boolean;
   hasMore: boolean;
   sortBy: EntityListSortByOptions;
+  sortByReaction: SortByReaction;
   sortDir: SortDirection;
   sortType: SortType;
   setSortBy: (newSortBy: EntityListSortByOptions) => void;
+  setSortByReaction: (newSortByReaction: SortByReaction) => void;
   setSortDir: (newSortDir: SortDirection) => void;
   setSortType: (newSortType: SortType) => void;
   loadMore: () => void;
@@ -50,6 +53,7 @@ function useFetchManyEntitiesWrapper(
     userId,
     limit = 10,
     defaultSortBy = "new",
+    defaultSortByReaction = "upvote",
     defaultSortDir = "desc",
     defaultSortType = "auto",
     timeFrame,
@@ -73,6 +77,7 @@ function useFetchManyEntitiesWrapper(
   const [hasMoreState, setHasMoreState] = useState(true);
 
   const [sortBy, setSortBy] = useState<EntityListSortByOptions>(defaultSortBy);
+  const [sortByReaction, setSortByReaction] = useState<SortByReaction>(defaultSortByReaction);
   const [sortDir, setSortDir] = useState<SortDirection>(defaultSortDir);
   const [sortType, setSortType] = useState<SortType>(defaultSortType);
   const [page, setPage] = useState(1);
@@ -96,6 +101,7 @@ function useFetchManyEntitiesWrapper(
         userId,
         page: 1,
         sortBy,
+        sortByReaction,
         sortDir,
         sortType,
         timeFrame,
@@ -128,6 +134,7 @@ function useFetchManyEntitiesWrapper(
     fetchManyEntities,
     limit,
     sortBy,
+    sortByReaction,
     sortDir,
     sortType,
     timeFrame,
@@ -165,6 +172,7 @@ function useFetchManyEntitiesWrapper(
           userId,
           page,
           sortBy,
+          sortByReaction,
           sortDir,
           sortType,
           timeFrame,
@@ -204,6 +212,7 @@ function useFetchManyEntitiesWrapper(
     fetchManyEntities,
     userId,
     sortBy,
+    sortByReaction,
     sortDir,
     sortType,
     timeFrame,
@@ -225,9 +234,11 @@ function useFetchManyEntitiesWrapper(
     loading: loadingState,
     hasMore: hasMoreState,
     sortBy,
+    sortByReaction,
     sortDir,
     sortType,
     setSortBy,
+    setSortByReaction,
     setSortDir,
     setSortType,
     loadMore,

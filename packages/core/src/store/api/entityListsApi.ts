@@ -1,6 +1,6 @@
 import { baseApi } from "./baseApi";
 import type { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
-import type { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import type { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { validateSortBy } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
 import type { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
@@ -77,6 +77,7 @@ interface FetchEntitiesParams {
 
   // Sort parameters
   sortBy: EntityListSortByOptions | null;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType | null;
 
@@ -144,6 +145,7 @@ export const entityListsApi = baseApi.injectEndpoints({
         page,
         limit,
         sortBy,
+        sortByReaction,
         sortDir,
         sortType,
         timeFrame,
@@ -177,6 +179,7 @@ export const entityListsApi = baseApi.injectEndpoints({
             sourceId,
             spaceId,
             sortBy,
+            sortByReaction,
             sortDir,
             sortType,
             timeFrame,
