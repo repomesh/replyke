@@ -126,6 +126,7 @@ function useCommentSectionData(
     loadMore,
     addCommentsToTree,
     removeCommentFromTree,
+    markCommentAsDeleted,
   } = useEntityComments({
     entityId: entity?.id,
     defaultSortBy,
@@ -268,6 +269,7 @@ function useCommentSectionData(
         updatedAt: new Date(),
         deletedAt: null,
         parentDeletedAt: null,
+        userDeletedAt: null,
         repliesCount: 0,
         metadata: {},
         moderationStatus: null,
@@ -325,7 +327,8 @@ function useCommentSectionData(
     async ({ commentId }: CommentSectionDeleteCommentProps) => {
       if (!isUUID(commentId)) return;
       try {
-        removeCommentFromTree(commentId);
+        // Reddit-style: mark as deleted placeholder instead of removing from tree
+        markCommentAsDeleted(commentId);
         await deleteComment({ commentId });
         setContextEntity?.((prevEntity) => {
           if (!prevEntity) return prevEntity;
@@ -335,7 +338,7 @@ function useCommentSectionData(
         handleError(err, "Failed to delete comment");
       }
     },
-    [deleteComment, removeCommentFromTree],
+    [deleteComment, markCommentAsDeleted],
   );
 
   const handleUpdateComment = useCallback(

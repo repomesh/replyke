@@ -34,7 +34,11 @@ export interface Comment {
   createdAt: Date; // Timestamp for creation
   updatedAt: Date; // Timestamp for updating
   deletedAt: Date | null; // Timestamp for updating
-  parentDeletedAt: Date | null; // Timestamp for updating
+  // Legacy v6 field: set on children when their parent was paranoid-deleted.
+  // Not used by v7 (which uses userDeletedAt). Can be removed once v6 is
+  // retired and legacy data is cleaned up.
+  parentDeletedAt: Date | null;
+  userDeletedAt: Date | null; // Timestamp for user-initiated deletion (Reddit-style placeholder)
   moderationStatus: "approved" | "removed" | null;
   moderatedAt: Date | null;
   moderatedById: string | null;

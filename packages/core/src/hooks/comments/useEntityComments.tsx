@@ -6,6 +6,7 @@ import { handleError } from "../../utils/handleError";
 import { EntityCommentsTree } from "../../interfaces/EntityCommentsTree";
 import { addCommentsToTree as addCommentsToTreeHandler } from "../../helpers/addCommentsToTree";
 import { removeCommentFromTree as removeCommentFromTreeHandler } from "../../helpers/removeCommentFromTree";
+import { markCommentAsDeletedInTree as markCommentAsDeletedInTreeHandler } from "../../helpers/markCommentAsDeletedInTree";
 
 export interface UseEntityCommentsProps {
   entityId: string | undefined | null;
@@ -28,6 +29,7 @@ export interface UseEntityCommentsValues {
     newlyAdded?: boolean
   ) => void;
   removeCommentFromTree: (commentId: string) => void;
+  markCommentAsDeleted: (commentId: string) => void;
 }
 
 function useEntityComments(
@@ -80,6 +82,15 @@ function useEntityComments(
     (commentId: string) => {
       setEntityCommentsTree!((prevTree) =>
         removeCommentFromTreeHandler(prevTree, commentId)
+      );
+    },
+    [setEntityCommentsTree]
+  );
+
+  const markCommentAsDeleted = useCallback(
+    (commentId: string) => {
+      setEntityCommentsTree((prevTree) =>
+        markCommentAsDeletedInTreeHandler(prevTree, commentId)
       );
     },
     [setEntityCommentsTree]
@@ -182,6 +193,7 @@ function useEntityComments(
     loadMore,
     addCommentsToTree,
     removeCommentFromTree,
+    markCommentAsDeleted,
   };
 }
 
