@@ -43,6 +43,7 @@ const getReplacementVariables = (notification: any) => {
     commentContent: notification.metadata.commentContent || "",
     replyContent: notification.metadata.replyContent || "",
     reactionType: notification.metadata.reactionType || "",
+    milestoneCount: notification.metadata.milestoneCount?.toString() || "",
   };
 };
 
@@ -153,6 +154,38 @@ export default (
           `$initiatorUsername reacted $reactionType to your comment`,
           `$commentContent`,
           notificationTemplates?.commentReaction
+        ));
+        break;
+      case "entity-reaction-milestone-specific":
+        ({ title, content } = configureMessage(
+          notification,
+          `Your post reached $milestoneCount $reactionType reactions`,
+          ``,
+          notificationTemplates?.entityReactionMilestoneSpecific
+        ));
+        break;
+      case "entity-reaction-milestone-total":
+        ({ title, content } = configureMessage(
+          notification,
+          `Your post reached $milestoneCount reactions`,
+          ``,
+          notificationTemplates?.entityReactionMilestoneTotal
+        ));
+        break;
+      case "comment-reaction-milestone-specific":
+        ({ title, content } = configureMessage(
+          notification,
+          `Your comment reached $milestoneCount $reactionType reactions`,
+          `$commentContent`,
+          notificationTemplates?.commentReactionMilestoneSpecific
+        ));
+        break;
+      case "comment-reaction-milestone-total":
+        ({ title, content } = configureMessage(
+          notification,
+          `Your comment reached $milestoneCount reactions`,
+          `$commentContent`,
+          notificationTemplates?.commentReactionMilestoneTotal
         ));
         break;
       case "connection-request":

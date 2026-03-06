@@ -1,3 +1,10 @@
+interface MilestoneUser {
+  id: string;
+  name: string | null | undefined;
+  username: string | null | undefined;
+  avatar: string | null | undefined;
+}
+
 type AppNotificationType =
   | "system"
   | "entity-comment"
@@ -8,6 +15,10 @@ type AppNotificationType =
   | "comment-upvote"
   | "entity-reaction"
   | "comment-reaction"
+  | "entity-reaction-milestone-specific"
+  | "entity-reaction-milestone-total"
+  | "comment-reaction-milestone-specific"
+  | "comment-reaction-milestone-total"
   | "new-follow"
   | "connection-request"
   | "connection-accepted";
@@ -200,6 +211,72 @@ export interface CommentReactionNotification extends BaseAppNotification {
   };
 }
 
+export interface EntityReactionMilestoneSpecificNotification extends BaseAppNotification {
+  type: "entity-reaction-milestone-specific";
+  action: "open-entity";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    reactionType: string;
+    milestoneCount: number;
+    lastThreeUsers: MilestoneUser[];
+  };
+}
+
+export interface EntityReactionMilestoneTotalNotification extends BaseAppNotification {
+  type: "entity-reaction-milestone-total";
+  action: "open-entity";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    milestoneCount: number;
+    reactionCounts: Record<string, number>;
+    lastThreeUsers: MilestoneUser[];
+  };
+}
+
+export interface CommentReactionMilestoneSpecificNotification extends BaseAppNotification {
+  type: "comment-reaction-milestone-specific";
+  action: "open-comment";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    commentId: string;
+    commentContent: string | null | undefined;
+
+    reactionType: string;
+    milestoneCount: number;
+    lastThreeUsers: MilestoneUser[];
+  };
+}
+
+export interface CommentReactionMilestoneTotalNotification extends BaseAppNotification {
+  type: "comment-reaction-milestone-total";
+  action: "open-comment";
+  metadata: {
+    entityId: string;
+    entityShortId: string;
+    entityTitle: string | null | undefined;
+    entityContent: string | null | undefined;
+
+    commentId: string;
+    commentContent: string | null | undefined;
+
+    milestoneCount: number;
+    reactionCounts: Record<string, number>;
+    lastThreeUsers: MilestoneUser[];
+  };
+}
+
 export interface NewFollowNotification extends BaseAppNotification {
   type: "new-follow";
   action: "open-profile";
@@ -327,6 +404,10 @@ export type UnifiedAppNotification =
   | CommentUpvoteNotification
   | EntityReactionNotification
   | CommentReactionNotification
+  | EntityReactionMilestoneSpecificNotification
+  | EntityReactionMilestoneTotalNotification
+  | CommentReactionMilestoneSpecificNotification
+  | CommentReactionMilestoneTotalNotification
   | NewFollowNotification
   | ConnectionRequestNotification
   | ConnectionAcceptedNotification;
@@ -357,6 +438,10 @@ export type NotificationTemplates = {
   commentUpvote: NotificationTemplate;
   entityReaction: NotificationTemplate;
   commentReaction: NotificationTemplate;
+  entityReactionMilestoneSpecific: NotificationTemplate;
+  entityReactionMilestoneTotal: NotificationTemplate;
+  commentReactionMilestoneSpecific: NotificationTemplate;
+  commentReactionMilestoneTotal: NotificationTemplate;
   newFollow: NotificationTemplate;
   connectionRequest: NotificationTemplate;
   connectionAccepted: NotificationTemplate;
