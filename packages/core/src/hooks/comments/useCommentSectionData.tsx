@@ -9,6 +9,8 @@ import { Mention } from "../../interfaces/models/Mention";
 import { handleError } from "../../utils/handleError";
 import useDeleteComment from "./useDeleteComment";
 import useUpdateComment from "./useUpdateComment";
+import useAddReaction from "../reactions/useAddReaction";
+import { ReactionType } from "../../interfaces/models/Reaction";
 import useEntityComments from "./useEntityComments";
 import useFetchComment from "./useFetchComment";
 import { useUser } from "../user";
@@ -41,6 +43,7 @@ export interface CommentSectionCreateCommentProps {
   content?: string;
   gif?: GifData;
   mentions?: Mention[];
+  autoReaction?: ReactionType;
 }
 
 export interface CommentSectionUpdateCommentProps {
@@ -137,6 +140,7 @@ function useCommentSectionData(
   const createComment = useCreateComment();
   const deleteComment = useDeleteComment();
   const updateComment = useUpdateComment();
+  const addReaction = useAddReaction();
   const fetchComment = useFetchComment();
   const fetchEntity = useFetchEntity();
   const fetchEntityByForeignId = useFetchEntityByForeignId();
@@ -192,7 +196,7 @@ function useCommentSectionData(
 
   const handleCreateComment = useCallback(
     async (props: CommentSectionCreateCommentProps) => {
-      const { parentId, content, gif, mentions } = props;
+      const { parentId, content, gif, mentions, autoReaction } = props;
 
       if (submittingComment.current) return;
 
@@ -255,15 +259,16 @@ function useCommentSectionData(
         } as User,
         upvotes: [],
         downvotes: [],
+        userReaction: autoReaction ?? null,
         reactionCounts: {
-          upvote: 0,
-          downvote: 0,
-          like: 0,
-          love: 0,
-          wow: 0,
-          sad: 0,
-          angry: 0,
-          funny: 0,
+          upvote: autoReaction === "upvote" ? 1 : 0,
+          downvote: autoReaction === "downvote" ? 1 : 0,
+          like: autoReaction === "like" ? 1 : 0,
+          love: autoReaction === "love" ? 1 : 0,
+          wow: autoReaction === "wow" ? 1 : 0,
+          sad: autoReaction === "sad" ? 1 : 0,
+          angry: autoReaction === "angry" ? 1 : 0,
+          funny: autoReaction === "funny" ? 1 : 0,
         },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -295,7 +300,26 @@ function useCommentSectionData(
 
         if (newCommentData) {
           removeCommentFromTree(TEMP_ID);
-          addCommentsToTree([newCommentData], true);
+
+          if (autoReaction) {
+            // Add comment with optimistic reaction data while the API call is in flight
+            addCommentsToTree(
+              [{ ...newCommentData, userReaction: autoReaction, reactionCounts: { ...newCommentData.reactionCounts, [autoReaction]: (newCommentData.reactionCounts?.[autoReaction] ?? 0) + 1 } }],
+              true,
+            );
+            // Fire-and-forget: update the tree with server truth when the reaction API resolves
+            addReaction({
+              targetType: "comment",
+              targetId: newCommentData.id,
+              reactionType: autoReaction,
+            })
+              .then((updatedComment) => {
+                addCommentsToTree([updatedComment as Comment], true);
+              })
+              .catch(() => {});
+          } else {
+            addCommentsToTree([newCommentData], true);
+          }
         }
         setContextEntity?.((prevEntity) => {
           if (!prevEntity) return prevEntity;
@@ -318,6 +342,7 @@ function useCommentSectionData(
       removeCommentFromTree,
       entity,
       createComment,
+      addReaction,
       repliedToComment,
       callbacks,
     ],
