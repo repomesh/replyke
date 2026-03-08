@@ -25,6 +25,11 @@ import {
 import { isUUID } from "../../utils/isUUID";
 import { useStableObject } from "../useStableObject";
 
+export interface MentionTriggers {
+  user?: string;
+  space?: string;
+}
+
 export interface UseCommentSectionDataProps {
   entity?: Entity | undefined | null;
   entityId?: string | undefined | null;
@@ -36,6 +41,7 @@ export interface UseCommentSectionDataProps {
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
   highlightedCommentId?: string | null;
+  mentionTriggers?: MentionTriggers;
 }
 
 export interface CommentSectionCreateCommentProps {
@@ -105,7 +111,13 @@ function useCommentSectionData(
     limit = 15,
     callbacks: callbacksProp = {},
     highlightedCommentId,
+    mentionTriggers: mentionTriggersProp,
   } = props;
+
+  const mentionTriggers = {
+    user: mentionTriggersProp?.user ?? "@",
+    space: mentionTriggersProp?.space ?? "#",
+  };
 
   // Stabilize callbacks reference to prevent unnecessary re-renders
   const callbacks = useStableObject(callbacksProp);
@@ -223,16 +235,13 @@ function useCommentSectionData(
       submittingComment.current = true;
       setSubmittingCommentState(true);
 
-      // Filter mentions to include only those with "@username" in the content
+      // Filter mentions to include only those whose trigger + identifier appears in the content
       const filteredMentions = content
         ? (mentions || []).filter((mention) => {
-            const mentionRegex = new RegExp(`@${mention.username}\\b`, "g");
-            // const mentionRegex = new RegExp(
-            //   `@(${mention.username}|${mention.name})\\b`,
-            //   "g"
-            // );
-
-            return mentionRegex.test(content);
+            if (mention.type === "space") {
+              return content.includes(mentionTriggers.space + mention.slug);
+            }
+            return content.includes(mentionTriggers.user + mention.username);
           })
         : [];
 

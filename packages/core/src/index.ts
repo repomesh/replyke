@@ -184,6 +184,7 @@ export {
   useModerateSpaceEntity,
   useModerateSpaceComment,
   useSpacePermissions,
+  useSpaceMentions,
   useCheckMyMembership,
   // Digest config hooks
   useFetchDigestConfig,
@@ -221,6 +222,8 @@ export {
   type ModerateSpaceCommentProps,
   type UseSpacePermissionsProps,
   type UseSpacePermissionsValues,
+  type UseSpaceMentionsProps,
+  type UseSpaceMentionsValues,
   type FetchDigestConfigProps,
   type UpdateDigestConfigProps,
   type CreateRuleProps,
@@ -269,6 +272,7 @@ export {
   type DeleteCommentProps,
   type UseFetchManyCommentsWrapperProps,
   type UseFetchManyCommentsWrapperValues,
+  type MentionTriggers,
 } from "./hooks/comments";
 
 // -- reactions
@@ -300,13 +304,14 @@ export {
   useFetchUserByUsername,
   useCheckUsernameAvailability,
   useFetchUserSuggestions,
-  useMentions,
+  useUserMentions,
   type FetchUserProps,
   type FetchUserByForeignIdProps,
   type FetchUserByUsernameProps,
   type CheckUsernameAvailabilityProps,
   type FetchUserSuggestionsProps,
-  type UseMentionsProps,
+  type UseUserMentionsProps,
+  type UseUserMentionsValues,
 } from "./hooks/users";
 
 // -- follows
@@ -443,7 +448,11 @@ export type {
   ReactionType,
   ReactionCounts,
 } from "./interfaces/models/Reaction";
-export type { Mention } from "./interfaces/models/Mention";
+export type {
+  Mention,
+  UserMention,
+  SpaceMention,
+} from "./interfaces/models/Mention";
 export type {
   Space,
   SpaceDetailed,

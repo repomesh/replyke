@@ -55,6 +55,13 @@ export type { ModerateSpaceEntityProps } from "./useModerateSpaceEntity";
 export { default as useModerateSpaceComment } from "./useModerateSpaceComment";
 export type { ModerateSpaceCommentProps } from "./useModerateSpaceComment";
 
+// Mention hooks
+export { default as useSpaceMentions } from "./useSpaceMentions";
+export type {
+  UseSpaceMentionsProps,
+  UseSpaceMentionsValues,
+} from "./useSpaceMentions";
+
 // Helper hooks
 export { default as useSpacePermissions } from "./useSpacePermissions";
 export type {
