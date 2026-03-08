@@ -19,6 +19,7 @@ export {
   type FetchUserSuggestionsProps,
 } from "./useFetchUserSuggestions";
 export {
-  default as useMentions,
-  type UseMentionsProps,
-} from "./useMentions";
+  default as useUserMentions,
+  type UseUserMentionsProps,
+  type UseUserMentionsValues,
+} from "./useUserMentions";

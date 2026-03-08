@@ -4,15 +4,23 @@ import { Mention } from "../../interfaces/models/Mention";
 import useFetchUserSuggestions from "./useFetchUserSuggestions";
 import { handleError } from "../../utils/handleError";
 
-export interface UseMentionsProps {
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export interface UseUserMentionsProps {
   content: string;
   setContent: (value: string) => void;
   focus: () => void;
   cursorPosition: number;
   isSelectionActive: boolean;
+  trigger?: string;
+  minChars?: number;
+  debounceDelay?: number;
+  validPattern?: string;
 }
 
-export interface UseMentionsValues {
+export interface UseUserMentionsValues {
   isMentionActive: boolean;
   loading: boolean;
   mentionSuggestions: User[];
@@ -22,16 +30,19 @@ export interface UseMentionsValues {
   resetMentions: () => void;
 }
 
-const useMentions = ({
+const useUserMentions = ({
   content,
   setContent,
   focus,
   cursorPosition,
   isSelectionActive,
-}: UseMentionsProps): UseMentionsValues => {
+  trigger = "@",
+  minChars = 3,
+  debounceDelay = 1000,
+  validPattern = "[\\w.]+",
+}: UseUserMentionsProps): UseUserMentionsValues => {
   const fetchMentionSuggestions = useFetchUserSuggestions();
 
-  // const loading = useRef(false);
   const [loadingState, setLoadingState] = useState(false);
 
   const [mentions, setMentions] = useState<Mention[]>([]);
@@ -39,8 +50,6 @@ const useMentions = ({
   const [mentionTrigger, setMentionTrigger] = useState("");
   const [mentionSuggestions, setMentionSuggestions] = useState<User[]>([]);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const debounceDelay = 1000;
 
   const resetMentions = () => {
     setMentions([]);
@@ -65,14 +74,15 @@ const useMentions = ({
           id: user.id,
           foreignId: user.foreignId,
           username: user.username!,
+          type: "user" as const,
         },
       ];
     });
   };
 
   const handleMentionClick = (user: User) => {
-    const mentionRegex = new RegExp(`@${mentionTrigger}(\\s|$)`);
-    setContent(content.replace(mentionRegex, `@${user.username} `));
+    const mentionRegex = new RegExp(`${escapeRegex(trigger)}${escapeRegex(mentionTrigger)}(\\s|$)`);
+    setContent(content.replace(mentionRegex, `${trigger}${user.username} `));
 
     addMention(user);
 
@@ -114,15 +124,14 @@ const useMentions = ({
     // Extract potential trigger word (start + 1 because `start` is on the space)
     const potentialTrigger = content.slice(start + 1, cursorPosition);
 
-    // Regex to check if the trigger starts with "@" and contains only valid characters
-    const validMentionPattern = /^@[\w.]+$/; // \w matches a-z, A-Z, 0-9, and "_"
+    const validMentionPattern = new RegExp("^" + escapeRegex(trigger) + validPattern + "$");
 
     if (
       !isSelectionActive &&
       validMentionPattern.test(potentialTrigger) &&
-      potentialTrigger.length > 3
+      potentialTrigger.length >= trigger.length + minChars
     ) {
-      const triggerText = potentialTrigger.slice(1); // remove "@"
+      const triggerText = potentialTrigger.slice(trigger.length);
       setMentionTrigger(triggerText);
       setIsMentionActive(true);
       setLoadingState(true);
@@ -158,6 +167,10 @@ const useMentions = ({
     isSelectionActive,
     handleFetchMentionSuggestions,
     content,
+    trigger,
+    minChars,
+    debounceDelay,
+    validPattern,
   ]);
 
   return {
@@ -171,4 +184,4 @@ const useMentions = ({
   };
 };
 
-export default useMentions;
+export default useUserMentions;
