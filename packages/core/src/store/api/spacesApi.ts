@@ -144,6 +144,12 @@ interface RemoveMemberParams {
   memberId: string;
 }
 
+interface UnbanMemberParams {
+  projectId: string;
+  spaceId: string;
+  memberId: string;
+}
+
 // ===== API Endpoints =====
 
 export const spacesApi = baseApi.injectEndpoints({
@@ -504,6 +510,18 @@ export const spacesApi = baseApi.injectEndpoints({
         { type: "Space", id: spaceId }, // Update member count
       ],
     }),
+
+    // Unban a banned member (moderator+)
+    unbanMember: builder.mutation<SpaceMember, UnbanMemberParams>({
+      query: ({ projectId, spaceId, memberId }) => ({
+        url: `/${projectId}/spaces/${spaceId}/members/${memberId}/unban`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (result, error, { spaceId, memberId }) => [
+        { type: "SpaceMember", id: spaceId },
+        { type: "SpaceMember", id: memberId },
+      ],
+    }),
   }),
 });
 
@@ -534,6 +552,7 @@ export const {
   useApproveMemberMutation,
   useDeclineMemberMutation,
   useRemoveMemberMutation,
+  useUnbanMemberMutation,
 } = spacesApi;
 
 // Export for manual cache management
@@ -555,4 +574,5 @@ export const {
   approveMember,
   declineMember,
   removeMember,
+  unbanMember,
 } = spacesApi.endpoints;

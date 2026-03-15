@@ -48,6 +48,8 @@ export { default as useDeclineMember } from "./useDeclineMember";
 export type { DeclineMemberProps } from "./useDeclineMember";
 export { default as useRemoveMember } from "./useRemoveMember";
 export type { RemoveMemberProps } from "./useRemoveMember";
+export { default as useUnbanMember } from "./useUnbanMember";
+export type { UnbanMemberProps } from "./useUnbanMember";
 
 // Moderation hooks
 export { default as useModerateSpaceEntity } from "./useModerateSpaceEntity";
