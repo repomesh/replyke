@@ -528,6 +528,51 @@ export type {
 } from "./interfaces/models/Image";
 export type { File } from "./interfaces/models/File";
 
+// -- chat hooks
+export {
+  useConversations,
+  useConversation,
+  useCreateDirectConversation,
+  useSpaceConversation,
+  useConversationMembers,
+  useChatMessages,
+  useSendMessage,
+  useEditMessage,
+  useDeleteMessage,
+  useToggleReaction,
+  useMessageThread,
+  useTotalUnreadCount,
+  useMarkConversationAsRead,
+  useReportMessage,
+  useConversationData,
+} from "./hooks/chat";
+export type {
+  UseConversationsProps,
+  UseConversationsValues,
+  UseConversationProps,
+  UseConversationValues,
+  UpdateConversationParams,
+  CreateDirectConversationProps,
+  UseSpaceConversationProps,
+  UseSpaceConversationValues,
+  UseConversationMembersProps,
+  UseConversationMembersValues,
+  UseChatMessagesProps,
+  UseChatMessagesValues,
+  SendMessageParams,
+  UseSendMessageProps,
+  EditMessageParams,
+  DeleteMessageParams,
+  ToggleReactionParams,
+  ToggleReactionResult,
+  UseMessageThreadProps,
+  UseMessageThreadValues,
+  UseMarkConversationAsReadProps,
+  ReportMessageParams,
+  UseConversationDataProps,
+  UseConversationDataValues,
+} from "./hooks/chat";
+
 // -- chat interfaces
 export type {
   IConversation,
