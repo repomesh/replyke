@@ -29,6 +29,7 @@ export interface File {
   userId: string | null;
   entityId: string | null;
   commentId: string | null;
+  chatMessageId: string | null;
   spaceId: string | null;
 
   type: "image" | "video" | "document" | "other";

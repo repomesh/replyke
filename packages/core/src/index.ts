@@ -527,3 +527,56 @@ export type {
   UploadImageOptions,
 } from "./interfaces/models/Image";
 export type { File } from "./interfaces/models/File";
+
+// -- chat interfaces
+export type {
+  IConversation,
+  IConversationPreview,
+} from "./interfaces/models/IConversation";
+export type {
+  IConversationMember,
+  ConversationMemberRole,
+} from "./interfaces/models/IConversationMember";
+export type { IChatMessage } from "./interfaces/models/IChatMessage";
+
+// -- chat slice
+export {
+  chatSlice,
+  setConversation,
+  setConversationLoading,
+  setConversationList,
+  setConversationListLoading,
+  setConversationListHasMore,
+  setConversationListCursor,
+  upsertConversationPreview,
+  incrementUnread,
+  clearUnread,
+  setMessagesLoading,
+  setMessagesHasMore,
+  upsertMessage,
+  addOptimisticMessage,
+  failOptimisticMessage,
+  removeMessage,
+  updateReactions,
+  setThreadReplies,
+  setThreadLoading,
+  setTypingUsers,
+  setSocketConnected,
+  selectConversation,
+  selectConversationLoading,
+  selectConversationList,
+  selectConversationListLoading,
+  selectConversationListHasMore,
+  selectConversationListCursor,
+  selectMessages,
+  selectMessagesLoading,
+  selectMessagesHasMore,
+  selectOldestMessageId,
+  selectNewestMessageId,
+  selectThreadReplies,
+  selectThreadLoading,
+  selectThreadHasMore,
+  selectTypingUsers,
+  selectSocketConnected,
+  type ChatState,
+} from "./store/slices/chatSlice";

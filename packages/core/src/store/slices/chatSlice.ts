@@ -1,0 +1,555 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type {
+  IConversation,
+  IConversationPreview,
+} from "../../interfaces/models/IConversation";
+import type { IChatMessage } from "../../interfaces/models/IChatMessage";
+import type { ReplykeState } from "../replykeReducers";
+
+// ─── Sub-state shapes ────────────────────────────────────────────────────────
+
+interface ConversationEntry {
+  data: IConversation | null;
+  loading: boolean;
+  error: string | null;
+}
+
+interface MessagesBucket {
+  items: IChatMessage[];
+  loading: boolean;
+  hasMore: boolean;
+  // ID of the oldest message currently loaded — cursor for "load older" requests
+  oldestMessageId: string | null;
+  // ID of the newest message currently loaded — cursor for catch-up on socket reconnect
+  newestMessageId: string | null;
+}
+
+interface ThreadBucket {
+  items: IChatMessage[];
+  loading: boolean;
+  hasMore: boolean;
+}
+
+// ─── State ───────────────────────────────────────────────────────────────────
+
+export interface ChatState {
+  // Individual conversation detail, keyed by conversationId
+  conversations: Record<string, ConversationEntry>;
+  // Flat sorted list used for the inbox / conversation-list view
+  conversationList: {
+    items: IConversationPreview[];
+    loading: boolean;
+    hasMore: boolean;
+    // lastMessageAt ISO string of the oldest loaded preview — next-page cursor
+    cursor: string | null;
+  };
+  // Messages keyed by conversationId; stored ASC (oldest first, newest at end)
+  messages: Record<string, MessagesBucket>;
+  // Thread replies keyed by parentMessageId; stored ASC
+  threads: Record<string, ThreadBucket>;
+  // userIds currently typing, keyed by conversationId
+  typingUsers: Record<string, string[]>;
+  socketConnected: boolean;
+}
+
+const initialState: ChatState = {
+  conversations: {},
+  conversationList: {
+    items: [],
+    loading: false,
+    hasMore: true,
+    cursor: null,
+  },
+  messages: {},
+  threads: {},
+  typingUsers: {},
+  socketConnected: false,
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Sort previews by lastMessageAt DESC, placing null values last. */
+function sortPreviews(items: IConversationPreview[]): void {
+  items.sort((a, b) => {
+    if (!a.lastMessageAt && !b.lastMessageAt) return 0;
+    if (!a.lastMessageAt) return 1;
+    if (!b.lastMessageAt) return -1;
+    return (
+      new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()
+    );
+  });
+}
+
+/** Return a fresh MessagesBucket with safe defaults. */
+function emptyBucket(): MessagesBucket {
+  return {
+    items: [],
+    loading: false,
+    hasMore: true,
+    oldestMessageId: null,
+    newestMessageId: null,
+  };
+}
+
+/**
+ * Recompute oldestMessageId / newestMessageId cursors from the current items.
+ * Temp IDs (prefixed "temp-") are excluded from cursor tracking because they
+ * cannot be used as valid server-side pagination cursors.
+ */
+function refreshCursors(bucket: MessagesBucket): void {
+  const realItems = bucket.items.filter((m) => !m.id.startsWith("temp-"));
+  bucket.oldestMessageId = realItems.length > 0 ? realItems[0].id : null;
+  bucket.newestMessageId =
+    realItems.length > 0 ? realItems[realItems.length - 1].id : null;
+}
+
+// ─── Slice ───────────────────────────────────────────────────────────────────
+
+export const chatSlice = createSlice({
+  name: "chat",
+  initialState,
+  reducers: {
+    // ── Conversation actions ─────────────────────────────────────────────────
+
+    /**
+     * Upsert a single conversation into the conversations map AND patch the
+     * matching preview in conversationList.items so both stores stay in sync.
+     */
+    setConversation(state, action: PayloadAction<IConversation>) {
+      const conversation = action.payload;
+      const { id } = conversation;
+
+      if (!state.conversations[id]) {
+        state.conversations[id] = { data: null, loading: false, error: null };
+      }
+      state.conversations[id].data = conversation;
+      state.conversations[id].loading = false;
+      state.conversations[id].error = null;
+
+      // Patch the matching preview in the list if it exists
+      const previewIndex = state.conversationList.items.findIndex(
+        (c) => c.id === id
+      );
+      if (previewIndex !== -1) {
+        Object.assign(state.conversationList.items[previewIndex], conversation);
+      }
+    },
+
+    setConversationLoading(
+      state,
+      action: PayloadAction<{ conversationId: string; loading: boolean }>
+    ) {
+      const { conversationId, loading } = action.payload;
+      if (!state.conversations[conversationId]) {
+        state.conversations[conversationId] = {
+          data: null,
+          loading,
+          error: null,
+        };
+      } else {
+        state.conversations[conversationId].loading = loading;
+      }
+    },
+
+    /** Replace the entire conversation list (first-page load or refresh). */
+    setConversationList(state, action: PayloadAction<IConversationPreview[]>) {
+      state.conversationList.items = action.payload;
+    },
+
+    setConversationListLoading(state, action: PayloadAction<boolean>) {
+      state.conversationList.loading = action.payload;
+    },
+
+    setConversationListHasMore(state, action: PayloadAction<boolean>) {
+      state.conversationList.hasMore = action.payload;
+    },
+
+    setConversationListCursor(state, action: PayloadAction<string | null>) {
+      state.conversationList.cursor = action.payload;
+    },
+
+    /**
+     * Update lastMessageAt / lastMessage / unreadCount on a preview item, then
+     * re-sort the list by lastMessageAt DESC NULLS LAST. Also patches
+     * conversations[id].data so a split-screen layout (sidebar + chat view)
+     * stays in sync without a separate fetch.
+     */
+    upsertConversationPreview(
+      state,
+      action: PayloadAction<{
+        conversationId: string;
+        patch: Partial<IConversationPreview>;
+      }>
+    ) {
+      const { conversationId, patch } = action.payload;
+
+      const previewIndex = state.conversationList.items.findIndex(
+        (c) => c.id === conversationId
+      );
+      if (previewIndex !== -1) {
+        Object.assign(state.conversationList.items[previewIndex], patch);
+        sortPreviews(state.conversationList.items);
+      }
+
+      // Mirror the patch into the individual conversation entry if loaded
+      if (state.conversations[conversationId]?.data) {
+        Object.assign(state.conversations[conversationId].data!, patch);
+      }
+    },
+
+    incrementUnread(state, action: PayloadAction<string>) {
+      const conversationId = action.payload;
+      const preview = state.conversationList.items.find(
+        (c) => c.id === conversationId
+      );
+      if (preview) {
+        preview.unreadCount = (preview.unreadCount ?? 0) + 1;
+      }
+    },
+
+    clearUnread(state, action: PayloadAction<string>) {
+      const conversationId = action.payload;
+      const preview = state.conversationList.items.find(
+        (c) => c.id === conversationId
+      );
+      if (preview) {
+        preview.unreadCount = 0;
+      }
+    },
+
+    // ── Message actions ──────────────────────────────────────────────────────
+
+    setMessagesLoading(
+      state,
+      action: PayloadAction<{ conversationId: string; loading: boolean }>
+    ) {
+      const { conversationId, loading } = action.payload;
+      if (!state.messages[conversationId]) {
+        state.messages[conversationId] = emptyBucket();
+      }
+      state.messages[conversationId].loading = loading;
+    },
+
+    setMessagesHasMore(
+      state,
+      action: PayloadAction<{ conversationId: string; hasMore: boolean }>
+    ) {
+      const { conversationId, hasMore } = action.payload;
+      if (!state.messages[conversationId]) {
+        state.messages[conversationId] = emptyBucket();
+      }
+      state.messages[conversationId].hasMore = hasMore;
+    },
+
+    /**
+     * Add or update a message in its conversation bucket.
+     *
+     * Deduplication order:
+     *  1. Match by real `id` → update in-place (handles socket events after REST)
+     *  2. Match by `clientId` → replace optimistic placeholder with confirmed message
+     *  3. Otherwise insert, maintaining chronological ASC order
+     */
+    upsertMessage(state, action: PayloadAction<IChatMessage>) {
+      const message = action.payload;
+      const { conversationId } = message;
+
+      if (!state.messages[conversationId]) {
+        state.messages[conversationId] = emptyBucket();
+      }
+      const bucket = state.messages[conversationId];
+      const items = bucket.items;
+
+      // 1. Match by real id
+      const byIdIndex = items.findIndex((m) => m.id === message.id);
+      if (byIdIndex !== -1) {
+        items[byIdIndex] = message;
+        refreshCursors(bucket);
+        return;
+      }
+
+      // 2. Match by clientId (replace optimistic placeholder)
+      if (message.clientId) {
+        const byClientIndex = items.findIndex(
+          (m) => m.clientId === message.clientId
+        );
+        if (byClientIndex !== -1) {
+          items[byClientIndex] = message;
+          refreshCursors(bucket);
+          return;
+        }
+      }
+
+      // 3. New message — insert at the correct chronological position
+      const insertAt = items.findIndex(
+        (m) =>
+          new Date(m.createdAt).getTime() > new Date(message.createdAt).getTime()
+      );
+      if (insertAt === -1) {
+        items.push(message);
+      } else {
+        items.splice(insertAt, 0, message);
+      }
+      refreshCursors(bucket);
+    },
+
+    /**
+     * Insert a pending optimistic message with a `temp-{uuid}` id immediately
+     * before the POST fires. The message is replaced by upsertMessage when the
+     * server response arrives (matched via clientId).
+     */
+    addOptimisticMessage(state, action: PayloadAction<IChatMessage>) {
+      const message = action.payload;
+      const { conversationId } = message;
+
+      if (!state.messages[conversationId]) {
+        state.messages[conversationId] = emptyBucket();
+      }
+      // Optimistic messages are always the newest — append to end
+      state.messages[conversationId].items.push(message);
+      // Do NOT update cursor IDs — temp IDs are not valid pagination cursors
+    },
+
+    /**
+     * Mark a failed optimistic message with sendFailed: true so the UI can
+     * show a retry prompt. The message is NOT removed from the list.
+     */
+    failOptimisticMessage(
+      state,
+      action: PayloadAction<{ conversationId: string; clientId: string }>
+    ) {
+      const { conversationId, clientId } = action.payload;
+      const bucket = state.messages[conversationId];
+      if (!bucket) return;
+
+      const message = bucket.items.find((m) => m.clientId === clientId);
+      if (message) {
+        message.sendFailed = true;
+      }
+    },
+
+    /**
+     * Soft-delete a message by marking it with the current time as userDeletedAt
+     * and clearing its content. Matches server behavior (Reddit-style placeholder).
+     */
+    removeMessage(
+      state,
+      action: PayloadAction<{ conversationId: string; messageId: string }>
+    ) {
+      const { conversationId, messageId } = action.payload;
+      const bucket = state.messages[conversationId];
+      if (!bucket) return;
+
+      const message = bucket.items.find((m) => m.id === messageId);
+      if (message) {
+        message.userDeletedAt = new Date();
+        message.content = null;
+        message.gif = null;
+        message.mentions = [];
+        message.metadata = {};
+        message.files = undefined;
+      }
+    },
+
+    /**
+     * Update the reactionCounts map on a message. If userId matches the current
+     * user, add or remove the emoji from userReactions accordingly.
+     * Dispatched by ChatProvider on `message:reaction` socket events.
+     */
+    updateReactions(
+      state,
+      action: PayloadAction<{
+        conversationId: string;
+        messageId: string;
+        reactionCounts: Record<string, number>;
+        userId: string;
+        emoji: string;
+        delta: 1 | -1;
+        currentUserId: string;
+      }>
+    ) {
+      const {
+        conversationId,
+        messageId,
+        reactionCounts,
+        userId,
+        emoji,
+        delta,
+        currentUserId,
+      } = action.payload;
+
+      const bucket = state.messages[conversationId];
+      if (!bucket) return;
+
+      const message = bucket.items.find((m) => m.id === messageId);
+      if (!message) return;
+
+      message.reactionCounts = reactionCounts;
+
+      // Keep userReactions in sync for the current user only
+      if (userId === currentUserId) {
+        if (delta === 1) {
+          if (!message.userReactions.includes(emoji)) {
+            message.userReactions.push(emoji);
+          }
+        } else {
+          message.userReactions = message.userReactions.filter(
+            (e) => e !== emoji
+          );
+        }
+      }
+    },
+
+    // ── Thread actions ───────────────────────────────────────────────────────
+
+    setThreadReplies(
+      state,
+      action: PayloadAction<{
+        parentMessageId: string;
+        messages: IChatMessage[];
+        hasMore: boolean;
+      }>
+    ) {
+      const { parentMessageId, messages, hasMore } = action.payload;
+      state.threads[parentMessageId] = {
+        items: messages,
+        loading: false,
+        hasMore,
+      };
+    },
+
+    setThreadLoading(
+      state,
+      action: PayloadAction<{ parentMessageId: string; loading: boolean }>
+    ) {
+      const { parentMessageId, loading } = action.payload;
+      if (!state.threads[parentMessageId]) {
+        state.threads[parentMessageId] = {
+          items: [],
+          loading,
+          hasMore: true,
+        };
+      } else {
+        state.threads[parentMessageId].loading = loading;
+      }
+    },
+
+    // ── Typing indicator actions ─────────────────────────────────────────────
+
+    /** Replace the full typing-user list for a conversation. */
+    setTypingUsers(
+      state,
+      action: PayloadAction<{ conversationId: string; userIds: string[] }>
+    ) {
+      const { conversationId, userIds } = action.payload;
+      state.typingUsers[conversationId] = userIds;
+    },
+
+    // ── Socket connection ────────────────────────────────────────────────────
+
+    setSocketConnected(state, action: PayloadAction<boolean>) {
+      state.socketConnected = action.payload;
+    },
+  },
+});
+
+// ─── Action exports ──────────────────────────────────────────────────────────
+
+export const {
+  setConversation,
+  setConversationLoading,
+  setConversationList,
+  setConversationListLoading,
+  setConversationListHasMore,
+  setConversationListCursor,
+  upsertConversationPreview,
+  incrementUnread,
+  clearUnread,
+  setMessagesLoading,
+  setMessagesHasMore,
+  upsertMessage,
+  addOptimisticMessage,
+  failOptimisticMessage,
+  removeMessage,
+  updateReactions,
+  setThreadReplies,
+  setThreadLoading,
+  setTypingUsers,
+  setSocketConnected,
+} = chatSlice.actions;
+
+export default chatSlice.reducer;
+
+// ─── Selectors ───────────────────────────────────────────────────────────────
+
+export const selectConversation =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.conversations[conversationId]?.data ?? null;
+
+export const selectConversationLoading =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.conversations[conversationId]?.loading ?? false;
+
+export const selectConversationList = (state: { replyke: ReplykeState }) =>
+  state.replyke.chat.conversationList.items;
+
+export const selectConversationListLoading = (state: {
+  replyke: ReplykeState;
+}) => state.replyke.chat.conversationList.loading;
+
+export const selectConversationListHasMore = (state: {
+  replyke: ReplykeState;
+}) => state.replyke.chat.conversationList.hasMore;
+
+export const selectConversationListCursor = (state: {
+  replyke: ReplykeState;
+}) => state.replyke.chat.conversationList.cursor;
+
+export const selectMessages =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.messages[conversationId]?.items ?? [];
+
+export const selectMessagesLoading =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.messages[conversationId]?.loading ?? false;
+
+export const selectMessagesHasMore =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.messages[conversationId]?.hasMore ?? true;
+
+export const selectOldestMessageId =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.messages[conversationId]?.oldestMessageId ?? null;
+
+export const selectNewestMessageId =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.messages[conversationId]?.newestMessageId ?? null;
+
+export const selectThreadReplies =
+  (parentMessageId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.threads[parentMessageId]?.items ?? [];
+
+export const selectThreadLoading =
+  (parentMessageId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.threads[parentMessageId]?.loading ?? false;
+
+export const selectThreadHasMore =
+  (parentMessageId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.threads[parentMessageId]?.hasMore ?? true;
+
+export const selectTypingUsers =
+  (conversationId: string) =>
+  (state: { replyke: ReplykeState }) =>
+    state.replyke.chat.typingUsers[conversationId] ?? [];
+
+export const selectSocketConnected = (state: { replyke: ReplykeState }) =>
+  state.replyke.chat.socketConnected;
