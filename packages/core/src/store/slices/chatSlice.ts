@@ -105,7 +105,9 @@ function refreshCursors(bucket: MessagesBucket): void {
 
 // ─── Slice ───────────────────────────────────────────────────────────────────
 
-export const chatSlice = createSlice({
+// Not exported directly — use the actions below and the default reducer export.
+// Exporting the slice itself causes TS4023 due to immer's internal WritableNonArrayDraft type.
+const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {

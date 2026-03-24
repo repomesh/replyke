@@ -22,6 +22,18 @@ export {
   EntityProvider,
   CommentSectionProvider,
   SpaceProvider,
+  ChatProvider,
+  ConversationProvider,
+  MessageThreadProvider,
+  useChatContext,
+  useConversationContext,
+  useMessageThreadContext,
+  type ChatContextValue,
+  type ChatProviderProps,
+  type ConversationContextValue,
+  type ConversationProviderProps,
+  type MessageThreadContextValue,
+  type MessageThreadProviderProps,
 } from "./context";
 
 // Integration mode exports (for users with their own Redux store)
@@ -545,6 +557,8 @@ export {
   useMarkConversationAsRead,
   useReportMessage,
   useConversationData,
+  useTypingIndicator,
+  useChatSocket,
 } from "./hooks/chat";
 export type {
   UseConversationsProps,
@@ -571,6 +585,9 @@ export type {
   ReportMessageParams,
   UseConversationDataProps,
   UseConversationDataValues,
+  UseTypingIndicatorProps,
+  UseTypingIndicatorValues,
+  UseChatSocketValues,
 } from "./hooks/chat";
 
 // -- chat interfaces
@@ -586,7 +603,6 @@ export type { IChatMessage } from "./interfaces/models/IChatMessage";
 
 // -- chat slice
 export {
-  chatSlice,
   setConversation,
   setConversationLoading,
   setConversationList,

@@ -15,6 +15,10 @@ export interface UseConversationMembersValues {
   removeMember: (userId: string) => Promise<void>;
   leave: () => Promise<void>;
   changeRole: (userId: string, role: "admin" | "member") => Promise<void>;
+  /** Upsert a member into the local list (for real-time socket updates). */
+  upsertMember: (member: IConversationMember) => void;
+  /** Remove a member from the local list by userId (for real-time socket updates). */
+  removeMemberLocally: (userId: string) => void;
 }
 
 function useConversationMembers({
@@ -102,6 +106,22 @@ function useConversationMembers({
     }
   }, [projectId, conversationId, axios]);
 
+  const upsertMember = useCallback((member: IConversationMember) => {
+    setMembers((prev) => {
+      const idx = prev.findIndex((m) => m.userId === member.userId);
+      if (idx !== -1) {
+        const next = [...prev];
+        next[idx] = member;
+        return next;
+      }
+      return [...prev, member];
+    });
+  }, []);
+
+  const removeMemberLocally = useCallback((userId: string) => {
+    setMembers((prev) => prev.filter((m) => m.userId !== userId));
+  }, []);
+
   const changeRole = useCallback(
     async (userId: string, role: "admin" | "member") => {
       if (!projectId || !conversationId) return;
@@ -128,7 +148,7 @@ function useConversationMembers({
     [projectId, conversationId, axios]
   );
 
-  return { members, loading, addMember, removeMember, leave, changeRole };
+  return { members, loading, addMember, removeMember, leave, changeRole, upsertMember, removeMemberLocally };
 }
 
 export default useConversationMembers;

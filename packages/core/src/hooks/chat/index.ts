@@ -47,6 +47,13 @@ export { default as useMarkConversationAsRead } from "./useMarkConversationAsRea
 export type { UseMarkConversationAsReadProps } from "./useMarkConversationAsRead";
 export { default as useReportMessage } from "./useReportMessage";
 export type { ReportMessageParams } from "./useReportMessage";
+export { default as useTypingIndicator } from "./useTypingIndicator";
+export type {
+  UseTypingIndicatorProps,
+  UseTypingIndicatorValues,
+} from "./useTypingIndicator";
+export { default as useChatSocket } from "./useChatSocket";
+export type { UseChatSocketValues } from "./useChatSocket";
 
 // Composition hook
 export { default as useConversationData } from "./useConversationData";

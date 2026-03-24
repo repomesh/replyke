@@ -24,7 +24,7 @@ function useMessageThread({
     parentId: messageId,
   });
 
-  const { send } = useSendMessage({ conversationId });
+  const send = useSendMessage({ conversationId });
 
   const sendReply = (params: Omit<SendMessageParams, "parentMessageId">) =>
     send({ ...params, parentMessageId: messageId });

@@ -61,10 +61,12 @@ function useChatMessages({
   const loading = isThread ? threadLoading : mainLoading;
   const hasMore = isThread ? threadHasMore : mainHasMore;
 
-  // Keep a fresh ref to the main messages array so loadOlder can read the
-  // oldest message's createdAt timestamp without closing over stale state
+  // Keep fresh refs to message arrays so loadOlder can read cursors without
+  // closing over stale state
   const mainMessagesRef = useRef(mainMessages);
   mainMessagesRef.current = mainMessages;
+  const threadMessagesRef = useRef(threadMessages);
+  threadMessagesRef.current = threadMessages;
 
   // Fetch a page of messages.
   // `before` is an ISO 8601 timestamp — the server queries messages created
@@ -139,13 +141,48 @@ function useChatMessages({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, conversationId, parentId]);
 
-  // Load older messages using the oldest known message's createdAt as the
-  // timestamp cursor. The server `before` param is an ISO 8601 timestamp.
+  // Load more messages:
+  // - Main stream: fetch older messages using `before` cursor (oldest loaded createdAt)
+  // - Thread: fetch newer replies using `after` cursor (newest loaded createdAt), append
   const loadOlder = useCallback(async () => {
     if (loading || !hasMore) return;
 
     if (isThread) {
-      // Thread replies are fully loaded in one shot; pagination not supported yet
+      const currentItems = threadMessagesRef.current;
+      const newest = currentItems[currentItems.length - 1];
+      if (!newest || !parentId || !projectId || !conversationId) return;
+
+      const after = new Date(newest.createdAt).toISOString();
+      dispatch(setThreadLoading({ parentMessageId: parentId, loading: true }));
+      try {
+        const response = await axios.get(
+          `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
+          {
+            params: {
+              parentId,
+              after,
+              limit,
+              sort: "asc",
+              ...(includeFiles ? { include: "files" } : {}),
+            },
+          }
+        );
+        const { messages: newItems, hasMore: more } = response.data as {
+          messages: IChatMessage[];
+          hasMore: boolean;
+        };
+        dispatch(
+          setThreadReplies({
+            parentMessageId: parentId,
+            messages: [...currentItems, ...newItems],
+            hasMore: more,
+          })
+        );
+      } catch (err) {
+        handleError(err, "Failed to load more thread replies");
+      } finally {
+        dispatch(setThreadLoading({ parentMessageId: parentId, loading: false }));
+      }
       return;
     }
 
@@ -153,11 +190,10 @@ function useChatMessages({
     if (!oldest) return;
 
     const before = new Date(oldest.createdAt).toISOString();
-
     dispatch(setMessagesLoading({ conversationId, loading: true }));
     await fetchPage(before);
     dispatch(setMessagesLoading({ conversationId, loading: false }));
-  }, [loading, hasMore, isThread, conversationId, dispatch, fetchPage]);
+  }, [loading, hasMore, isThread, parentId, projectId, conversationId, limit, includeFiles, axios, dispatch, fetchPage]);
 
   return { messages, loading, hasMore, loadOlder };
 }

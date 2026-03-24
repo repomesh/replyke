@@ -5,6 +5,7 @@ import useConversationMembers, {
   UseConversationMembersValues,
 } from "./conversations/useConversationMembers";
 import useMarkConversationAsRead from "./useMarkConversationAsRead";
+import useTypingIndicator from "./useTypingIndicator";
 import { IChatMessage } from "../../interfaces/models/IChatMessage";
 
 export interface UseConversationDataProps {
@@ -28,15 +29,21 @@ export interface UseConversationDataValues {
   removeMember: UseConversationMembersValues["removeMember"];
   leave: UseConversationMembersValues["leave"];
   changeRole: UseConversationMembersValues["changeRole"];
+  upsertMember: UseConversationMembersValues["upsertMember"];
+  removeMemberLocally: UseConversationMembersValues["removeMemberLocally"];
 
   // Read state
   mark: (messageId: string) => Promise<void>;
+
+  // Typing
+  typingUsers: string[];
+  startTyping: () => void;
+  stopTyping: () => void;
 }
 
 /**
  * High-level composition hook that powers ConversationProvider.
- * Combines messages, send, members, and read-state into a single object.
- * Typing indicator is a stub here — real-time wiring is added in Phase 6.
+ * Combines messages, send, members, read-state, and typing indicators into one object.
  */
 function useConversationData({
   conversationId,
@@ -54,9 +61,15 @@ function useConversationData({
     removeMember,
     leave,
     changeRole,
+    upsertMember,
+    removeMemberLocally,
   } = useConversationMembers({ conversationId });
 
   const mark = useMarkConversationAsRead({ conversationId });
+
+  const { typingUsers, startTyping, stopTyping } = useTypingIndicator({
+    conversationId,
+  });
 
   return {
     messages,
@@ -70,7 +83,12 @@ function useConversationData({
     removeMember,
     leave,
     changeRole,
+    upsertMember,
+    removeMemberLocally,
     mark,
+    typingUsers,
+    startTyping,
+    stopTyping,
   };
 }
 

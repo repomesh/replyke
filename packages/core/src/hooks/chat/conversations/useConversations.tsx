@@ -80,8 +80,8 @@ function useConversations({
         if (items.length > 0) {
           const last = items[items.length - 1];
           cursorRef.current = {
-            cursor: last.lastMessageAt ?? null,
-            cursorCreatedAt: last.createdAt ?? null,
+            cursor: last.lastMessageAt ? new Date(last.lastMessageAt).toISOString() : null,
+            cursorCreatedAt: new Date(last.createdAt).toISOString(),
           };
         } else if (isRefresh) {
           cursorRef.current = { cursor: null, cursorCreatedAt: null };
