@@ -39,7 +39,7 @@ function useToggleReaction(): (
 
       try {
         const response = await axios.post(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages/${messageId}/reactions`,
+          `/${projectId}/chat/conversations/${conversationId}/messages/${messageId}/reactions`,
           { emoji }
         );
         const { reactionCounts, userReactions, delta } = response.data as {

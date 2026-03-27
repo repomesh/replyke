@@ -37,7 +37,7 @@ function useConversationMembers({
       setLoading(true);
       try {
         const response = await axios.get(
-          `/${projectId}/v7/chat/conversations/${conversationId}/members`,
+          `/${projectId}/chat/conversations/${conversationId}/members`,
           { params: { limit: 100 } }
         );
         setMembers(response.data.data as IConversationMember[]);
@@ -56,7 +56,7 @@ function useConversationMembers({
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.post(
-          `/${projectId}/v7/chat/conversations/${conversationId}/members`,
+          `/${projectId}/chat/conversations/${conversationId}/members`,
           { userId }
         );
         const newMember = response.data as IConversationMember;
@@ -83,7 +83,7 @@ function useConversationMembers({
       if (!projectId || !conversationId) return;
       try {
         await axios.delete(
-          `/${projectId}/v7/chat/conversations/${conversationId}/members/${userId}`
+          `/${projectId}/chat/conversations/${conversationId}/members/${userId}`
         );
         setMembers((prev) => prev.filter((m) => m.userId !== userId));
       } catch (err) {
@@ -98,7 +98,7 @@ function useConversationMembers({
     if (!projectId || !conversationId) return;
     try {
       await axios.delete(
-        `/${projectId}/v7/chat/conversations/${conversationId}/leave`
+        `/${projectId}/chat/conversations/${conversationId}/leave`
       );
     } catch (err) {
       handleError(err, "Failed to leave conversation");
@@ -127,7 +127,7 @@ function useConversationMembers({
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.patch(
-          `/${projectId}/v7/chat/conversations/${conversationId}/members/${userId}/role`,
+          `/${projectId}/chat/conversations/${conversationId}/members/${userId}/role`,
           { role }
         );
         const updated = response.data as IConversationMember;

@@ -21,7 +21,7 @@ function useDeleteMessage(): (params: DeleteMessageParams) => Promise<void> {
 
       try {
         await axios.delete(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages/${messageId}`
+          `/${projectId}/chat/conversations/${conversationId}/messages/${messageId}`
         );
         // Soft-remove locally — mirrors the server-side soft-delete behavior
         dispatch(removeMessage({ conversationId, messageId }));

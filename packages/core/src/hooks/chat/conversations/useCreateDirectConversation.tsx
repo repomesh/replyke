@@ -24,7 +24,7 @@ function useCreateDirectConversation(): (
 
       try {
         const response = await axios.post(
-          `/${projectId}/v7/chat/conversations/direct`,
+          `/${projectId}/chat/conversations/direct`,
           { userId }
         );
         const conversation = response.data as IConversation;

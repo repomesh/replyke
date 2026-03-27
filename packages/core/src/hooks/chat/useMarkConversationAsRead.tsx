@@ -30,7 +30,7 @@ function useMarkConversationAsRead({
 
       try {
         await axios.post(
-          `/${projectId}/v7/chat/conversations/${conversationId}/read`,
+          `/${projectId}/chat/conversations/${conversationId}/read`,
           { messageId }
         );
       } catch (err) {

@@ -32,7 +32,7 @@ function useSpaceConversation({
       setLoading(true);
       try {
         const response = await axios.get(
-          `/${projectId}/v7/chat/spaces/${spaceId}/conversation`
+          `/${projectId}/chat/spaces/${spaceId}/conversation`
         );
         const data = response.data as IConversation;
         dispatch(setConversation(data));

@@ -102,14 +102,14 @@ function useSendMessage({
           if (parentMessageId) formData.append("parentMessageId", parentMessageId);
           files.forEach((file) => formData.append("files", file));
           response = await axios.post(
-            `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
+            `/${projectId}/chat/conversations/${conversationId}/messages`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
         } else {
           // JSON body for text/gif-only messages
           response = await axios.post(
-            `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
+            `/${projectId}/chat/conversations/${conversationId}/messages`,
             {
               clientId,
               ...(content !== undefined && { content }),

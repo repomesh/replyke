@@ -67,7 +67,7 @@ function useConversations({
         if (cursors?.cursor) params.cursor = cursors.cursor;
         if (cursors?.cursorCreatedAt) params.cursorCreatedAt = cursors.cursorCreatedAt;
 
-        const response = await axios.get(`/${projectId}/v7/chat/conversations`, {
+        const response = await axios.get(`/${projectId}/chat/conversations`, {
           params,
         });
 
@@ -137,7 +137,7 @@ function useConversations({
       if (!projectId) throw new Error("No project ID");
 
       const response = await axios.post(
-        `/${projectId}/v7/chat/conversations`,
+        `/${projectId}/chat/conversations`,
         { type: "group", ...params }
       );
 

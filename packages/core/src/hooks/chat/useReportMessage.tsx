@@ -25,7 +25,7 @@ function useReportMessage(): (params: ReportMessageParams) => Promise<void> {
 
       try {
         await axios.post(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages/${messageId}/report`,
+          `/${projectId}/chat/conversations/${conversationId}/messages/${messageId}/report`,
           { reason, details }
         );
       } catch (err) {

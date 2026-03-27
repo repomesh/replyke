@@ -47,7 +47,7 @@ function useConversation({
       dispatch(setConversationLoading({ conversationId, loading: true }));
       try {
         const response = await axios.get(
-          `/${projectId}/v7/chat/conversations/${conversationId}`
+          `/${projectId}/chat/conversations/${conversationId}`
         );
         dispatch(setConversation(response.data as IConversation));
       } catch (err) {
@@ -64,7 +64,7 @@ function useConversation({
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.patch(
-          `/${projectId}/v7/chat/conversations/${conversationId}`,
+          `/${projectId}/chat/conversations/${conversationId}`,
           params
         );
         const updated = response.data as IConversation;
@@ -81,7 +81,7 @@ function useConversation({
   const deleteConversation = useCallback(async () => {
     if (!projectId || !conversationId) return;
     try {
-      await axios.delete(`/${projectId}/v7/chat/conversations/${conversationId}`);
+      await axios.delete(`/${projectId}/chat/conversations/${conversationId}`);
     } catch (err) {
       handleError(err, "Failed to delete conversation");
       throw err;

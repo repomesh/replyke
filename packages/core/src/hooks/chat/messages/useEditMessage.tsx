@@ -35,7 +35,7 @@ function useEditMessage(): (params: EditMessageParams) => Promise<IChatMessage> 
 
       try {
         const response = await axios.patch(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages/${messageId}`,
+          `/${projectId}/chat/conversations/${conversationId}/messages/${messageId}`,
           { content, gif, mentions, metadata }
         );
         const updated = response.data as IChatMessage;

@@ -85,7 +85,7 @@ function useChatMessages({
 
       try {
         const response = await axios.get(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
+          `/${projectId}/chat/conversations/${conversationId}/messages`,
           { params }
         );
         const { messages: items, hasMore: more } = response.data as {
@@ -156,7 +156,7 @@ function useChatMessages({
       dispatch(setThreadLoading({ parentMessageId: parentId, loading: true }));
       try {
         const response = await axios.get(
-          `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
+          `/${projectId}/chat/conversations/${conversationId}/messages`,
           {
             params: {
               parentId,
