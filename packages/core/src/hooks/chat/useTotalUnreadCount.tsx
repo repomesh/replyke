@@ -1,13 +1,13 @@
 import { useReplykeSelector } from "../../store/hooks";
-import { selectConversationList } from "../../store/slices/chatSlice";
+import { selectTotalUnreadCount } from "../../store/slices/chatSlice";
 
 /**
- * Returns the sum of unread message counts across all loaded conversation
- * previews. Reads directly from Redux — no network call.
+ * Returns the total number of unread messages across all conversations.
+ * Initialized from the server on ChatProvider mount — accurate before the
+ * conversation list is ever loaded. Kept in sync via socket events.
  */
 function useTotalUnreadCount(): number {
-  const conversations = useReplykeSelector(selectConversationList);
-  return conversations.reduce((sum, c) => sum + (c.unreadCount ?? 0), 0);
+  return useReplykeSelector(selectTotalUnreadCount) ?? 0;
 }
 
 export default useTotalUnreadCount;

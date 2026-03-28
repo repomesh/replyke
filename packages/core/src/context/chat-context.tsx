@@ -23,7 +23,9 @@ import {
   setTypingUsers,
   updateReactions,
   setConversation,
+  setUnreadSummary,
 } from "../store/slices/chatSlice";
+import useAxiosPrivate from "../config/useAxiosPrivate";
 import type { IChatMessage } from "../interfaces/models/IChatMessage";
 import type { IConversation } from "../interfaces/models/IConversation";
 
@@ -70,6 +72,7 @@ function getSocketUrl(): string {
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
+  const axiosPrivate = useAxiosPrivate();
 
   const accessToken = useReplykeSelector(selectAccessToken);
   const user = useReplykeSelector(selectUser);
@@ -157,6 +160,31 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     },
     [dispatch]
   );
+
+  // ── Unread summary fetch ─────────────────────────────────────────────────────
+  // Fetch total unread counts once auth is ready so global badges (e.g. sidebar)
+  // are accurate before the user ever loads the conversation list.
+  useEffect(() => {
+    if (!projectId || !accessToken) return;
+
+    axiosPrivate
+      .get<{ totalUnread: number; unreadConversationCount: number }>(
+        `/${projectId}/chat/conversations/unread-count`
+      )
+      .then(({ data }) => {
+        dispatch(
+          setUnreadSummary({
+            totalUnread: data.totalUnread,
+            unreadConversationCount: data.unreadConversationCount,
+          })
+        );
+      })
+      .catch(() => {
+        // Non-critical — badge will update via socket events as messages arrive
+      });
+    // Re-fetch when auth changes (e.g. user switches accounts)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, accessToken]);
 
   // ── Main socket creation effect ─────────────────────────────────────────────
   const hasToken = Boolean(accessToken);

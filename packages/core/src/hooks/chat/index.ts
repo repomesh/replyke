@@ -43,6 +43,7 @@ export type {
 
 // Utility hooks
 export { default as useTotalUnreadCount } from "./useTotalUnreadCount";
+export { default as useUnreadConversationCount } from "./useUnreadConversationCount";
 export { default as useMarkConversationAsRead } from "./useMarkConversationAsRead";
 export type { UseMarkConversationAsReadProps } from "./useMarkConversationAsRead";
 export { default as useReportMessage } from "./useReportMessage";

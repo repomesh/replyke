@@ -50,6 +50,10 @@ export interface ChatState {
   // userIds currently typing, keyed by conversationId
   typingUsers: Record<string, string[]>;
   socketConnected: boolean;
+  // Global unread totals — fetched on ChatProvider mount, kept in sync via socket events.
+  // null means not yet fetched (use 0 as display fallback).
+  totalUnreadCount: number | null;
+  unreadConversationCount: number | null;
 }
 
 const initialState: ChatState = {
@@ -64,6 +68,8 @@ const initialState: ChatState = {
   threads: {},
   typingUsers: {},
   socketConnected: false,
+  totalUnreadCount: null,
+  unreadConversationCount: null,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -205,7 +211,16 @@ const chatSlice = createSlice({
         (c) => c.id === conversationId
       );
       if (preview) {
+        const wasZero = (preview.unreadCount ?? 0) === 0;
         preview.unreadCount = (preview.unreadCount ?? 0) + 1;
+        // Only bump conversation count if this conversation just became unread
+        if (wasZero && state.unreadConversationCount !== null) {
+          state.unreadConversationCount += 1;
+        }
+      }
+      // Always bump total — even if conversation not in the loaded list
+      if (state.totalUnreadCount !== null) {
+        state.totalUnreadCount += 1;
       }
     },
 
@@ -215,8 +230,26 @@ const chatSlice = createSlice({
         (c) => c.id === conversationId
       );
       if (preview) {
+        const prevCount = preview.unreadCount ?? 0;
         preview.unreadCount = 0;
+        if (prevCount > 0) {
+          if (state.totalUnreadCount !== null) {
+            state.totalUnreadCount = Math.max(0, state.totalUnreadCount - prevCount);
+          }
+          if (state.unreadConversationCount !== null) {
+            state.unreadConversationCount = Math.max(0, state.unreadConversationCount - 1);
+          }
+        }
       }
+    },
+
+    /** Initialize global unread totals from the server on ChatProvider mount. */
+    setUnreadSummary(
+      state,
+      action: PayloadAction<{ totalUnread: number; unreadConversationCount: number }>
+    ) {
+      state.totalUnreadCount = action.payload.totalUnread;
+      state.unreadConversationCount = action.payload.unreadConversationCount;
     },
 
     // ── Message actions ──────────────────────────────────────────────────────
@@ -466,6 +499,7 @@ export const {
   upsertConversationPreview,
   incrementUnread,
   clearUnread,
+  setUnreadSummary,
   setMessagesLoading,
   setMessagesHasMore,
   upsertMessage,
@@ -555,3 +589,10 @@ export const selectTypingUsers =
 
 export const selectSocketConnected = (state: { replyke: ReplykeState }) =>
   state.replyke.chat.socketConnected;
+
+export const selectTotalUnreadCount = (state: { replyke: ReplykeState }) =>
+  state.replyke.chat.totalUnreadCount;
+
+export const selectUnreadConversationCount = (state: {
+  replyke: ReplykeState;
+}) => state.replyke.chat.unreadConversationCount;

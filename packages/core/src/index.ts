@@ -554,6 +554,7 @@ export {
   useToggleReaction,
   useMessageThread,
   useTotalUnreadCount,
+  useUnreadConversationCount,
   useMarkConversationAsRead,
   useReportMessage,
   useConversationData,
