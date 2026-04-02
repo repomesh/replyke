@@ -416,6 +416,25 @@ export type {
   UrlMetadataAppLinks,
 } from "./interfaces/UrlMetadata";
 
+// -- search
+export {
+  useSearchContent,
+  useSearchUsers,
+  useSearchSpaces,
+  useAskContent,
+  type UseSearchContentProps,
+  type UseSearchContentReturn,
+  type ContentSearchResult,
+  type UseSearchUsersProps,
+  type UseSearchUsersReturn,
+  type UserSearchResult,
+  type UseSearchSpacesProps,
+  type UseSearchSpacesReturn,
+  type SpaceSearchResult,
+  type UseAskContentProps,
+  type UseAskContentReturn,
+} from "./hooks/search";
+
 // -- storage
 export {
   useUploadFile,
