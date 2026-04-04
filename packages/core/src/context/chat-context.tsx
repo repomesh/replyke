@@ -26,8 +26,8 @@ import {
   setUnreadSummary,
 } from "../store/slices/chatSlice";
 import useAxiosPrivate from "../config/useAxiosPrivate";
-import type { IChatMessage } from "../interfaces/models/IChatMessage";
-import type { IConversation } from "../interfaces/models/IConversation";
+import type { ChatMessage } from "../interfaces/models/ChatMessage";
+import type { Conversation } from "../interfaces/models/Conversation";
 
 // ─── Context shape ────────────────────────────────────────────────────────────
 
@@ -86,15 +86,15 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   }, [currentUser]);
 
   // Fresh snapshot of messages for socket handlers that need to find a message by id
-  const messagesRef = useRef<Record<string, { items: IChatMessage[] }>>({});
-  const allMessages = useReplykeSelector((state: any) => state.replyke.chat.messages as Record<string, { items: IChatMessage[] }>);
+  const messagesRef = useRef<Record<string, { items: ChatMessage[] }>>({});
+  const allMessages = useReplykeSelector((state: any) => state.replyke.chat.messages as Record<string, { items: ChatMessage[] }>);
   useEffect(() => {
     messagesRef.current = allMessages;
   }, [allMessages]);
 
   // Fresh snapshot of conversations for conversation:updated merging
-  const conversationsRef = useRef<Record<string, { data: IConversation | null }>>({});
-  const allConversations = useReplykeSelector((state: any) => state.replyke.chat.conversations as Record<string, { data: IConversation | null }>);
+  const conversationsRef = useRef<Record<string, { data: Conversation | null }>>({});
+  const allConversations = useReplykeSelector((state: any) => state.replyke.chat.conversations as Record<string, { data: Conversation | null }>);
   useEffect(() => {
     conversationsRef.current = allConversations;
   }, [allConversations]);
@@ -133,7 +133,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   }, []);
 
   // Helper: find a message by id across all loaded conversation buckets
-  const findMessage = useCallback((messageId: string): IChatMessage | null => {
+  const findMessage = useCallback((messageId: string): ChatMessage | null => {
     for (const bucket of Object.values(messagesRef.current)) {
       const found = bucket.items?.find((m) => m.id === messageId);
       if (found) return found;

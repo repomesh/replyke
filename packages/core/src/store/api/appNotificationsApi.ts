@@ -1,6 +1,6 @@
 import { baseApi } from "./baseApi";
 import type { UnifiedAppNotification } from "../../interfaces/models/AppNotification";
-import type { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import type { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 
 // API parameters types
 interface FetchAppNotificationsParams {

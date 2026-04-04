@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import type { User } from "../../../interfaces/models/User";
-import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../../interfaces/PaginatedResponse";
 
 export interface FollowerWithFollowInfo {
   followId: string;

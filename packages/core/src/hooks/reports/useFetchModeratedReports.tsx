@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
 import { Space } from "../../interfaces/models/Space";

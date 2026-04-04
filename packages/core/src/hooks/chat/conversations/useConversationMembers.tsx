@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { IConversationMember } from "../../../interfaces/models/IConversationMember";
+import { ConversationMember } from "../../../interfaces/models/ConversationMember";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
@@ -9,14 +9,14 @@ export interface UseConversationMembersProps {
 }
 
 export interface UseConversationMembersValues {
-  members: IConversationMember[];
+  members: ConversationMember[];
   loading: boolean;
   addMember: (userId: string) => Promise<void>;
   removeMember: (userId: string) => Promise<void>;
   leave: () => Promise<void>;
   changeRole: (userId: string, role: "admin" | "member") => Promise<void>;
   /** Upsert a member into the local list (for real-time socket updates). */
-  upsertMember: (member: IConversationMember) => void;
+  upsertMember: (member: ConversationMember) => void;
   /** Remove a member from the local list by userId (for real-time socket updates). */
   removeMemberLocally: (userId: string) => void;
 }
@@ -27,7 +27,7 @@ function useConversationMembers({
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
-  const [members, setMembers] = useState<IConversationMember[]>([]);
+  const [members, setMembers] = useState<ConversationMember[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ function useConversationMembers({
           `/${projectId}/chat/conversations/${conversationId}/members`,
           { params: { limit: 100 } }
         );
-        setMembers(response.data.data as IConversationMember[]);
+        setMembers(response.data.data as ConversationMember[]);
       } catch (err) {
         handleError(err, "Failed to load conversation members");
       } finally {
@@ -59,7 +59,7 @@ function useConversationMembers({
           `/${projectId}/chat/conversations/${conversationId}/members`,
           { userId }
         );
-        const newMember = response.data as IConversationMember;
+        const newMember = response.data as ConversationMember;
         setMembers((prev) => {
           // Replace existing entry or append
           const idx = prev.findIndex((m) => m.userId === newMember.userId);
@@ -106,7 +106,7 @@ function useConversationMembers({
     }
   }, [projectId, conversationId, axios]);
 
-  const upsertMember = useCallback((member: IConversationMember) => {
+  const upsertMember = useCallback((member: ConversationMember) => {
     setMembers((prev) => {
       const idx = prev.findIndex((m) => m.userId === member.userId);
       if (idx !== -1) {
@@ -130,7 +130,7 @@ function useConversationMembers({
           `/${projectId}/chat/conversations/${conversationId}/members/${userId}/role`,
           { role }
         );
-        const updated = response.data as IConversationMember;
+        const updated = response.data as ConversationMember;
         setMembers((prev) => {
           const idx = prev.findIndex((m) => m.userId === userId);
           if (idx !== -1) {

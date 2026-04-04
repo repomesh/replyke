@@ -16,8 +16,8 @@ import useMarkConversationAsRead from "../hooks/chat/useMarkConversationAsRead";
 import useAxiosPrivate from "../config/useAxiosPrivate";
 import useProject from "../hooks/projects/useProject";
 import { upsertMessage } from "../store/slices/chatSlice";
-import type { IChatMessage } from "../interfaces/models/IChatMessage";
-import type { IConversationMember } from "../interfaces/models/IConversationMember";
+import type { ChatMessage } from "../interfaces/models/ChatMessage";
+import type { ConversationMember } from "../interfaces/models/ConversationMember";
 import { handleError } from "../utils/handleError";
 
 // ─── Context shape ────────────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
           `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
           { params: { after: afterTimestamp, limit: 100, sort: "asc" } }
         );
-        const { messages } = response.data as { messages: IChatMessage[] };
+        const { messages } = response.data as { messages: ChatMessage[] };
         messages.forEach((msg) => dispatch(upsertMessage(msg)));
       } catch (err) {
         handleError(err, "Failed to fetch missed messages");
@@ -84,7 +84,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   );
 
   // Keep a ref to the messages state so socket handlers can find latest messages
-  const messagesRef = useRef<IChatMessage[]>([]);
+  const messagesRef = useRef<ChatMessage[]>([]);
   const reduxMessages = useReplykeSelector((state: any) =>
     state.replyke.chat.messages[conversationId]?.items ?? []
   );
@@ -177,7 +177,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   useEffect(() => {
     if (!socket || !conversationId) return;
 
-    const handleMemberJoined = (payload: { conversationId: string; member: IConversationMember }) => {
+    const handleMemberJoined = (payload: { conversationId: string; member: ConversationMember }) => {
       if (payload.conversationId !== conversationId) return;
       data.upsertMember(payload.member);
     };
@@ -200,7 +200,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   useEffect(() => {
     if (!socket || !conversationId) return;
 
-    const handleMessage = (message: IChatMessage) => {
+    const handleMessage = (message: ChatMessage) => {
       if (message.conversationId !== conversationId) return;
       mark(message.id);
     };

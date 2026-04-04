@@ -6,7 +6,7 @@ import useConversationMembers, {
 } from "./conversations/useConversationMembers";
 import useMarkConversationAsRead from "./useMarkConversationAsRead";
 import useTypingIndicator from "./useTypingIndicator";
-import { IChatMessage } from "../../interfaces/models/IChatMessage";
+import { ChatMessage } from "../../interfaces/models/ChatMessage";
 
 export interface UseConversationDataProps {
   conversationId: string;
@@ -14,13 +14,13 @@ export interface UseConversationDataProps {
 
 export interface UseConversationDataValues {
   // Messages
-  messages: IChatMessage[];
+  messages: ChatMessage[];
   messagesLoading: boolean;
   hasMore: boolean;
   loadOlder: () => Promise<void>;
 
   // Send
-  send: (params: SendMessageParams) => Promise<IChatMessage>;
+  send: (params: SendMessageParams) => Promise<ChatMessage>;
 
   // Members
   members: UseConversationMembersValues["members"];

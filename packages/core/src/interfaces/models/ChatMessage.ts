@@ -3,7 +3,7 @@ import { File } from "./File";
 import { Mention } from "./Mention";
 import { User } from "./User";
 
-export interface IChatMessage {
+export interface ChatMessage {
   id: string;
   // Client-generated UUID echoed by the server in the REST response and socket payload.
   // Never stored in the DB. Used for optimistic deduplication (matching temp entries to confirmed ones).
@@ -41,8 +41,8 @@ export interface IChatMessage {
   user: User | null;
   // Populated one level deep only. Chains are resolved from the Redux store at render time
   // (via quotedMessageId) so that edits to quoted messages propagate automatically.
-  quotedMessage?: IChatMessage | null;
-  parentMessage?: IChatMessage | null;
+  quotedMessage?: ChatMessage | null;
+  parentMessage?: ChatMessage | null;
 
   // Client-only flag — never comes from the server.
   // Set to true by failOptimisticMessage when a send request fails.

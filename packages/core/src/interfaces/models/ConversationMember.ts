@@ -2,7 +2,7 @@ import { User } from "./User";
 
 export type ConversationMemberRole = "admin" | "member";
 
-export interface IConversationMember {
+export interface ConversationMember {
   id: string;
   projectId: string;
   conversationId: string;

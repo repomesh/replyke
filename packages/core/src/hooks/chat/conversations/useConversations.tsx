@@ -8,7 +8,7 @@ import {
   setConversationListLoading,
   setConversationListHasMore,
 } from "../../../store/slices/chatSlice";
-import { IConversationPreview } from "../../../interfaces/models/IConversation";
+import { ConversationPreview } from "../../../interfaces/models/Conversation";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
@@ -18,7 +18,7 @@ export interface UseConversationsProps {
 }
 
 export interface UseConversationsValues {
-  conversations: IConversationPreview[];
+  conversations: ConversationPreview[];
   loading: boolean;
   hasMore: boolean;
   loadMore: () => Promise<void>;
@@ -26,7 +26,7 @@ export interface UseConversationsValues {
   createGroup: (params: {
     name?: string;
     metadata?: Record<string, unknown>;
-  }) => Promise<IConversationPreview>;
+  }) => Promise<ConversationPreview>;
 }
 
 // Two-cursor state derived from the last item returned by the server.
@@ -72,7 +72,7 @@ function useConversations({
         });
 
         const { conversations: items, hasMore: more } = response.data as {
-          conversations: IConversationPreview[];
+          conversations: ConversationPreview[];
           hasMore: boolean;
         };
 
@@ -133,7 +133,7 @@ function useConversations({
     async (params: {
       name?: string;
       metadata?: Record<string, unknown>;
-    }): Promise<IConversationPreview> => {
+    }): Promise<ConversationPreview> => {
       if (!projectId) throw new Error("No project ID");
 
       const response = await axios.post(
@@ -141,7 +141,7 @@ function useConversations({
         { type: "group", ...params }
       );
 
-      const conversation = response.data as IConversationPreview;
+      const conversation = response.data as ConversationPreview;
 
       // Prepend to the current list so it appears immediately
       const current = conversationsRef.current;

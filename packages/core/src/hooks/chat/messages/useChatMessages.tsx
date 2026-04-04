@@ -13,7 +13,7 @@ import {
   setThreadReplies,
   setThreadLoading,
 } from "../../../store/slices/chatSlice";
-import { IChatMessage } from "../../../interfaces/models/IChatMessage";
+import { ChatMessage } from "../../../interfaces/models/ChatMessage";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
@@ -26,7 +26,7 @@ export interface UseChatMessagesProps {
 }
 
 export interface UseChatMessagesValues {
-  messages: IChatMessage[];
+  messages: ChatMessage[];
   loading: boolean;
   hasMore: boolean;
   loadOlder: () => Promise<void>;
@@ -89,7 +89,7 @@ function useChatMessages({
           { params }
         );
         const { messages: items, hasMore: more } = response.data as {
-          messages: IChatMessage[];
+          messages: ChatMessage[];
           hasMore: boolean;
         };
 
@@ -168,7 +168,7 @@ function useChatMessages({
           }
         );
         const { messages: newItems, hasMore: more } = response.data as {
-          messages: IChatMessage[];
+          messages: ChatMessage[];
           hasMore: boolean;
         };
         dispatch(

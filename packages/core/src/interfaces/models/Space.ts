@@ -1,4 +1,4 @@
-import { PaginatedResponse, PaginationMetadata } from "../IPaginatedResponse";
+import { PaginatedResponse, PaginationMetadata } from "../PaginatedResponse";
 import { File } from "./File";
 
 export type ReadingPermission = "anyone" | "members";

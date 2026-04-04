@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 
 interface FetchDraftsParams {
   page?: number;

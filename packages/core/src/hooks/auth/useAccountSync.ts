@@ -16,14 +16,15 @@ import {
 import { selectRefreshToken, setRefreshToken } from "../../store/slices/authSlice";
 import { selectUser } from "../../store/slices/userSlice";
 import { handleError } from "../../utils/handleError";
-import type { IAccountStorage } from "../../interfaces/IAccountStorage";
+import type { AccountStorage } from "../../interfaces/AccountStorage";
 
 function base64UrlDecode(str: string): string {
   // Convert base64url to standard base64
   const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
   if (typeof atob === "function") return atob(base64);
   // Fallback for React Native (Buffer available via Node.js polyfill or hermes)
-  if (typeof Buffer === "function") return Buffer.from(base64, "base64").toString("utf-8");
+  const GlobalBuffer = (globalThis as any).Buffer;
+  if (typeof GlobalBuffer === "function") return GlobalBuffer.from(base64, "base64").toString("utf-8");
   return "";
 }
 
@@ -37,7 +38,7 @@ function extractExpFromJwt(jwt: string): number {
 }
 
 export default function useAccountSync(
-  storage: IAccountStorage,
+  storage: AccountStorage,
   projectId: string
 ): void {
   const dispatch = useReplykeDispatch();

@@ -1,17 +1,17 @@
-import type { IChatMessage } from "../interfaces/models/IChatMessage";
-import type { IConversation } from "../interfaces/models/IConversation";
-import type { IConversationMember } from "../interfaces/models/IConversationMember";
+import type { ChatMessage } from "../interfaces/models/ChatMessage";
+import type { Conversation } from "../interfaces/models/Conversation";
+import type { ConversationMember } from "../interfaces/models/ConversationMember";
 
 // ─── Server → Client events ────────────────────────────────────────────────
 
 export interface ServerToClientEvents {
-  "message:created": (message: IChatMessage) => void;
+  "message:created": (message: ChatMessage) => void;
   "message:updated": (payload: {
     messageId: string;
     conversationId: string;
     content: string | null;
-    gif: IChatMessage["gif"];
-    mentions: IChatMessage["mentions"];
+    gif: ChatMessage["gif"];
+    mentions: ChatMessage["mentions"];
     metadata: Record<string, any>;
     editedAt: Date | null;
   }) => void;
@@ -47,13 +47,13 @@ export interface ServerToClientEvents {
   }) => void;
   "member:joined": (payload: {
     conversationId: string;
-    member: IConversationMember;
+    member: ConversationMember;
   }) => void;
   "member:left": (payload: {
     conversationId: string;
     userId: string;
   }) => void;
-  "conversation:updated": (patch: Partial<IConversation> & { id: string }) => void;
+  "conversation:updated": (patch: Partial<Conversation> & { id: string }) => void;
   "conversation:deleted": (payload: { conversationId: string }) => void;
 }
 

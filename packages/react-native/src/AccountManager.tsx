@@ -1,10 +1,10 @@
 import * as Keychain from "react-native-keychain";
 import { useAccountSync, useProject, handleError } from "@replyke/core";
-import type { IAccountStorage, AccountMap } from "@replyke/core";
+import type { AccountStorage, AccountMap } from "@replyke/core";
 
 const STORAGE_SERVICE_PREFIX = "replyke-accounts:";
 
-const keychainStorage: IAccountStorage = {
+const keychainStorage: AccountStorage = {
   async getAccountMap(projectId: string): Promise<AccountMap | null> {
     try {
       const credentials = await Keychain.getGenericPassword({

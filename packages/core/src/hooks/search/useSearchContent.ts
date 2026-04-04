@@ -4,12 +4,12 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { handleError } from "../../utils/handleError";
 import { Entity } from "../../interfaces/models/Entity";
 import { Comment } from "../../interfaces/models/Comment";
-import { IChatMessage } from "../../interfaces/models/IChatMessage";
+import { ChatMessage } from "../../interfaces/models/ChatMessage";
 
 export interface ContentSearchResult {
   sourceType: "entity" | "comment" | "message";
   similarity: number;
-  record: Entity | Comment | IChatMessage;
+  record: Entity | Comment | ChatMessage;
 }
 
 export interface UseSearchContentProps {

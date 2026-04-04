@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import { Space, SpaceIncludeParam } from "../../interfaces/models/Space";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
 export interface FetchManySpacesProps {

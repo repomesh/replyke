@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useReplykeDispatch } from "../../../store/hooks";
 import { setConversation } from "../../../store/slices/chatSlice";
-import { IConversation } from "../../../interfaces/models/IConversation";
+import { Conversation } from "../../../interfaces/models/Conversation";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
@@ -11,7 +11,7 @@ export interface UseSpaceConversationProps {
 }
 
 export interface UseSpaceConversationValues {
-  conversation: IConversation | null;
+  conversation: Conversation | null;
   loading: boolean;
 }
 
@@ -22,7 +22,7 @@ function useSpaceConversation({
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
-  const [conversation, setLocalConversation] = useState<IConversation | null>(null);
+  const [conversation, setLocalConversation] = useState<Conversation | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function useSpaceConversation({
         const response = await axios.get(
           `/${projectId}/chat/spaces/${spaceId}/conversation`
         );
-        const data = response.data as IConversation;
+        const data = response.data as Conversation;
         dispatch(setConversation(data));
         setLocalConversation(data);
       } catch (err) {

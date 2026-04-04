@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Reaction, ReactionType } from "../../interfaces/models/Reaction";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import useProject from "../projects/useProject";
 import axios from "../../config/axios";
 

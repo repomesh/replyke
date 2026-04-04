@@ -1,9 +1,9 @@
 import { useAccountSync, useProject, handleError } from "@replyke/core";
-import type { IAccountStorage, AccountMap } from "@replyke/core";
+import type { AccountStorage, AccountMap } from "@replyke/core";
 
 const STORAGE_KEY_PREFIX = "replyke-accounts:";
 
-const webAccountStorage: IAccountStorage = {
+const webAccountStorage: AccountStorage = {
   async getAccountMap(projectId: string): Promise<AccountMap | null> {
     try {
       const raw = localStorage.getItem(`${STORAGE_KEY_PREFIX}${projectId}`);

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../../projects/useProject";
 import { EstablishedConnection } from "../../../interfaces/models/Connection";
-import { PaginatedResponse } from "../../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../../interfaces/PaginatedResponse";
 import axios from "../../../config/axios";
 
 export interface FetchConnectionsByUserIdParams {

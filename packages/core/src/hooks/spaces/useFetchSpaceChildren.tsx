@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
 import { Space, SpaceIncludeParam } from "../../interfaces/models/Space";
-import { PaginatedResponse } from "../../interfaces/IPaginatedResponse";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import axios from "../../config/axios";
 
 export interface FetchSpaceChildrenProps {

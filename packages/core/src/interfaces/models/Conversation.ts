@@ -1,8 +1,8 @@
 import { File } from "./File";
-import { IChatMessage } from "./IChatMessage";
-import { IConversationMember } from "./IConversationMember";
+import { ChatMessage } from "./ChatMessage";
+import { ConversationMember } from "./ConversationMember";
 
-export interface IConversation {
+export interface Conversation {
   id: string;
   projectId: string;
   type: "direct" | "group" | "space";
@@ -21,12 +21,12 @@ export interface IConversation {
   // Populated fields
   memberCount?: number;
   // The requesting user's own ConversationMember row — used to bootstrap lastReadAt and role
-  currentMember?: IConversationMember;
+  currentMember?: ConversationMember;
   avatarFile?: File;
 }
 
-export interface IConversationPreview extends IConversation {
+export interface ConversationPreview extends Conversation {
   unreadCount: number;
   // Truncated to 100 chars by the server for list performance
-  lastMessage: IChatMessage | null;
+  lastMessage: ChatMessage | null;
 }

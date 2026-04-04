@@ -6,7 +6,7 @@ import {
   setConversation,
   setConversationLoading,
 } from "../../../store/slices/chatSlice";
-import { IConversation } from "../../../interfaces/models/IConversation";
+import { Conversation } from "../../../interfaces/models/Conversation";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
@@ -23,9 +23,9 @@ export interface UpdateConversationParams {
 }
 
 export interface UseConversationValues {
-  conversation: IConversation | null;
+  conversation: Conversation | null;
   loading: boolean;
-  update: (params: UpdateConversationParams) => Promise<IConversation | undefined>;
+  update: (params: UpdateConversationParams) => Promise<Conversation | undefined>;
   deleteConversation: () => Promise<void>;
 }
 
@@ -49,7 +49,7 @@ function useConversation({
         const response = await axios.get(
           `/${projectId}/chat/conversations/${conversationId}`
         );
-        dispatch(setConversation(response.data as IConversation));
+        dispatch(setConversation(response.data as Conversation));
       } catch (err) {
         handleError(err, "Failed to fetch conversation");
         dispatch(setConversationLoading({ conversationId, loading: false }));
@@ -60,14 +60,14 @@ function useConversation({
   }, [projectId, conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const update = useCallback(
-    async (params: UpdateConversationParams): Promise<IConversation | undefined> => {
+    async (params: UpdateConversationParams): Promise<Conversation | undefined> => {
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.patch(
           `/${projectId}/chat/conversations/${conversationId}`,
           params
         );
-        const updated = response.data as IConversation;
+        const updated = response.data as Conversation;
         dispatch(setConversation(updated));
         return updated;
       } catch (err) {

@@ -1,10 +1,10 @@
 import * as SecureStore from "expo-secure-store";
 import { useAccountSync, useProject, handleError } from "@replyke/core";
-import type { IAccountStorage, AccountMap } from "@replyke/core";
+import type { AccountStorage, AccountMap } from "@replyke/core";
 
 const STORAGE_KEY_PREFIX = "replyke-accounts:";
 
-const secureStoreStorage: IAccountStorage = {
+const secureStoreStorage: AccountStorage = {
   async getAccountMap(projectId: string): Promise<AccountMap | null> {
     try {
       const raw = await SecureStore.getItemAsync(

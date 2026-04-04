@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type {
-  IConversation,
-  IConversationPreview,
-} from "../../interfaces/models/IConversation";
-import type { IChatMessage } from "../../interfaces/models/IChatMessage";
+  Conversation,
+  ConversationPreview,
+} from "../../interfaces/models/Conversation";
+import type { ChatMessage } from "../../interfaces/models/ChatMessage";
 import type { ReplykeState } from "../replykeReducers";
 
 // ─── Sub-state shapes ────────────────────────────────────────────────────────
 
 interface ConversationEntry {
-  data: IConversation | null;
+  data: Conversation | null;
   loading: boolean;
   error: string | null;
 }
 
 interface MessagesBucket {
-  items: IChatMessage[];
+  items: ChatMessage[];
   loading: boolean;
   hasMore: boolean;
   // ID of the oldest message currently loaded — cursor for "load older" requests
@@ -25,7 +25,7 @@ interface MessagesBucket {
 }
 
 interface ThreadBucket {
-  items: IChatMessage[];
+  items: ChatMessage[];
   loading: boolean;
   hasMore: boolean;
 }
@@ -37,7 +37,7 @@ export interface ChatState {
   conversations: Record<string, ConversationEntry>;
   // Flat sorted list used for the inbox / conversation-list view
   conversationList: {
-    items: IConversationPreview[];
+    items: ConversationPreview[];
     loading: boolean;
     hasMore: boolean;
     // lastMessageAt ISO string of the oldest loaded preview — next-page cursor
@@ -75,7 +75,7 @@ const initialState: ChatState = {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Sort previews by lastMessageAt DESC, placing null values last. */
-function sortPreviews(items: IConversationPreview[]): void {
+function sortPreviews(items: ConversationPreview[]): void {
   items.sort((a, b) => {
     if (!a.lastMessageAt && !b.lastMessageAt) return 0;
     if (!a.lastMessageAt) return 1;
@@ -123,7 +123,7 @@ const chatSlice = createSlice({
      * Upsert a single conversation into the conversations map AND patch the
      * matching preview in conversationList.items so both stores stay in sync.
      */
-    setConversation(state, action: PayloadAction<IConversation>) {
+    setConversation(state, action: PayloadAction<Conversation>) {
       const conversation = action.payload;
       const { id } = conversation;
 
@@ -160,7 +160,7 @@ const chatSlice = createSlice({
     },
 
     /** Replace the entire conversation list (first-page load or refresh). */
-    setConversationList(state, action: PayloadAction<IConversationPreview[]>) {
+    setConversationList(state, action: PayloadAction<ConversationPreview[]>) {
       state.conversationList.items = action.payload;
     },
 
@@ -186,7 +186,7 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         conversationId: string;
-        patch: Partial<IConversationPreview>;
+        patch: Partial<ConversationPreview>;
       }>
     ) {
       const { conversationId, patch } = action.payload;
@@ -284,7 +284,7 @@ const chatSlice = createSlice({
      *  2. Match by `clientId` → replace optimistic placeholder with confirmed message
      *  3. Otherwise insert, maintaining chronological ASC order
      */
-    upsertMessage(state, action: PayloadAction<IChatMessage>) {
+    upsertMessage(state, action: PayloadAction<ChatMessage>) {
       const message = action.payload;
       const { conversationId } = message;
 
@@ -332,7 +332,7 @@ const chatSlice = createSlice({
      * before the POST fires. The message is replaced by upsertMessage when the
      * server response arrives (matched via clientId).
      */
-    addOptimisticMessage(state, action: PayloadAction<IChatMessage>) {
+    addOptimisticMessage(state, action: PayloadAction<ChatMessage>) {
       const message = action.payload;
       const { conversationId } = message;
 
@@ -440,7 +440,7 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         parentMessageId: string;
-        messages: IChatMessage[];
+        messages: ChatMessage[];
         hasMore: boolean;
       }>
     ) {

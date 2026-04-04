@@ -7,7 +7,7 @@ import {
 } from "../../../store/slices/chatSlice";
 import { selectUser } from "../../../store/slices/userSlice";
 import { selectUser as selectAuthUser } from "../../../store/slices/authSlice";
-import { IChatMessage } from "../../../interfaces/models/IChatMessage";
+import { ChatMessage } from "../../../interfaces/models/ChatMessage";
 import { GifData } from "../../../interfaces/models/Comment";
 import { Mention } from "../../../interfaces/models/Mention";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
@@ -30,7 +30,7 @@ export interface UseSendMessageProps {
 
 function useSendMessage({
   conversationId,
-}: UseSendMessageProps): (params: SendMessageParams) => Promise<IChatMessage> {
+}: UseSendMessageProps): (params: SendMessageParams) => Promise<ChatMessage> {
   const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
@@ -49,7 +49,7 @@ function useSendMessage({
       quotedMessageId,
       parentMessageId,
       files,
-    }: SendMessageParams): Promise<IChatMessage> => {
+    }: SendMessageParams): Promise<ChatMessage> => {
       if (!projectId) throw new Error("No projectId available.");
       if (!conversationId) throw new Error("No conversationId provided.");
 
@@ -57,7 +57,7 @@ function useSendMessage({
       const now = new Date();
 
       // Insert optimistic message immediately
-      const optimisticMsg: IChatMessage = {
+      const optimisticMsg: ChatMessage = {
         id: `temp-${clientId}`,
         clientId,
         projectId,
@@ -122,7 +122,7 @@ function useSendMessage({
           );
         }
 
-        const confirmedMsg = response.data as IChatMessage;
+        const confirmedMsg = response.data as ChatMessage;
         dispatch(upsertMessage(confirmedMsg));
         return confirmedMsg;
       } catch (err) {

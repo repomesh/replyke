@@ -1,4 +1,4 @@
-import { IChatMessage } from "../../../interfaces/models/IChatMessage";
+import { ChatMessage } from "../../../interfaces/models/ChatMessage";
 import useChatMessages from "./useChatMessages";
 import useSendMessage, { SendMessageParams } from "./useSendMessage";
 
@@ -8,11 +8,11 @@ export interface UseMessageThreadProps {
 }
 
 export interface UseMessageThreadValues {
-  replies: IChatMessage[];
+  replies: ChatMessage[];
   loading: boolean;
   hasMore: boolean;
   loadMore: () => Promise<void>;
-  sendReply: (params: Omit<SendMessageParams, "parentMessageId">) => Promise<IChatMessage>;
+  sendReply: (params: Omit<SendMessageParams, "parentMessageId">) => Promise<ChatMessage>;
 }
 
 function useMessageThread({
