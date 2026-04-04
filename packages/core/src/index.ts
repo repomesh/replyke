@@ -90,7 +90,7 @@ export { setTokens, setInitialized, selectAccessToken } from "./store/slices/aut
 export { requestNewAccessTokenThunk } from "./store/slices/authThunks";
 
 // -- account storage
-export type { IAccountStorage } from "./interfaces/IAccountStorage";
+export type { AccountStorage } from "./interfaces/AccountStorage";
 export {
   MAX_ACCOUNTS,
   type AccountSummary,
@@ -448,7 +448,7 @@ export {
 export type {
   PaginatedResponse,
   PaginationMetadata,
-} from "./interfaces/IPaginatedResponse";
+} from "./interfaces/PaginatedResponse";
 export type { EntityCommentsTree } from "./interfaces/EntityCommentsTree";
 export type {
   UserFull,
@@ -612,14 +612,14 @@ export type {
 
 // -- chat interfaces
 export type {
-  IConversation,
-  IConversationPreview,
-} from "./interfaces/models/IConversation";
+  Conversation,
+  ConversationPreview,
+} from "./interfaces/models/Conversation";
 export type {
-  IConversationMember,
+  ConversationMember,
   ConversationMemberRole,
-} from "./interfaces/models/IConversationMember";
-export type { IChatMessage } from "./interfaces/models/IChatMessage";
+} from "./interfaces/models/ConversationMember";
+export type { ChatMessage } from "./interfaces/models/ChatMessage";
 
 // -- chat slice
 export {
