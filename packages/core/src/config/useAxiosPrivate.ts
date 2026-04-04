@@ -1,11 +1,12 @@
 import { useEffect } from "react";
+import type { AxiosInstance } from "axios";
 import { axiosPrivate } from "./axios";
 import { useAuth } from "../hooks/auth";
 
 // Module-level mutex: prevents concurrent token rotations from racing
 let refreshPromise: Promise<string | undefined> | null = null;
 
-const useAxiosPrivate = () => {
+const useAxiosPrivate = (): AxiosInstance => {
   const { accessToken, requestNewAccessToken } = useAuth();
 
   useEffect(() => {
