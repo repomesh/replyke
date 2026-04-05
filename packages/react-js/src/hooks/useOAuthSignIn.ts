@@ -13,9 +13,9 @@ const BASE_URL = "https://api.replyke.com/v7";
 
 export interface UseOAuthSignInReturn {
   /** Initiate OAuth sign-in / sign-up (unauthenticated). */
-  initiateOAuth: (provider: string, redirectAfterAuth?: string) => Promise<void>;
+  initiateOAuth: ({ provider, redirectAfterAuth }: { provider: string; redirectAfterAuth?: string }) => Promise<void>;
   /** Link a new OAuth provider to the current authenticated user. */
-  linkOAuthProvider: (provider: string, redirectAfterAuth?: string) => Promise<void>;
+  linkOAuthProvider: ({ provider, redirectAfterAuth }: { provider: string; redirectAfterAuth?: string }) => Promise<void>;
   /** Call on the callback page to extract tokens from the URL fragment. */
   handleOAuthCallback: () => boolean;
   isLoading: boolean;
@@ -99,13 +99,13 @@ function useOAuthSignIn(): UseOAuthSignInReturn {
   );
 
   const initiateOAuth = useCallback(
-    (provider: string, redirectAfterAuth?: string) =>
+    ({ provider, redirectAfterAuth }: { provider: string; redirectAfterAuth?: string }) =>
       startOAuthFlow("authorize", provider, redirectAfterAuth),
     [startOAuthFlow]
   );
 
   const linkOAuthProvider = useCallback(
-    (provider: string, redirectAfterAuth?: string) =>
+    ({ provider, redirectAfterAuth }: { provider: string; redirectAfterAuth?: string }) =>
       startOAuthFlow("link", provider, redirectAfterAuth),
     [startOAuthFlow]
   );

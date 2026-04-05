@@ -11,14 +11,14 @@ export interface UseConversationMembersProps {
 export interface UseConversationMembersValues {
   members: ConversationMember[];
   loading: boolean;
-  addMember: (userId: string) => Promise<void>;
-  removeMember: (userId: string) => Promise<void>;
+  addMember: ({ userId }: { userId: string }) => Promise<void>;
+  removeMember: ({ userId }: { userId: string }) => Promise<void>;
   leave: () => Promise<void>;
-  changeRole: (userId: string, role: "admin" | "member") => Promise<void>;
+  changeRole: ({ userId, role }: { userId: string; role: "admin" | "member" }) => Promise<void>;
   /** Upsert a member into the local list (for real-time socket updates). */
   upsertMember: (member: ConversationMember) => void;
   /** Remove a member from the local list by userId (for real-time socket updates). */
-  removeMemberLocally: (userId: string) => void;
+  removeMemberLocally: ({ userId }: { userId: string }) => void;
 }
 
 function useConversationMembers({
@@ -52,7 +52,7 @@ function useConversationMembers({
   }, [projectId, conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addMember = useCallback(
-    async (userId: string) => {
+    async ({ userId }: { userId: string }) => {
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.post(
@@ -79,7 +79,7 @@ function useConversationMembers({
   );
 
   const removeMember = useCallback(
-    async (userId: string) => {
+    async ({ userId }: { userId: string }) => {
       if (!projectId || !conversationId) return;
       try {
         await axios.delete(
@@ -118,12 +118,12 @@ function useConversationMembers({
     });
   }, []);
 
-  const removeMemberLocally = useCallback((userId: string) => {
+  const removeMemberLocally = useCallback(({ userId }: { userId: string }) => {
     setMembers((prev) => prev.filter((m) => m.userId !== userId));
   }, []);
 
   const changeRole = useCallback(
-    async (userId: string, role: "admin" | "member") => {
+    async ({ userId, role }: { userId: string; role: "admin" | "member" }) => {
       if (!projectId || !conversationId) return;
       try {
         const response = await axios.patch(

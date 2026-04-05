@@ -29,13 +29,13 @@ export interface UseCollectionsActionsValues {
   openCollection: (collection: Collection) => void;
   goBack: () => void;
   goToRoot: () => void;
-  fetchRootCollection: (projectId: string) => Promise<void>;
-  fetchSubCollections: (projectId: string, collectionId: string) => Promise<void>;
-  createCollection: (projectId: string, parentCollectionId: string, collectionName: string) => Promise<void>;
-  updateCollection: (projectId: string, collectionId: string, update: Partial<{ name: string }>) => Promise<void>;
-  deleteCollection: (projectId: string, collection: Collection) => Promise<void>;
-  addToCollection: (projectId: string, collectionId: string, entityId: string) => Promise<void>;
-  removeFromCollection: (projectId: string, collectionId: string, entityId: string) => Promise<void>;
+  fetchRootCollection: ({ projectId }: { projectId: string }) => Promise<void>;
+  fetchSubCollections: ({ projectId, collectionId }: { projectId: string; collectionId: string }) => Promise<void>;
+  createCollection: ({ projectId, parentCollectionId, collectionName }: { projectId: string; parentCollectionId: string; collectionName: string }) => Promise<void>;
+  updateCollection: ({ projectId, collectionId, update }: { projectId: string; collectionId: string; update: Partial<{ name: string }> }) => Promise<void>;
+  deleteCollection: ({ projectId, collection }: { projectId: string; collection: Collection }) => Promise<void>;
+  addToCollection: ({ projectId, collectionId, entityId }: { projectId: string; collectionId: string; entityId: string }) => Promise<void>;
+  removeFromCollection: ({ projectId, collectionId, entityId }: { projectId: string; collectionId: string; entityId: string }) => Promise<void>;
   resetCollections: () => void;
 }
 
@@ -69,7 +69,7 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [dispatch]);
 
   // Fetch root collection
-  const fetchRootCollection = useCallback(async (projectId: string) => {
+  const fetchRootCollection = useCallback(async ({ projectId }: { projectId: string }) => {
     if (!projectId) {
       console.warn("Can't fetch root collection without projectId.");
       return;
@@ -93,7 +93,7 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [dispatch, fetchRootCollectionQuery]);
 
   // Fetch sub-collections
-  const fetchSubCollections = useCallback(async (projectId: string, collectionId: string) => {
+  const fetchSubCollections = useCallback(async ({ projectId, collectionId }: { projectId: string; collectionId: string }) => {
     if (!projectId || !collectionId) {
       console.warn("Can't fetch sub-collections without projectId and collectionId.");
       return;
@@ -115,11 +115,15 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [dispatch, fetchSubCollectionsQuery]);
 
   // Create collection
-  const createCollection = useCallback(async (
-    projectId: string,
-    parentCollectionId: string,
-    collectionName: string
-  ): Promise<void> => {
+  const createCollection = useCallback(async ({
+    projectId,
+    parentCollectionId,
+    collectionName,
+  }: {
+    projectId: string;
+    parentCollectionId: string;
+    collectionName: string;
+  }): Promise<void> => {
     if (!projectId || !parentCollectionId || !collectionName) {
       console.error("Missing required parameters for creating collection.");
       return;
@@ -141,11 +145,15 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [createCollectionMutation, dispatch]);
 
   // Update collection
-  const updateCollection = useCallback(async (
-    projectId: string,
-    collectionId: string,
-    update: Partial<{ name: string }>
-  ): Promise<void> => {
+  const updateCollection = useCallback(async ({
+    projectId,
+    collectionId,
+    update,
+  }: {
+    projectId: string;
+    collectionId: string;
+    update: Partial<{ name: string }>;
+  }): Promise<void> => {
     if (!projectId || !collectionId) {
       console.error("Missing required parameters for updating collection.");
       return;
@@ -168,10 +176,13 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [updateCollectionMutation, dispatch]);
 
   // Delete collection
-  const deleteCollection = useCallback(async (
-    projectId: string,
-    collection: Collection
-  ): Promise<void> => {
+  const deleteCollection = useCallback(async ({
+    projectId,
+    collection,
+  }: {
+    projectId: string;
+    collection: Collection;
+  }): Promise<void> => {
     if (!projectId || !collection) {
       console.error("Missing required parameters for deleting collection.");
       return;
@@ -190,11 +201,15 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [deleteCollectionMutation, dispatch]);
 
   // Add entity to collection
-  const addToCollection = useCallback(async (
-    projectId: string,
-    collectionId: string,
-    entityId: string
-  ): Promise<void> => {
+  const addToCollection = useCallback(async ({
+    projectId,
+    collectionId,
+    entityId,
+  }: {
+    projectId: string;
+    collectionId: string;
+    entityId: string;
+  }): Promise<void> => {
     if (!projectId || !collectionId || !entityId) {
       console.error("Missing required parameters for adding to collection.");
       return;
@@ -214,11 +229,15 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
   }, [addToCollectionMutation]);
 
   // Remove entity from collection
-  const removeFromCollection = useCallback(async (
-    projectId: string,
-    collectionId: string,
-    entityId: string
-  ): Promise<void> => {
+  const removeFromCollection = useCallback(async ({
+    projectId,
+    collectionId,
+    entityId,
+  }: {
+    projectId: string;
+    collectionId: string;
+    entityId: string;
+  }): Promise<void> => {
     if (!projectId || !collectionId || !entityId) {
       console.error("Missing required parameters for removing from collection.");
       return;

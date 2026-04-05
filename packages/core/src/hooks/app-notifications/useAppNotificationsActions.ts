@@ -24,10 +24,10 @@ import { useUser } from "../user";
 
 export interface UseAppNotificationsActionsValues {
   loadMore: () => void;
-  markNotificationAsRead: (notificationId: string) => Promise<void>;
+  markNotificationAsRead: ({ notificationId }: { notificationId: string }) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
   resetAppNotifications: () => Promise<void>;
-  fetchMoreNotifications: (pageToFetch: number) => Promise<void>;
+  fetchMoreNotifications: ({ pageToFetch }: { pageToFetch: number }) => Promise<void>;
   updateUnreadCount: () => Promise<void>;
 }
 
@@ -66,7 +66,7 @@ export function useAppNotificationsActions(): UseAppNotificationsActionsValues {
 
   // Mark notification as read action
   const markNotificationAsRead = useCallback(
-    async (notificationId: string) => {
+    async ({ notificationId }: { notificationId: string }) => {
       if (!projectId || !user) {
         throw new Error("No project ID or authenticated user available");
       }
@@ -130,7 +130,7 @@ export function useAppNotificationsActions(): UseAppNotificationsActionsValues {
 
   // Fetch more notifications (internal action triggered by page changes)
   const fetchMoreNotifications = useCallback(
-    async (pageToFetch: number) => {
+    async ({ pageToFetch }: { pageToFetch: number }) => {
       if (!projectId || !user) return;
 
       try {

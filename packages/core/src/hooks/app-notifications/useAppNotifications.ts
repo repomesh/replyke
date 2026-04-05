@@ -28,7 +28,7 @@ export interface UseAppNotificationsValues {
   loading: boolean;
   hasMore: boolean;
   loadMore: () => void;
-  markNotificationAsRead: (notificationId: string) => Promise<void>;
+  markNotificationAsRead: ({ notificationId }: { notificationId: string }) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
   resetAppNotifications: () => Promise<void>;
 }
@@ -93,7 +93,7 @@ function useAppNotifications({
   // Handle page changes (load more notifications)
   useEffect(() => {
     if (currentPage > 1 && projectId && user) {
-      fetchMoreNotifications(currentPage);
+      fetchMoreNotifications({ pageToFetch: currentPage });
     }
   }, [currentPage, fetchMoreNotifications, projectId, user]);
 

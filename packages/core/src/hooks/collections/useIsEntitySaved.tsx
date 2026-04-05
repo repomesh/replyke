@@ -4,7 +4,7 @@ import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
 export interface UseIsEntityInCollectionValues {
-  checkIfEntityIsSaved: (entityId: string) => Promise<boolean>;
+  checkIfEntityIsSaved: ({ entityId }: { entityId: string }) => Promise<boolean>;
   entityIsSaved: boolean | null;
 }
 
@@ -17,7 +17,7 @@ function useIsEntityInCollection(): UseIsEntityInCollectionValues {
   // const checkedStatus = useRef<Record<string, boolean>>({}); // Track status by entityId
 
   const checkIfEntityIsSaved = useCallback(
-    async (entityId: string) => {
+    async ({ entityId }: { entityId: string }) => {
       // if (!user || !entityId || checkedStatus.current[entityId]) return;
       if (!user ) {
         throw new Error("No user autheticated.");

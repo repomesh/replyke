@@ -33,7 +33,7 @@ export interface UseConversationDataValues {
   removeMemberLocally: UseConversationMembersValues["removeMemberLocally"];
 
   // Read state
-  mark: (messageId: string) => Promise<void>;
+  mark: ({ messageId }: { messageId: string }) => Promise<void>;
 
   // Typing
   typingUsers: string[];

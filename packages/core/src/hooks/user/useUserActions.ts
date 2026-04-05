@@ -43,7 +43,7 @@ export function useUserActions() {
 
   // Update user with optimistic updates for instant UI feedback
   const updateUser = useCallback(
-    async (projectId: string, userId: string, update: UpdateUserParams, currentUser?: any) => {
+    async ({ projectId, userId, update, currentUser }: { projectId: string; userId: string; update: UpdateUserParams; currentUser?: any }) => {
       if (!projectId || !userId) {
         throw new Error("Project ID and User ID are required");
       }

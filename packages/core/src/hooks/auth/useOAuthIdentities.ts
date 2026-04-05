@@ -16,7 +16,7 @@ export interface OAuthIdentity {
 export interface UseOAuthIdentitiesReturn {
   identities: OAuthIdentity[];
   fetchIdentities: () => Promise<void>;
-  unlinkIdentity: (identityId: string) => Promise<void>;
+  unlinkIdentity: ({ identityId }: { identityId: string }) => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -43,7 +43,7 @@ function useOAuthIdentities(): UseOAuthIdentitiesReturn {
   }, [projectId, axios]);
 
   const unlinkIdentity = useCallback(
-    async (identityId: string) => {
+    async ({ identityId }: { identityId: string }) => {
       if (!projectId) return;
       setIsLoading(true);
       setError(null);

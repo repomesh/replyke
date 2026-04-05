@@ -14,7 +14,7 @@ import axios from "../../config/axios";
 import { handleError } from "../../utils/handleError";
 
 export interface UseRemoveAccountReturn {
-  removeAccount: (userId: string) => Promise<void>;
+  removeAccount: ({ userId }: { userId: string }) => Promise<void>;
   isRemoving: boolean;
   error: string | null;
 }
@@ -28,7 +28,7 @@ export default function useRemoveAccount(): UseRemoveAccountReturn {
   const [error, setError] = useState<string | null>(null);
 
   const removeAccount = useCallback(
-    async (userId: string) => {
+    async ({ userId }: { userId: string }) => {
       if (!projectId) throw new Error("No projectId available");
       const targetAccount = accounts[userId];
       if (!targetAccount) throw new Error(`Account ${userId} not found`);

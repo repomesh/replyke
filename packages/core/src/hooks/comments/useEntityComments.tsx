@@ -28,8 +28,8 @@ export interface UseEntityCommentsValues {
     newComments: Comment[] | undefined,
     newlyAdded?: boolean
   ) => void;
-  removeCommentFromTree: (commentId: string) => void;
-  markCommentAsDeleted: (commentId: string) => void;
+  removeCommentFromTree: ({ commentId }: { commentId: string }) => void;
+  markCommentAsDeleted: ({ commentId }: { commentId: string }) => void;
 }
 
 function useEntityComments(
@@ -79,7 +79,7 @@ function useEntityComments(
   };
 
   const removeCommentFromTree = useCallback(
-    (commentId: string) => {
+    ({ commentId }: { commentId: string }) => {
       setEntityCommentsTree!((prevTree) =>
         removeCommentFromTreeHandler(prevTree, commentId)
       );
@@ -88,7 +88,7 @@ function useEntityComments(
   );
 
   const markCommentAsDeleted = useCallback(
-    (commentId: string) => {
+    ({ commentId }: { commentId: string }) => {
       setEntityCommentsTree((prevTree) =>
         markCommentAsDeletedInTreeHandler(prevTree, commentId)
       );

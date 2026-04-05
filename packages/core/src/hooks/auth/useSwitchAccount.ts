@@ -12,7 +12,7 @@ import { baseApi } from "../../store/api/baseApi";
 import useProject from "../projects/useProject";
 
 export interface UseSwitchAccountReturn {
-  switchAccount: (userId: string) => Promise<void>;
+  switchAccount: ({ userId }: { userId: string }) => Promise<void>;
   isSwitching: boolean;
   error: string | null;
 }
@@ -26,7 +26,7 @@ export default function useSwitchAccount(): UseSwitchAccountReturn {
   const [error, setError] = useState<string | null>(null);
 
   const switchAccount = useCallback(
-    async (userId: string) => {
+    async ({ userId }: { userId: string }) => {
       if (!projectId) throw new Error("No projectId available");
       if (userId === activeAccountId) return;
       if (!accounts[userId]) throw new Error(`Account ${userId} not found`);

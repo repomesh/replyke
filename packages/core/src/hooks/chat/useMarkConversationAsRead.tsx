@@ -16,13 +16,13 @@ export interface UseMarkConversationAsReadProps {
  */
 function useMarkConversationAsRead({
   conversationId,
-}: UseMarkConversationAsReadProps): (messageId: string) => Promise<void> {
+}: UseMarkConversationAsReadProps): ({ messageId }: { messageId: string }) => Promise<void> {
   const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const mark = useCallback(
-    async (messageId: string): Promise<void> => {
+    async ({ messageId }: { messageId: string }): Promise<void> => {
       if (!projectId || !conversationId || !messageId) return;
 
       // Clear unread count locally for immediate UI update

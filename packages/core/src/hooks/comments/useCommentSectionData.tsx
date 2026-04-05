@@ -83,12 +83,12 @@ export interface UseCommentSectionDataValues {
   repliedToComment: Partial<Comment> | null;
   setRepliedToComment: (newRepliedToComment: Comment | null) => void;
   showReplyBanner: boolean;
-  setShowReplyBanner: (newState: boolean) => void;
+  setShowReplyBanner: ({ newState }: { newState: boolean }) => void;
   addCommentsToTree: (
     newComments: Comment[] | undefined,
     newlyAdded?: boolean,
   ) => void;
-  removeCommentFromTree: (commentId: string) => void;
+  removeCommentFromTree: ({ commentId }: { commentId: string }) => void;
   handleDeepReply: (comment: Comment) => void;
   handleShallowReply: (comment: Comment) => void;
 
@@ -174,6 +174,9 @@ function useCommentSectionData(
   const [repliedToComment, setRepliedToComment] =
     useState<Partial<Comment> | null>(null);
   const [showReplyBanner, setShowReplyBanner] = useState(false);
+  const setShowReplyBannerHandler = useCallback(({ newState }: { newState: boolean }) => {
+    setShowReplyBanner(newState);
+  }, []);
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
 
   // const handleSetPushMention = (user: User | null) => {
@@ -308,7 +311,7 @@ function useCommentSectionData(
         });
 
         if (newCommentData) {
-          removeCommentFromTree(TEMP_ID);
+          removeCommentFromTree({ commentId: TEMP_ID });
 
           if (autoReaction) {
             // Add comment with optimistic reaction data while the API call is in flight
@@ -337,7 +340,7 @@ function useCommentSectionData(
         return newCommentData;
       } catch (err: unknown) {
         // TODO: currently we remove the temp comment from the tree but don't offer the user any option to retry. It's as if they've never sent anything and all they typed is gone. We need to add a flag for comment in the tree that says t failed so we can give he user a try again button
-        removeCommentFromTree(TEMP_ID);
+        removeCommentFromTree({ commentId: TEMP_ID });
         handleError(err, "Failed to submit a new comment: ");
         return undefined;
       } finally {
@@ -362,7 +365,7 @@ function useCommentSectionData(
       if (!isUUID(commentId)) return;
       try {
         // Reddit-style: mark as deleted placeholder instead of removing from tree
-        markCommentAsDeleted(commentId);
+        markCommentAsDeleted({ commentId });
         await deleteComment({ commentId });
         setContextEntity?.((prevEntity) => {
           if (!prevEntity) return prevEntity;
@@ -511,7 +514,7 @@ function useCommentSectionData(
     repliedToComment,
     setRepliedToComment,
     showReplyBanner,
-    setShowReplyBanner,
+    setShowReplyBanner: setShowReplyBannerHandler,
 
     addCommentsToTree,
     removeCommentFromTree,
