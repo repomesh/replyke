@@ -6,7 +6,6 @@ import useFetchEntityByShortId from "./useFetchEntityByShortId";
 import useUpdateEntity, { UpdateEntityProps } from "./useUpdateEntity";
 import useDeleteEntity from "./useDeleteEntity";
 
-import useIncrementEntityViews from "./useIncrementEntityViews";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
 
@@ -45,7 +44,6 @@ export interface UseEntityDataValues {
   updateEntity(
     props: Pick<UpdateEntityProps, "update">,
   ): Promise<Entity | undefined>;
-  incrementEntityViews: () => Promise<void>;
   deleteEntity: () => Promise<void>;
 }
 
@@ -58,8 +56,6 @@ function useEntityData({
 }: UseEntityDataProps): UseEntityDataValues {
   const [entity, setEntity] = useState<Entity | undefined | null>(entityProp);
 
-  const entityViewsIncremented = useRef<boolean>(false);
-
   // Cache to store fetched entities keyed by unique identifier
   const entityCache = useRef<Record<string, Entity>>({});
 
@@ -68,8 +64,6 @@ function useEntityData({
   const fetchEntityByShortId = useFetchEntityByShortId();
 
   const updateEntity = useUpdateEntity();
-  const incrementEntityViews = useIncrementEntityViews();
-
   const deleteEntity = useDeleteEntity();
 
   const handleUpdateEntity = useCallback(
@@ -88,16 +82,6 @@ function useEntityData({
     },
     [entity, updateEntity],
   );
-
-  const handleIncrementEntityViews = useCallback(async () => {
-    if (!entity || entityViewsIncremented.current) return;
-    try {
-      await incrementEntityViews({ entityId: entity.id });
-      entityViewsIncremented.current = true;
-    } catch (err) {
-      handleError(err, "Failed to increment entity views");
-    }
-  }, [entity, incrementEntityViews, entityViewsIncremented]);
 
   const handleDeleteEntity = useCallback(async () => {
     if (!entity) return;
@@ -176,7 +160,6 @@ function useEntityData({
     entity,
     setEntity,
     updateEntity: handleUpdateEntity,
-    incrementEntityViews: handleIncrementEntityViews,
     deleteEntity: handleDeleteEntity,
   };
 }

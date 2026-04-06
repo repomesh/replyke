@@ -12,7 +12,6 @@ export type { FetchEntityByForeignIdProps } from "./useFetchEntityByForeignId";
 export { default as useFetchEntityByShortId } from "./useFetchEntityByShortId";
 export type { FetchEntityByShortIdProps } from "./useFetchEntityByShortId";
 export { default as useFetchManyEntities } from "./useFetchManyEntities";
-export { default as useIncrementEntityViews } from "./useIncrementEntityViews";
 export { default as useFetchManyEntitiesWrapper } from "./useFetchManyEntitiesWrapper";
 export type {
   UseFetchManyEntitiesWrapperProps,
