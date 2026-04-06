@@ -3,7 +3,7 @@ export {
   useConversations,
   useConversation,
   useCreateDirectConversation,
-  useSpaceConversation,
+  useFetchSpaceConversation,
   useConversationMembers,
 } from "./conversations";
 export type {
@@ -13,8 +13,8 @@ export type {
   UseConversationValues,
   UpdateConversationParams,
   CreateDirectConversationProps,
-  UseSpaceConversationProps,
-  UseSpaceConversationValues,
+  UseFetchSpaceConversationProps,
+  UseFetchSpaceConversationValues,
   UseConversationMembersProps,
   UseConversationMembersValues,
 } from "./conversations";

@@ -6,18 +6,18 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
 
-export interface UseSpaceConversationProps {
+export interface UseFetchSpaceConversationProps {
   spaceId: string;
 }
 
-export interface UseSpaceConversationValues {
+export interface UseFetchSpaceConversationValues {
   conversation: Conversation | null;
   loading: boolean;
 }
 
-function useSpaceConversation({
+function useFetchSpaceConversation({
   spaceId,
-}: UseSpaceConversationProps): UseSpaceConversationValues {
+}: UseFetchSpaceConversationProps): UseFetchSpaceConversationValues {
   const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
@@ -50,4 +50,4 @@ function useSpaceConversation({
   return { conversation, loading };
 }
 
-export default useSpaceConversation;
+export default useFetchSpaceConversation;

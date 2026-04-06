@@ -14,11 +14,11 @@ export type {
 export { default as useCreateDirectConversation } from "./useCreateDirectConversation";
 export type { CreateDirectConversationProps } from "./useCreateDirectConversation";
 
-export { default as useSpaceConversation } from "./useSpaceConversation";
+export { default as useFetchSpaceConversation } from "./useFetchSpaceConversation";
 export type {
-  UseSpaceConversationProps,
-  UseSpaceConversationValues,
-} from "./useSpaceConversation";
+  UseFetchSpaceConversationProps,
+  UseFetchSpaceConversationValues,
+} from "./useFetchSpaceConversation";
 
 export { default as useConversationMembers } from "./useConversationMembers";
 export type {
