@@ -6,4 +6,6 @@ export { default as useAddAccount, type UseAddAccountReturn } from './useAddAcco
 export { default as useRemoveAccount, type UseRemoveAccountReturn } from './useRemoveAccount';
 export { default as useSignOutAll, type UseSignOutAllReturn } from './useSignOutAll';
 export { default as useRequestPasswordReset, type RequestPasswordResetProps } from './useRequestPasswordReset';
+export { default as useSendVerificationEmail, type SendVerificationEmailProps } from './useSendVerificationEmail';
+export { default as useVerifyEmail, type VerifyEmailProps } from './useVerifyEmail';
 export { default as useOAuthIdentities, type OAuthIdentity, type UseOAuthIdentitiesReturn } from './useOAuthIdentities';

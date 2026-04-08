@@ -55,11 +55,15 @@ export { useSignTestingJwt, type SignTestingJwtProps } from "./hooks/crypto";
 export {
   useAuth,
   useRequestPasswordReset,
+  useSendVerificationEmail,
+  useVerifyEmail,
   type UseAuthValues,
   type SignUpWithEmailAndPasswordProps,
   type SignInWithEmailAndPasswordProps,
   type ChangePasswordProps,
   type RequestPasswordResetProps,
+  type SendVerificationEmailProps,
+  type VerifyEmailProps,
 } from "./hooks/auth";
 
 // -- authentication (accounts)
