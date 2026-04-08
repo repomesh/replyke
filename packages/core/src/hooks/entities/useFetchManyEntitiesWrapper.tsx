@@ -84,10 +84,6 @@ function useFetchManyEntitiesWrapper(
   const [entities, setEntities] = useState<Entity[]>([]);
 
   const resetEntities = useCallback(async () => {
-    if (!userId) {
-      return;
-    }
-
     try {
       loading.current = true;
       setLoadingState(true);
