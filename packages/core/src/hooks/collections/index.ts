@@ -10,7 +10,7 @@ export {
   type AddToCollectionProps,
   type RemoveFromCollectionProps,
 } from "./useCollections";
-export { default as useIsEntityInCollection } from "./useIsEntitySaved";
+export { default as useIsEntityInCollection } from "./useIsEntityInCollection";
 export {
   default as useCollectionEntitiesWrapper,
   type UseCollectionEntitiesWrapperProps,
