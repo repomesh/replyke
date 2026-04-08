@@ -135,14 +135,14 @@ export function useEntityListActions(): UseEntityListActionsValues {
 
         if (result) {
           const append = options.page > 1;
-          dispatch(setEntityListEntities({ listId, entities: result, append }));
+          dispatch(setEntityListEntities({ listId, entities: result.data, append }));
           dispatch(
             setEntityListHasMore({
               listId,
-              hasMore: result.length >= options.limit,
+              hasMore: result.pagination.hasMore,
             })
           );
-          return result;
+          return result.data;
         }
 
         return null;

@@ -1,4 +1,5 @@
 import { baseApi } from "./baseApi";
+import type { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import type { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import type { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import { validateSortBy } from "../../interfaces/EntityListSortByOptions";
@@ -139,7 +140,7 @@ interface DeleteEntityParams {
 export const entityListsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch paginated entities with filters
-    fetchEntities: builder.query<Entity[], FetchEntitiesParams>({
+    fetchEntities: builder.query<PaginatedResponse<Entity>, FetchEntitiesParams>({
       query: ({
         projectId,
         page,
@@ -195,13 +196,9 @@ export const entityListsApi = baseApi.injectEndpoints({
           }),
         };
       },
-      transformResponse: (response: { data: Entity[], pagination: any }) => {
-        // Extract the data array from the paginated v7 API response
-        return response.data;
-      },
       providesTags: (result, error, { projectId, sourceId, spaceId }) => [
         { type: "Entity" as const, id: `${projectId}-${sourceId || 'all'}-${spaceId || 'no-space'}-LIST` },
-        ...(result?.map(({ id }) => ({
+        ...(result?.data?.map(({ id }) => ({
           type: "Entity" as const,
           id,
         })) ?? []),
