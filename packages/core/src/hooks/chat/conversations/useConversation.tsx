@@ -7,25 +7,21 @@ import {
   setConversationLoading,
 } from "../../../store/slices/chatSlice";
 import { Conversation } from "../../../interfaces/models/Conversation";
-import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { handleError } from "../../../utils/handleError";
+import useFetchConversation from "./useFetchConversation";
+import useUpdateConversation from "./useUpdateConversation";
+import { UpdateConversationParams } from "./useUpdateConversation";
+import useDeleteConversation from "./useDeleteConversation";
 
 export interface UseConversationProps {
   conversationId: string;
 }
 
-export interface UpdateConversationParams {
-  name?: string;
-  description?: string;
-  avatarFileId?: string | null;
-  postingPermission?: "members" | "admins";
-}
-
 export interface UseConversationValues {
   conversation: Conversation | null;
   loading: boolean;
-  update: (params: UpdateConversationParams) => Promise<Conversation | undefined>;
+  update: (params: Omit<UpdateConversationParams, "conversationId">) => Promise<Conversation | undefined>;
   deleteConversation: () => Promise<void>;
 }
 
@@ -34,59 +30,46 @@ function useConversation({
 }: UseConversationProps): UseConversationValues {
   const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
-  const axios = useAxiosPrivate();
 
   const conversation = useReplykeSelector(selectConversation(conversationId));
   const loading = useReplykeSelector(selectConversationLoading(conversationId));
+
+  const fetchConversation = useFetchConversation();
+  const _update = useUpdateConversation();
+  const _delete = useDeleteConversation();
 
   // Fetch conversation on mount if not already loaded
   useEffect(() => {
     if (!projectId || !conversationId || conversation) return;
 
-    const fetchConversation = async () => {
+    const load = async () => {
       dispatch(setConversationLoading({ conversationId, loading: true }));
       try {
-        const response = await axios.get(
-          `/${projectId}/chat/conversations/${conversationId}`
-        );
-        dispatch(setConversation(response.data as Conversation));
+        const fetched = await fetchConversation({ conversationId });
+        dispatch(setConversation(fetched));
       } catch (err) {
         handleError(err, "Failed to fetch conversation");
         dispatch(setConversationLoading({ conversationId, loading: false }));
       }
     };
 
-    fetchConversation();
+    load();
   }, [projectId, conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const update = useCallback(
-    async (params: UpdateConversationParams): Promise<Conversation | undefined> => {
-      if (!projectId || !conversationId) return;
-      try {
-        const response = await axios.patch(
-          `/${projectId}/chat/conversations/${conversationId}`,
-          params
-        );
-        const updated = response.data as Conversation;
-        dispatch(setConversation(updated));
-        return updated;
-      } catch (err) {
-        handleError(err, "Failed to update conversation");
-        throw err;
-      }
+    async (
+      params: Omit<UpdateConversationParams, "conversationId">
+    ): Promise<Conversation | undefined> => {
+      const updated = await _update({ conversationId, ...params });
+      if (updated) dispatch(setConversation(updated));
+      return updated;
     },
-    [projectId, conversationId, axios, dispatch]
+    [_update, conversationId, dispatch]
   );
 
   const deleteConversation = useCallback(async () => {
-    if (!projectId || !conversationId) return;
-    try {
-      await axios.delete(`/${projectId}/chat/conversations/${conversationId}`);
-    } catch (err) {
-      handleError(err, "Failed to delete conversation");
-      throw err;
-    }
-  }, [projectId, conversationId, axios]);
+    await _delete({ conversationId });
+  }, [_delete, conversationId]);
 
   return { conversation, loading, update, deleteConversation };
 }

@@ -8,8 +8,16 @@ export { default as useConversation } from "./useConversation";
 export type {
   UseConversationProps,
   UseConversationValues,
-  UpdateConversationParams,
 } from "./useConversation";
+
+export { default as useFetchConversation } from "./useFetchConversation";
+export type { FetchConversationProps } from "./useFetchConversation";
+
+export { default as useUpdateConversation } from "./useUpdateConversation";
+export type { UpdateConversationParams } from "./useUpdateConversation";
+
+export { default as useDeleteConversation } from "./useDeleteConversation";
+export type { DeleteConversationProps } from "./useDeleteConversation";
 
 export { default as useCreateDirectConversation } from "./useCreateDirectConversation";
 export type { CreateDirectConversationProps } from "./useCreateDirectConversation";

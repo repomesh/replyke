@@ -2,6 +2,9 @@
 export {
   useConversations,
   useConversation,
+  useFetchConversation,
+  useUpdateConversation,
+  useDeleteConversation,
   useCreateDirectConversation,
   useFetchSpaceConversation,
   useConversationMembers,
@@ -12,6 +15,8 @@ export type {
   UseConversationProps,
   UseConversationValues,
   UpdateConversationParams,
+  FetchConversationProps,
+  DeleteConversationProps,
   CreateDirectConversationProps,
   UseFetchSpaceConversationProps,
   UseFetchSpaceConversationValues,

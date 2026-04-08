@@ -566,6 +566,9 @@ export type { File } from "./interfaces/models/File";
 export {
   useConversations,
   useConversation,
+  useFetchConversation,
+  useUpdateConversation,
+  useDeleteConversation,
   useCreateDirectConversation,
   useFetchSpaceConversation,
   useConversationMembers,
@@ -589,6 +592,8 @@ export type {
   UseConversationProps,
   UseConversationValues,
   UpdateConversationParams,
+  FetchConversationProps,
+  DeleteConversationProps,
   CreateDirectConversationProps,
   UseFetchSpaceConversationProps,
   UseFetchSpaceConversationValues,
