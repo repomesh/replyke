@@ -427,24 +427,140 @@ export type UnifiedAppNotification =
 // | SystemNotification
 // | CustomNotification;
 
-export type NotificationTemplate = { title?: string; content?: string };
+// --- Template variable types (one per notification type) ---
+
+export interface EntityCommentTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+}
+
+export interface CommentReplyTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+  replyContent: string;
+}
+
+export interface EntityMentionTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+}
+
+export interface CommentMentionTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+}
+
+export interface EntityUpvoteTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+}
+
+export interface CommentUpvoteTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+}
+
+export interface EntityReactionTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  reactionType: string;
+}
+
+export interface CommentReactionTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+  reactionType: string;
+}
+
+export interface EntityReactionMilestoneSpecificTemplateVars {
+  entityTitle: string;
+  entityContent: string;
+  reactionType: string;
+  milestoneCount: string;
+}
+
+export interface EntityReactionMilestoneTotalTemplateVars {
+  entityTitle: string;
+  entityContent: string;
+  milestoneCount: string;
+}
+
+export interface CommentReactionMilestoneSpecificTemplateVars {
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+  reactionType: string;
+  milestoneCount: string;
+}
+
+export interface CommentReactionMilestoneTotalTemplateVars {
+  entityTitle: string;
+  entityContent: string;
+  commentContent: string;
+  milestoneCount: string;
+}
+
+export interface NewFollowTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+}
+
+export interface ConnectionRequestTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+}
+
+export interface ConnectionAcceptedTemplateVars {
+  initiatorName: string;
+  initiatorUsername: string;
+}
+
+// A template field is either a string with $variable placeholders, or a function
+// receiving the typed vars for that notification type and returning a string.
+export type TemplateField<TVars> = string | ((vars: TVars) => string);
+
+export interface TypedNotificationTemplate<TVars> {
+  title?: TemplateField<TVars>;
+  content?: TemplateField<TVars>;
+}
 
 export type NotificationTemplates = {
-  entityComment: NotificationTemplate;
-  commentReply: NotificationTemplate;
-  entityMention: NotificationTemplate;
-  commentMention: NotificationTemplate;
-  entityUpvote: NotificationTemplate;
-  commentUpvote: NotificationTemplate;
-  entityReaction: NotificationTemplate;
-  commentReaction: NotificationTemplate;
-  entityReactionMilestoneSpecific: NotificationTemplate;
-  entityReactionMilestoneTotal: NotificationTemplate;
-  commentReactionMilestoneSpecific: NotificationTemplate;
-  commentReactionMilestoneTotal: NotificationTemplate;
-  newFollow: NotificationTemplate;
-  connectionRequest: NotificationTemplate;
-  connectionAccepted: NotificationTemplate;
+  entityComment: TypedNotificationTemplate<EntityCommentTemplateVars>;
+  commentReply: TypedNotificationTemplate<CommentReplyTemplateVars>;
+  entityMention: TypedNotificationTemplate<EntityMentionTemplateVars>;
+  commentMention: TypedNotificationTemplate<CommentMentionTemplateVars>;
+  entityUpvote: TypedNotificationTemplate<EntityUpvoteTemplateVars>;
+  commentUpvote: TypedNotificationTemplate<CommentUpvoteTemplateVars>;
+  entityReaction: TypedNotificationTemplate<EntityReactionTemplateVars>;
+  commentReaction: TypedNotificationTemplate<CommentReactionTemplateVars>;
+  entityReactionMilestoneSpecific: TypedNotificationTemplate<EntityReactionMilestoneSpecificTemplateVars>;
+  entityReactionMilestoneTotal: TypedNotificationTemplate<EntityReactionMilestoneTotalTemplateVars>;
+  commentReactionMilestoneSpecific: TypedNotificationTemplate<CommentReactionMilestoneSpecificTemplateVars>;
+  commentReactionMilestoneTotal: TypedNotificationTemplate<CommentReactionMilestoneTotalTemplateVars>;
+  newFollow: TypedNotificationTemplate<NewFollowTemplateVars>;
+  connectionRequest: TypedNotificationTemplate<ConnectionRequestTemplateVars>;
+  connectionAccepted: TypedNotificationTemplate<ConnectionAcceptedTemplateVars>;
 };
 
 export type PotentiallyPopulatedUnifiedAppNotification =
