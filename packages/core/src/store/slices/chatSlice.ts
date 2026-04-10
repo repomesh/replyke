@@ -281,7 +281,7 @@ const chatSlice = createSlice({
      *
      * Deduplication order:
      *  1. Match by real `id` → update in-place (handles socket events after REST)
-     *  2. Match by `clientId` → replace optimistic placeholder with confirmed message
+     *  2. Match by `localId` → replace optimistic placeholder with confirmed message
      *  3. Otherwise insert, maintaining chronological ASC order
      */
     upsertMessage(state, action: PayloadAction<ChatMessage>) {
@@ -302,10 +302,10 @@ const chatSlice = createSlice({
         return;
       }
 
-      // 2. Match by clientId (replace optimistic placeholder)
-      if (message.clientId) {
+      // 2. Match by localId (replace optimistic placeholder)
+      if (message.localId) {
         const byClientIndex = items.findIndex(
-          (m) => m.clientId === message.clientId
+          (m) => m.localId === message.localId
         );
         if (byClientIndex !== -1) {
           items[byClientIndex] = message;
@@ -330,7 +330,7 @@ const chatSlice = createSlice({
     /**
      * Insert a pending optimistic message with a `temp-{uuid}` id immediately
      * before the POST fires. The message is replaced by upsertMessage when the
-     * server response arrives (matched via clientId).
+     * server response arrives (matched via localId).
      */
     addOptimisticMessage(state, action: PayloadAction<ChatMessage>) {
       const message = action.payload;
@@ -350,13 +350,13 @@ const chatSlice = createSlice({
      */
     failOptimisticMessage(
       state,
-      action: PayloadAction<{ conversationId: string; clientId: string }>
+      action: PayloadAction<{ conversationId: string; localId: string }>
     ) {
-      const { conversationId, clientId } = action.payload;
+      const { conversationId, localId } = action.payload;
       const bucket = state.messages[conversationId];
       if (!bucket) return;
 
-      const message = bucket.items.find((m) => m.clientId === clientId);
+      const message = bucket.items.find((m) => m.localId === localId);
       if (message) {
         message.sendFailed = true;
       }

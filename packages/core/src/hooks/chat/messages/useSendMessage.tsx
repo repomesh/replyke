@@ -53,13 +53,13 @@ function useSendMessage({
       if (!projectId) throw new Error("No projectId available.");
       if (!conversationId) throw new Error("No conversationId provided.");
 
-      const clientId = crypto.randomUUID();
+      const localId = crypto.randomUUID();
       const now = new Date();
 
       // Insert optimistic message immediately
       const optimisticMsg: ChatMessage = {
-        id: `temp-${clientId}`,
-        clientId,
+        id: `temp-${localId}`,
+        localId,
         projectId,
         conversationId,
         userId: currentUser?.id ?? null,
@@ -91,7 +91,7 @@ function useSendMessage({
         if (files && files.length > 0) {
           // Multipart upload when files are attached
           const formData = new FormData();
-          formData.append("clientId", clientId);
+          formData.append("localId", localId);
           if (content) formData.append("content", content);
           if (gif) formData.append("gif", JSON.stringify(gif));
           if (mentions && mentions.length > 0)
@@ -111,7 +111,7 @@ function useSendMessage({
           response = await axios.post(
             `/${projectId}/chat/conversations/${conversationId}/messages`,
             {
-              clientId,
+              localId,
               ...(content !== undefined && { content }),
               ...(gif !== undefined && { gif }),
               ...(mentions !== undefined && { mentions }),
@@ -126,7 +126,7 @@ function useSendMessage({
         dispatch(upsertMessage(confirmedMsg));
         return confirmedMsg;
       } catch (err) {
-        dispatch(failOptimisticMessage({ conversationId, clientId }));
+        dispatch(failOptimisticMessage({ conversationId, localId }));
         handleError(err, "Failed to send message");
         throw err;
       }

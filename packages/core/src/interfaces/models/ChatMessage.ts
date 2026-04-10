@@ -5,9 +5,9 @@ import { User } from "./User";
 
 export interface ChatMessage {
   id: string;
-  // Client-generated UUID echoed by the server in the REST response and socket payload.
+  // Locally-generated UUID echoed by the server in the REST response and socket payload.
   // Never stored in the DB. Used for optimistic deduplication (matching temp entries to confirmed ones).
-  clientId?: string;
+  localId?: string;
   projectId: string;
   conversationId: string;
   // null when the original sender's account has been deleted (FK SET NULL)
