@@ -23,6 +23,7 @@ export interface Entity {
   sourceId: string | null;
   spaceId: string | null; // Optional space association - entities can be organized into spaces
   space?: Space | null; // Optional space object populated when include contains "space"
+  userId: string | null;
   user?: User | null;
   title: string | null;
   content: string | null;

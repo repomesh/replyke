@@ -4,7 +4,7 @@ export interface Collection {
   userId: string;
   parentId: string | null;
   name: string;
-  entityCount?: number;
+  entityCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
