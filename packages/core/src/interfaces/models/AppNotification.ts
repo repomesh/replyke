@@ -21,7 +21,8 @@ type AppNotificationType =
   | "comment-reaction-milestone-total"
   | "new-follow"
   | "connection-request"
-  | "connection-accepted";
+  | "connection-accepted"
+  | "space-membership-approved";
 // | "followRequest"
 // | "followRequestAccepted"
 // | "friendRequest"
@@ -312,6 +313,18 @@ export interface ConnectionAcceptedNotification extends BaseAppNotification {
   };
 }
 
+export interface SpaceMembershipApprovedNotification extends BaseAppNotification {
+  type: "space-membership-approved";
+  action: "open-space";
+  metadata: {
+    spaceId: string;
+    spaceName: string;
+    spaceShortId: string;
+    spaceSlug: string | null | undefined;
+    spaceAvatar: string | null | undefined;
+  };
+}
+
 // export interface FollowRequestNotification extends BaseAppNotification {
 //   type: "followRequest";
 //   metadata: {
@@ -410,7 +423,8 @@ export type UnifiedAppNotification =
   | CommentReactionMilestoneTotalNotification
   | NewFollowNotification
   | ConnectionRequestNotification
-  | ConnectionAcceptedNotification;
+  | ConnectionAcceptedNotification
+  | SpaceMembershipApprovedNotification;
 // | LikeNotification
 // | ReplyNotification
 // | MentionNotification
@@ -536,6 +550,12 @@ export interface ConnectionAcceptedTemplateVars {
   initiatorUsername: string;
 }
 
+export interface SpaceMembershipApprovedTemplateVars {
+  spaceName: string;
+  spaceShortId: string;
+  spaceSlug: string;
+}
+
 // A template field is either a string with $variable placeholders, or a function
 // receiving the typed vars for that notification type and returning a string.
 export type TemplateField<TVars> = string | ((vars: TVars) => string);
@@ -561,6 +581,7 @@ export type NotificationTemplates = {
   newFollow: TypedNotificationTemplate<NewFollowTemplateVars>;
   connectionRequest: TypedNotificationTemplate<ConnectionRequestTemplateVars>;
   connectionAccepted: TypedNotificationTemplate<ConnectionAcceptedTemplateVars>;
+  spaceMembershipApproved: TypedNotificationTemplate<SpaceMembershipApprovedTemplateVars>;
 };
 
 export type PotentiallyPopulatedUnifiedAppNotification =

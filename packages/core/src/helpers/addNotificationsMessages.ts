@@ -7,6 +7,7 @@ import {
   CommentUpvoteTemplateVars,
   ConnectionAcceptedTemplateVars,
   ConnectionRequestTemplateVars,
+  SpaceMembershipApprovedTemplateVars,
   EntityCommentTemplateVars,
   EntityMentionTemplateVars,
   EntityReactionMilestoneSpecificTemplateVars,
@@ -335,6 +336,21 @@ export default (
           `$initiatorUsername accepted your connection request`,
           ``,
           notificationTemplates?.connectionAccepted
+        ));
+        break;
+      }
+
+      case "space-membership-approved": {
+        const vars: SpaceMembershipApprovedTemplateVars = {
+          spaceName: notification.metadata.spaceName || "",
+          spaceShortId: notification.metadata.spaceShortId || "",
+          spaceSlug: notification.metadata.spaceSlug || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your request to join $spaceName has been approved`,
+          ``,
+          notificationTemplates?.spaceMembershipApproved
         ));
         break;
       }
