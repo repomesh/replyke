@@ -90,7 +90,11 @@ export {
 
 // -- store internals (for platform-specific hooks in react-js / react-native)
 export { useReplykeDispatch, useReplykeSelector } from "./store/hooks";
-export { setTokens, setInitialized, selectAccessToken } from "./store/slices/authSlice";
+export {
+  setTokens,
+  setInitialized,
+  selectAccessToken,
+} from "./store/slices/authSlice";
 export { requestNewAccessTokenThunk } from "./store/slices/authThunks";
 
 // -- account storage
@@ -170,6 +174,7 @@ export {
   type EntityListDeleteEntityProps,
   type EntityListFilters,
   type EntityListSort,
+  type EntityListConfig,
   type EntityListFetchOptions,
 } from "./hooks/entity-lists";
 

@@ -49,7 +49,7 @@ export interface UseCollectionsValues {
 
   isEntityInCollection: (
     selectedEntityId: string,
-    collectionId?: string
+    collectionId?: string,
   ) => Promise<{
     saved: boolean;
     inSpecificCollection?: boolean;
@@ -81,7 +81,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   const loading = useReplykeSelector(selectCollectionsLoading);
   const subCollectionsMap = useReplykeSelector(selectSubCollectionsMap);
   const collectionsById = useReplykeSelector(
-    (state) => state.replyke.collections.collectionsById
+    (state) => state.replyke.collections.collectionsById,
   );
   const currentProjectId = useReplykeSelector(selectCurrentProjectId);
 
@@ -110,7 +110,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   useEffect(() => {
     if (!user || !projectId) return;
 
-    fetchRootCollection(projectId);
+    fetchRootCollection({ projectId });
   }, [fetchRootCollection, user, projectId]);
 
   // Fetch sub-collections when current collection changes
@@ -122,8 +122,14 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
       return; // No need to fetch, we already have the mapping (even if empty)
     }
 
-    fetchSubCollections(projectId, currentCollection.id);
-  }, [fetchSubCollections, user, projectId, currentCollection, subCollectionsMap]);
+    fetchSubCollections({ projectId, collectionId: currentCollection.id });
+  }, [
+    fetchSubCollections,
+    user,
+    projectId,
+    currentCollection,
+    subCollectionsMap,
+  ]);
 
   // Entity membership checker - checks if entity is in any collection (or specific collection if provided)
   const isEntityInCollection = useCallback(
@@ -163,7 +169,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         };
       }
     },
-    [projectId, axios]
+    [projectId, axios],
   );
 
   // Wrapped CRUD operations that match the original interface
@@ -184,9 +190,13 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         return;
       }
 
-      await createCollectionAction(projectId, currentCollection.id, collectionName);
+      await createCollectionAction({
+        projectId,
+        parentCollectionId: currentCollection.id,
+        collectionName,
+      });
     },
-    [createCollectionAction, currentCollection, projectId]
+    [createCollectionAction, currentCollection, projectId],
   );
 
   const handleUpdateCollection = useCallback(
@@ -196,9 +206,9 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         return;
       }
 
-      await updateCollectionAction(projectId, collectionId, update);
+      await updateCollectionAction({ projectId, collectionId, update });
     },
-    [updateCollectionAction, projectId]
+    [updateCollectionAction, projectId],
   );
 
   const handleDeleteCollection = useCallback(
@@ -208,9 +218,9 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         return;
       }
 
-      await deleteCollectionAction(projectId, collection);
+      await deleteCollectionAction({ projectId, collection });
     },
-    [deleteCollectionAction, projectId]
+    [deleteCollectionAction, projectId],
   );
 
   const handleAddToCollection = useCallback(
@@ -230,9 +240,13 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         return;
       }
 
-      await addToCollectionAction(projectId, currentCollection.id, entityId);
+      await addToCollectionAction({
+        projectId,
+        collectionId: currentCollection.id,
+        entityId,
+      });
     },
-    [addToCollectionAction, currentCollection, projectId]
+    [addToCollectionAction, currentCollection, projectId],
   );
 
   const handleRemoveFromCollection = useCallback(
@@ -247,9 +261,13 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         return;
       }
 
-      await removeFromCollectionAction(projectId, currentCollection.id, entityId);
+      await removeFromCollectionAction({
+        projectId,
+        collectionId: currentCollection.id,
+        entityId,
+      });
     },
-    [removeFromCollectionAction, currentCollection, projectId]
+    [removeFromCollectionAction, currentCollection, projectId],
   );
 
   // Return the same interface as the original hook
@@ -284,7 +302,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
       handleDeleteCollection,
       handleAddToCollection,
       handleRemoveFromCollection,
-    ]
+    ],
   );
 }
 

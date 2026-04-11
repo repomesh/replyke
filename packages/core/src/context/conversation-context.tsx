@@ -57,7 +57,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
   // Read the newest message id from Redux for reconnect catch-up
   const newestMessageId = useReplykeSelector(
-    selectNewestMessageId(conversationId)
+    selectNewestMessageId(conversationId),
   );
   const newestMessageIdRef = useRef(newestMessageId);
   useEffect(() => {
@@ -72,7 +72,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
       try {
         const response = await axios.get(
           `/${projectId}/v7/chat/conversations/${conversationId}/messages`,
-          { params: { after: afterTimestamp, limit: 100, sort: "asc" } }
+          { params: { after: afterTimestamp, limit: 100, sort: "asc" } },
         );
         const { messages } = response.data as { messages: ChatMessage[] };
         messages.forEach((msg) => dispatch(upsertMessage(msg)));
@@ -80,13 +80,13 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
         handleError(err, "Failed to fetch missed messages");
       }
     },
-    [projectId, conversationId, axios, dispatch]
+    [projectId, conversationId, axios, dispatch],
   );
 
   // Keep a ref to the messages state so socket handlers can find latest messages
   const messagesRef = useRef<ChatMessage[]>([]);
-  const reduxMessages = useReplykeSelector((state: any) =>
-    state.replyke.chat.messages[conversationId]?.items ?? []
+  const reduxMessages = useReplykeSelector(
+    (state: any) => state.replyke.chat.messages[conversationId]?.items ?? [],
   );
   useEffect(() => {
     messagesRef.current = reduxMessages;
@@ -112,14 +112,20 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
     // Mark as read on mount (catches up any unread before the view was opened)
     const newestId = newestMessageIdRef.current;
     if (newestId) {
-      mark(newestId);
+      mark({ messageId: newestId });
     }
 
     return () => {
       socket.emit("leave:conversation", { conversationId });
       unregisterActiveConversation(room);
     };
-  }, [socket, conversationId, registerActiveConversation, unregisterActiveConversation, mark]);
+  }, [
+    socket,
+    conversationId,
+    registerActiveConversation,
+    unregisterActiveConversation,
+    mark,
+  ]);
 
   // ── Reconnect handler ──────────────────────────────────────────────────────
   // On reconnects (not the initial connect), re-join the room and catch up on
@@ -159,7 +165,11 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   useEffect(() => {
     if (!socket || !conversationId) return;
 
-    const handleDeleted = ({ conversationId: deletedId }: { conversationId: string }) => {
+    const handleDeleted = ({
+      conversationId: deletedId,
+    }: {
+      conversationId: string;
+    }) => {
       if (deletedId !== conversationId) return;
       socket.emit("leave:conversation", { conversationId });
       unregisterActiveConversation(conversationId);
@@ -177,14 +187,20 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   useEffect(() => {
     if (!socket || !conversationId) return;
 
-    const handleMemberJoined = (payload: { conversationId: string; member: ConversationMember }) => {
+    const handleMemberJoined = (payload: {
+      conversationId: string;
+      member: ConversationMember;
+    }) => {
       if (payload.conversationId !== conversationId) return;
       data.upsertMember(payload.member);
     };
 
-    const handleMemberLeft = (payload: { conversationId: string; userId: string }) => {
+    const handleMemberLeft = (payload: {
+      conversationId: string;
+      userId: string;
+    }) => {
       if (payload.conversationId !== conversationId) return;
-      data.removeMemberLocally(payload.userId);
+      data.removeMemberLocally({ userId: payload.userId });
     };
 
     socket.on("member:joined", handleMemberJoined);
@@ -202,7 +218,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
     const handleMessage = (message: ChatMessage) => {
       if (message.conversationId !== conversationId) return;
-      mark(message.id);
+      mark({ messageId: message.id });
     };
 
     socket.on("message:created", handleMessage);

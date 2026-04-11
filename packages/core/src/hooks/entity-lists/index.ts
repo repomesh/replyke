@@ -11,5 +11,6 @@ export { default as useEntityListActions } from "./useEntityListActions";
 export type {
   EntityListFilters,
   EntityListSort,
+  EntityListConfig,
   EntityListFetchOptions,
 } from "../../store/slices/entityListsSlice";

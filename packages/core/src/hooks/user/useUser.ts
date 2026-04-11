@@ -25,7 +25,7 @@ export interface UseUserValues {
 
   // Current user management actions
   updateUser: (update: UpdateUserParams) => Promise<AuthUser>;
-  
+
   // Error handling
   clearError: () => void;
 }
@@ -82,9 +82,14 @@ function useUser(_: UseUserProps = {}): UseUserValues {
       }
 
       // Pass current user for optimistic update reversion if needed
-      return await updateUserAction(projectId, user.id, update, user);
+      return await updateUserAction({
+        projectId,
+        userId: user.id,
+        update,
+        currentUser: user,
+      });
     },
-    [updateUserAction, user, projectId]
+    [updateUserAction, user, projectId],
   );
 
   // Return focused interface for current user management
@@ -99,15 +104,7 @@ function useUser(_: UseUserProps = {}): UseUserValues {
 
       clearError,
     }),
-    [
-      user,
-      authUser,
-      loading,
-      updating,
-      error,
-      handleUpdateUser,
-      clearError,
-    ]
+    [user, authUser, loading, updating, error, handleUpdateUser, clearError],
   );
 }
 
