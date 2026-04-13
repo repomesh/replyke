@@ -127,7 +127,6 @@ export {
 export {
   useCollections,
   useCollectionsActions,
-  useIsEntityInCollection,
   useCollectionEntitiesWrapper,
   type UseCollectionsProps,
   type UseCollectionsValues,
@@ -154,6 +153,7 @@ export {
   useUpdateEntity,
   useFetchDrafts,
   usePublishDraft,
+  useIsEntitySaved,
   type CreateEntityProps,
   type DeleteEntityProps,
   type FetchEntityProps,
@@ -162,6 +162,7 @@ export {
   type PublishDraftProps,
   type UseFetchManyEntitiesWrapperProps,
   type UseFetchManyEntitiesWrapperValues,
+  type UseIsEntitySavedValues,
 } from "./hooks/entities";
 
 // -- entity lists

@@ -47,10 +47,10 @@ export interface UseCollectionsValues {
   goBack: () => void;
   goToRoot: () => void;
 
-  isEntityInCollection: (
-    selectedEntityId: string,
-    collectionId?: string,
-  ) => Promise<{
+  isEntitySaved: (props: {
+    entityId: string;
+    collectionId?: string;
+  }) => Promise<{
     saved: boolean;
     inSpecificCollection?: boolean;
     collections: Array<{ id: string; name: string }>;
@@ -132,8 +132,8 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   ]);
 
   // Entity membership checker - checks if entity is in any collection (or specific collection if provided)
-  const isEntityInCollection = useCallback(
-    async (selectedEntityId: string, collectionId?: string) => {
+  const isEntitySaved = useCallback(
+    async ({ entityId: selectedEntityId, collectionId }: { entityId: string; collectionId?: string }) => {
       if (!projectId || !selectedEntityId) {
         return {
           saved: false,
@@ -146,7 +146,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
         const response = await axios.get<{
           saved: boolean;
           collections: Array<{ id: string; name: string }>;
-        }>(`/${projectId}/collections/is-entity-saved`, {
+        }>(`/${projectId}/entities/is-entity-saved`, {
           params: { entityId: selectedEntityId },
         });
 
@@ -281,7 +281,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
       goBack,
       goToRoot,
 
-      isEntityInCollection,
+      isEntitySaved,
 
       createCollection: handleCreateCollection,
       updateCollection: handleUpdateCollection,
@@ -296,7 +296,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
       openCollection,
       goBack,
       goToRoot,
-      isEntityInCollection,
+      isEntitySaved,
       handleCreateCollection,
       handleUpdateCollection,
       handleDeleteCollection,
