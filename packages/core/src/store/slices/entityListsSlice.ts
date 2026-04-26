@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import { Entity } from "../../interfaces/models/Entity";
-import { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import type { ReplykeState } from '../replykeReducers';
+import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import {
+  EntityListSortByOptions,
+  SortByReaction,
+  SortDirection,
+  SortType,
+} from "../../interfaces/EntityListSortByOptions";
 import { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import { TimeFrame } from "../../interfaces/TimeFrame";
 import { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -20,10 +26,13 @@ export interface EntityListState {
 
   // Configuration (set when fetchEntities is called)
   sourceId: string | null;
+  spaceId: string | null;
   limit: number;
+  include: EntityIncludeParam | null;
 
   // Filter/sort state (user-controlled filters only)
   sortBy: EntityListSortByOptions;
+  sortByReaction: SortByReaction;
   sortDir: SortDirection | null;
   sortType: SortType;
   timeFrame: TimeFrame | null;
@@ -53,10 +62,13 @@ const createDefaultEntityListState = (): EntityListState => ({
 
   // Default configuration
   sourceId: null,
+  spaceId: null,
   limit: 10,
+  include: null,
 
   // Default filters (user-controlled only)
   sortBy: "hot",
+  sortByReaction: "upvote",
   sortDir: null,
   sortType: "auto",
   timeFrame: null,
@@ -75,11 +87,17 @@ const initialState: EntityListsState = {
   lists: {},
 };
 
-// Entity list filters interface - used by both Redux slice and hooks
-export interface EntityListFilters {
-  sortBy?: EntityListSortByOptions;
+// Entity list sort configuration - separated from filters for semantic clarity
+export interface EntityListSort {
+  sortBy: EntityListSortByOptions;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType;
+}
+
+// Entity list filters interface - used by both Redux slice and hooks
+// Note: Sorting properties (sortBy, sortDir, sortType) moved to EntityListSort
+export interface EntityListFilters {
   timeFrame?: TimeFrame | null;
   userId?: string | null;
   followedOnly?: boolean;
@@ -94,13 +112,16 @@ export interface EntityListFilters {
 // Configuration for entity list operations
 export interface EntityListConfig {
   sourceId?: string | null;
+  spaceId?: string | null;
   limit?: number;
+  include?: EntityIncludeParam | null;
 }
 
 // Options for entity list operations
 export interface EntityListFetchOptions {
-  resetUnspecified?: boolean; // Reset any unspecified filters to their defaults
-  immediate?: boolean; // Skip debouncing, fetch immediately (used by hooks)
+  resetFilters?: boolean; // Reset only filter properties to defaults
+  resetSort?: boolean; // Reset only sort properties to defaults
+  fetchImmediately?: boolean; // Skip debouncing, fetch immediately (used by hooks)
   clearImmediately?: boolean; // Clear entities immediately before fetch starts
 }
 
@@ -108,6 +129,7 @@ export interface EntityListFetchOptions {
 export interface FilterUpdatePayload {
   listId: string;
   filters: Partial<EntityListFilters>;
+  sort?: Partial<EntityListSort>;
   config?: EntityListConfig;
   options?: EntityListFetchOptions;
 }
@@ -156,12 +178,12 @@ export const entityListsSlice = createSlice({
       }
     },
 
-    // Update filters and sort (unified function)
-    updateFiltersAndSort: (
+    // Update filters and sort configuration
+    updateFiltersAndSortConfig: (
       state,
       action: PayloadAction<FilterUpdatePayload>
     ) => {
-      const { listId, filters, options } = action.payload;
+      const { listId, filters, sort, config, options } = action.payload;
 
       // Ensure list exists
       if (!state.lists[listId]) {
@@ -170,13 +192,9 @@ export const entityListsSlice = createSlice({
 
       const list = state.lists[listId];
 
-      // If resetUnspecified is true, reset to defaults first
-      if (options?.resetUnspecified) {
+      // Handle resetFilters flag - reset only filter properties
+      if (options?.resetFilters) {
         const defaultState = createDefaultEntityListState();
-        // Reset all filter properties to defaults
-        list.sortBy = defaultState.sortBy;
-        list.sortDir = defaultState.sortDir;
-        list.sortType = defaultState.sortType;
         list.timeFrame = defaultState.timeFrame;
         list.userId = defaultState.userId;
         list.followedOnly = defaultState.followedOnly;
@@ -188,24 +206,47 @@ export const entityListsSlice = createSlice({
         list.metadataFilters = defaultState.metadataFilters;
       }
 
-      // Update specified filters
+      // Handle resetSort flag - reset only sort properties
+      if (options?.resetSort) {
+        const defaultState = createDefaultEntityListState();
+        list.sortBy = defaultState.sortBy;
+        list.sortByReaction = defaultState.sortByReaction;
+        list.sortDir = defaultState.sortDir;
+        list.sortType = defaultState.sortType;
+      }
+
+      // Apply specified filters
       Object.keys(filters).forEach((key) => {
         if (filters[key as keyof typeof filters] !== undefined) {
           (list as any)[key] = filters[key as keyof typeof filters];
         }
       });
 
+      // Apply specified sort configuration
+      if (sort) {
+        if (sort.sortBy !== undefined) list.sortBy = sort.sortBy;
+        if (sort.sortByReaction !== undefined) list.sortByReaction = sort.sortByReaction;
+        if (sort.sortDir !== undefined) list.sortDir = sort.sortDir;
+        if (sort.sortType !== undefined) list.sortType = sort.sortType;
+      }
+
       // Update config if provided
-      if (action.payload.config) {
-        if (action.payload.config.sourceId !== undefined) {
-          list.sourceId = action.payload.config.sourceId;
+      if (config) {
+        if (config.sourceId !== undefined) {
+          list.sourceId = config.sourceId;
         }
-        if (action.payload.config.limit !== undefined) {
-          list.limit = action.payload.config.limit;
+        if (config.spaceId !== undefined) {
+          list.spaceId = config.spaceId;
+        }
+        if (config.limit !== undefined) {
+          list.limit = config.limit;
+        }
+        if (config.include !== undefined) {
+          list.include = config.include;
         }
       }
 
-      // Reset pagination when filters change
+      // Reset pagination when filters or sort changes
       list.page = 1;
       list.hasMore = true;
       list.error = null;
@@ -409,7 +450,7 @@ export const entityListsSlice = createSlice({
 // Export actions
 export const {
   initializeList,
-  updateFiltersAndSort,
+  updateFiltersAndSortConfig,
   setEntityListLoading,
   setEntityListEntities,
   incrementPage,
@@ -422,10 +463,10 @@ export const {
   cleanupOldLists,
 } = entityListsSlice.actions;
 
-// Base selectors
-const selectEntityListsState = (state: { entityLists: EntityListsState }) =>
-  state.entityLists;
-const selectListId = (_: any, listId: string) => listId;
+// Base selectors - use namespaced state for dual-mode support
+const selectEntityListsState = (state: { replyke: ReplykeState }) =>
+  state.replyke.entityLists;
+const selectListId = (_: { replyke: ReplykeState }, listId: string) => listId;
 
 // Memoized selectors using createSelector
 export const selectEntityList = createSelector(
@@ -449,15 +490,26 @@ export const selectEntityListHasMore = createSelector(
   (entityList): boolean => entityList?.hasMore || false
 );
 
-export const selectEntityListFilters = createSelector(
+export const selectEntityListSort = createSelector(
   [selectEntityList],
-  (entityList) => {
+  (entityList): EntityListSort | null => {
     if (!entityList) return null;
 
     return {
       sortBy: entityList.sortBy,
+      sortByReaction: entityList.sortByReaction,
       sortDir: entityList.sortDir,
       sortType: entityList.sortType,
+    };
+  }
+);
+
+export const selectEntityListFilters = createSelector(
+  [selectEntityList],
+  (entityList): EntityListFilters | null => {
+    if (!entityList) return null;
+
+    return {
       timeFrame: entityList.timeFrame,
       userId: entityList.userId,
       followedOnly: entityList.followedOnly,
@@ -473,12 +525,21 @@ export const selectEntityListFilters = createSelector(
 
 export const selectEntityListConfig = createSelector(
   [selectEntityList],
-  (entityList): { sourceId: string | null; limit: number } | null => {
+  (
+    entityList
+  ): {
+    sourceId: string | null;
+    spaceId: string | null;
+    limit: number;
+    include: EntityIncludeParam | null;
+  } | null => {
     if (!entityList) return null;
 
     return {
       sourceId: entityList.sourceId,
+      spaceId: entityList.spaceId,
       limit: entityList.limit,
+      include: entityList.include,
     };
   }
 );

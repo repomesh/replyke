@@ -4,13 +4,17 @@ import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import { ConnectionActionResponse } from "../../../interfaces/models/Connection";
 
-function useDeclineConnection() {
+export interface DeclineConnectionProps {
+  connectionId: string;
+}
+
+function useDeclineConnection(): (props: DeclineConnectionProps) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const declineConnection = useCallback(
-    async (props: { connectionId: string }): Promise<ConnectionActionResponse> => {
+    async (props: DeclineConnectionProps): Promise<ConnectionActionResponse> => {
       const { connectionId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -26,8 +30,7 @@ function useDeclineConnection() {
 
       const response = await axios.patch(
         `/connections/${connectionId}/decline`,
-        {},
-        { withCredentials: true }
+        {}
       );
 
       return response.data as ConnectionActionResponse;

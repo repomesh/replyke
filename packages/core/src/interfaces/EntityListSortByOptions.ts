@@ -2,6 +2,8 @@ export type SortDirection = "asc" | "desc";
 
 export type SortType = "auto" | "numeric" | "text" | "boolean" | "timestamp";
 
+export type SortByReaction = "upvote" | "downvote" | "like" | "love" | "wow" | "sad" | "angry" | "funny";
+
 export type EntityListSortByOptions =
   | "top"
   | "hot"

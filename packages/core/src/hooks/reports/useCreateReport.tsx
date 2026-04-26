@@ -3,7 +3,30 @@ import { ReportReasonKey } from "../../constants/reportReasons";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 
-function useCreateReport({ type }: { type: "comment" | "entity" }) {
+export interface UseCreateReportProps {
+  type: "comment" | "entity";
+}
+
+export interface CreateReportProps {
+  targetId: string;
+  targetType: "comment" | "entity";
+  reason: ReportReasonKey;
+  details?: string;
+}
+
+export interface CreateCommentReportProps {
+  targetId: string;
+  reason: ReportReasonKey;
+  details?: string;
+}
+
+export interface CreateEntityReportProps {
+  targetId: string;
+  reason: ReportReasonKey;
+  details?: string;
+}
+
+function useCreateReport({ type }: UseCreateReportProps): ((props: CreateCommentReportProps) => Promise<void>) | ((props: CreateEntityReportProps) => Promise<void>) {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
@@ -13,12 +36,7 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
     targetType,
     reason,
     details,
-  }: {
-    targetId: string;
-    targetType: "Comment" | "Entity";
-    reason: ReportReasonKey;
-    details?: string;
-  }) => {
+  }: CreateReportProps) => {
     if (!projectId) {
       throw new Error("Project ID is required");
     }
@@ -35,7 +53,6 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
         reason,
         details,
       },
-      { withCredentials: true }
     );
   };
 
@@ -43,14 +60,10 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
     targetId,
     reason,
     details,
-  }: {
-    targetId: string;
-    reason: ReportReasonKey;
-    details?: string;
-  }) => {
+  }: CreateCommentReportProps) => {
     await createReport({
       targetId,
-      targetType: "Comment",
+      targetType: "comment",
       reason,
       details,
     });
@@ -60,14 +73,10 @@ function useCreateReport({ type }: { type: "comment" | "entity" }) {
     targetId,
     reason,
     details,
-  }: {
-    targetId: string;
-    reason: ReportReasonKey;
-    details?: string;
-  }) => {
+  }: CreateEntityReportProps) => {
     await createReport({
       targetId,
-      targetType: "Entity",
+      targetType: "entity",
       reason,
       details,
     });

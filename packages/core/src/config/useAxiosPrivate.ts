@@ -1,21 +1,18 @@
 import { useEffect } from "react";
+import type { AxiosInstance } from "axios";
 import { axiosPrivate } from "./axios";
 import { useAuth } from "../hooks/auth";
 
-const useAxiosPrivate = () => {
+// Module-level mutex: prevents concurrent token rotations from racing
+let refreshPromise: Promise<string | undefined> | null = null;
+
+const useAxiosPrivate = (): AxiosInstance => {
   const { accessToken, requestNewAccessToken } = useAuth();
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        // If we have no value for access token return the config as is
-        // This is a new addition so maybe let's avoid it for not until everything works fine.
-        // if (!accessToken) return config;
-
-        // If we already have Auth headers set then just return the config
         if (config.headers["Authorization"]) return config;
-
-        // Otherwise we set the authorization headers
         config.headers["Authorization"] = `Bearer ${accessToken}`;
         return config;
       },
@@ -28,7 +25,20 @@ const useAxiosPrivate = () => {
         const prevRequest = error?.config;
         if (error?.response?.status === 403 && !prevRequest?.sent) {
           prevRequest.sent = true;
-          const newAccessToken = await requestNewAccessToken?.();
+
+          // Use mutex to prevent concurrent rotation races
+          if (!refreshPromise) {
+            refreshPromise = requestNewAccessToken?.()?.finally(() => {
+              refreshPromise = null;
+            }) ?? Promise.resolve(undefined);
+          }
+
+          const newAccessToken = await refreshPromise;
+
+          if (!newAccessToken) {
+            return Promise.reject(error);
+          }
+
           prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return axiosPrivate(prevRequest);
         }

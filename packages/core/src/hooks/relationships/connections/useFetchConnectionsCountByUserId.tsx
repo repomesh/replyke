@@ -3,11 +3,11 @@ import useProject from "../../projects/useProject";
 import { ConnectionCountResponse } from "../../../interfaces/models/Connection";
 import axios from "../../../config/axios";
 
-interface FetchConnectionsCountByUserIdParams {
+export interface FetchConnectionsCountByUserIdParams {
   userId: string;
 }
 
-function useFetchConnectionsCountByUserId() {
+function useFetchConnectionsCountByUserId(): (props: FetchConnectionsCountByUserIdParams) => Promise<ConnectionCountResponse> {
   const { projectId } = useProject();
 
   const fetchConnectionsCountByUserId = useCallback(

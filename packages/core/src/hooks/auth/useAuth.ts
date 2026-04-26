@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import type { AppDispatch, RootState } from '../../store';
-import { 
+import { useReplykeDispatch, useReplykeSelector } from '../../store/hooks';
+import {
   selectAccessToken,
   selectRefreshToken,
-  selectLoadingInitial,
+  selectInitialized,
   setRefreshToken
 } from '../../store/slices/authSlice';
 import { 
@@ -16,65 +15,61 @@ import {
 } from '../../store/slices/authThunks';
 import useProject from '../projects/useProject';
 
+export interface SignUpWithEmailAndPasswordProps {
+  email: string;
+  password: string;
+  name?: string;
+  username?: string;
+  avatar?: string;
+  bio?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  birthdate?: Date;
+  metadata?: Record<string, any>;
+  secureMetadata?: Record<string, any>;
+  avatarFile?: File | Blob;
+  avatarOptions?: any;
+  bannerFile?: File | Blob;
+  bannerOptions?: any;
+}
+
+export interface SignInWithEmailAndPasswordProps {
+  email: string;
+  password: string;
+}
+
+export interface ChangePasswordProps {
+  password: string;
+  newPassword: string;
+}
+
 // Define the interface to match the original useAuth hook
 export interface UseAuthValues {
-  loadingInitial: boolean;
+  initialized: boolean;
   accessToken: string | null;
   refreshToken: string | null;
   setRefreshToken: React.Dispatch<React.SetStateAction<string | null>>;
-  signUpWithEmailAndPassword: (props: {
-    email: string;
-    password: string;
-    name?: string;
-    username?: string;
-    avatar?: string;
-    bio?: string;
-    location?: {
-      latitude: number;
-      longitude: number;
-    };
-    birthdate?: Date;
-    metadata?: Record<string, any>;
-    secureMetadata?: Record<string, any>;
-  }) => Promise<void>;
-  signInWithEmailAndPassword: (props: {
-    email: string;
-    password: string;
-  }) => Promise<void>;
+  signUpWithEmailAndPassword: (props: SignUpWithEmailAndPasswordProps) => Promise<void>;
+  signInWithEmailAndPassword: (props: SignInWithEmailAndPasswordProps) => Promise<void>;
   signOut: () => Promise<void>;
-  changePassword: (props: {
-    password: string;
-    newPassword: string;
-  }) => Promise<void>;
-  requestNewAccessToken: () => Promise<void>;
+  changePassword: (props: ChangePasswordProps) => Promise<void>;
+  requestNewAccessToken: () => Promise<string | undefined>;
 }
 
 export default function useAuth(): UseAuthValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
-  
+
   // Selectors
-  const loadingInitial = useSelector((state: RootState) => selectLoadingInitial(state));
-  const accessToken = useSelector((state: RootState) => selectAccessToken(state));
-  const refreshToken = useSelector((state: RootState) => selectRefreshToken(state));
+  const initialized = useReplykeSelector(selectInitialized);
+  const accessToken = useReplykeSelector(selectAccessToken);
+  const refreshToken = useReplykeSelector(selectRefreshToken);
 
   // Actions
   const handleSignUpWithEmailAndPassword = useCallback(
-    async (props: {
-      email: string;
-      password: string;
-      name?: string;
-      username?: string;
-      avatar?: string;
-      bio?: string;
-      location?: {
-        latitude: number;
-        longitude: number;
-      };
-      birthdate?: Date;
-      metadata?: Record<string, any>;
-      secureMetadata?: Record<string, any>;
-    }) => {
+    async (props: SignUpWithEmailAndPasswordProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -83,7 +78,7 @@ export default function useAuth(): UseAuthValues {
         projectId,
         ...props,
       }));
-      
+
       if (signUpWithEmailAndPasswordThunk.rejected.match(result)) {
         throw new Error(result.payload as string);
       }
@@ -92,7 +87,7 @@ export default function useAuth(): UseAuthValues {
   );
 
   const handleSignInWithEmailAndPassword = useCallback(
-    async (props: { email: string; password: string }) => {
+    async (props: SignInWithEmailAndPasswordProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -122,7 +117,7 @@ export default function useAuth(): UseAuthValues {
   }, [dispatch, projectId]);
 
   const handleChangePassword = useCallback(
-    async (props: { password: string; newPassword: string }) => {
+    async (props: ChangePasswordProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -161,7 +156,7 @@ export default function useAuth(): UseAuthValues {
   }, [dispatch, refreshToken]);
 
   return {
-    loadingInitial,
+    initialized,
     accessToken,
     refreshToken,
     setRefreshToken: handleSetRefreshToken,

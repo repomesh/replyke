@@ -4,13 +4,17 @@ import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import { ConnectionActionResponse } from "../../../interfaces/models/Connection";
 
-function useAcceptConnection() {
+export interface AcceptConnectionProps {
+  connectionId: string;
+}
+
+function useAcceptConnection(): (props: AcceptConnectionProps) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const acceptConnection = useCallback(
-    async (props: { connectionId: string }): Promise<ConnectionActionResponse> => {
+    async (props: AcceptConnectionProps): Promise<ConnectionActionResponse> => {
       const { connectionId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -26,8 +30,7 @@ function useAcceptConnection() {
 
       const response = await axios.patch(
         `/connections/${connectionId}/accept`,
-        {},
-        { withCredentials: true }
+        {}
       );
 
       return response.data as ConnectionActionResponse;

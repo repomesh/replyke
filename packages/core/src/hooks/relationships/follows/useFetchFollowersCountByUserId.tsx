@@ -2,11 +2,15 @@ import { useCallback } from "react";
 import useProject from "../../projects/useProject";
 import axios from "../../../config/axios";
 
-function useFetchFollowersCountByUserId() {
+export interface FetchFollowersCountByUserIdProps {
+  userId: string;
+}
+
+function useFetchFollowersCountByUserId(): (props: FetchFollowersCountByUserIdProps) => Promise<{ count: number }> {
   const { projectId } = useProject();
 
   const fetchFollowersCountByUserId = useCallback(
-    async ({ userId }: { userId: string }) => {
+    async ({ userId }: FetchFollowersCountByUserIdProps) => {
       if (!userId) {
         throw new Error("No userId provided.");
       }

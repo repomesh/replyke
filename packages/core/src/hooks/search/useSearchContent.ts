@@ -1,0 +1,67 @@
+import { useCallback, useState } from "react";
+import useProject from "../projects/useProject";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
+import { handleError } from "../../utils/handleError";
+import { Entity } from "../../interfaces/models/Entity";
+import { Comment } from "../../interfaces/models/Comment";
+import { ChatMessage } from "../../interfaces/models/ChatMessage";
+
+export interface ContentSearchResult {
+  sourceType: "entity" | "comment" | "message";
+  similarity: number;
+  record: Entity | Comment | ChatMessage;
+}
+
+export interface UseSearchContentProps {
+  query: string;
+  sourceTypes?: ("entity" | "comment" | "message")[];
+  spaceId?: string;
+  conversationId?: string;
+  limit?: number;
+}
+
+export interface UseSearchContentReturn {
+  results: ContentSearchResult[];
+  loading: boolean;
+  error: string | null;
+  search: (props: UseSearchContentProps) => Promise<void>;
+  reset: () => void;
+}
+
+export default function useSearchContent(): UseSearchContentReturn {
+  const { projectId } = useProject();
+  const axios = useAxiosPrivate();
+
+  const [results, setResults] = useState<ContentSearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const search = useCallback(
+    async ({ query, sourceTypes, spaceId, conversationId, limit }: UseSearchContentProps) => {
+      if (!projectId) return;
+      if (!query.trim()) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.post<ContentSearchResult[]>(
+          `/${projectId}/search/content`,
+          { query, sourceTypes, spaceId, conversationId, limit }
+        );
+        setResults(response.data);
+      } catch (err) {
+        setError(handleError(err, "Failed to search content"));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [projectId, axios]
+  );
+
+  const reset = useCallback(() => {
+    setResults([]);
+    setError(null);
+  }, []);
+
+  return { results, loading, error, search, reset };
+}

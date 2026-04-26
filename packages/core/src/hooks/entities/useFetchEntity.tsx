@@ -1,13 +1,19 @@
 import { useCallback } from "react";
 import useProject from "../projects/useProject";
-import { Entity } from "../../interfaces/models/Entity";
-import axios from "../../config/axios";
+import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-function useFetchEntity() {
+export interface FetchEntityProps {
+  entityId: string;
+  include?: EntityIncludeParam;
+}
+
+function useFetchEntity(): (props: FetchEntityProps) => Promise<Entity> {
+  const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchEntity = useCallback(
-    async ({ entityId }: { entityId: string }) => {
+    async ({ entityId, include }: FetchEntityProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -16,11 +22,15 @@ function useFetchEntity() {
         throw new Error("Please pass an entityId");
       }
 
-      const response = await axios.get(`/${projectId}/entities/${entityId}`);
+      const response = await axios.get(`/${projectId}/entities/${entityId}`, {
+        params: {
+          include: Array.isArray(include) ? include.join(",") : include,
+        },
+      });
 
       return response.data as Entity;
     },
-    [projectId]
+    [projectId],
   );
 
   return fetchEntity;

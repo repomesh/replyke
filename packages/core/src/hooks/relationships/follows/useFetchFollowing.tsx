@@ -3,6 +3,7 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import type { User } from "../../../interfaces/models/User";
+import { PaginatedResponse } from "../../../interfaces/PaginatedResponse";
 
 export interface FollowingWithFollowInfo {
   followId: string;
@@ -10,24 +11,12 @@ export interface FollowingWithFollowInfo {
   followedAt: string;
 }
 
-export interface FollowingResponse {
-  following: FollowingWithFollowInfo[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalCount: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    limit: number;
-  };
-}
-
 export interface FetchFollowingParams {
   page?: number;
   limit?: number;
 }
 
-function useFetchFollowing() {
+function useFetchFollowing(): (params?: FetchFollowingParams) => Promise<PaginatedResponse<FollowingWithFollowInfo>> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
@@ -42,15 +31,17 @@ function useFetchFollowing() {
         throw new Error("No user is logged in.");
       }
 
-      const response = await axios.get(`/${projectId}/follows/following`, {
-        params: {
-          page,
-          limit,
-        },
-        withCredentials: true,
-      });
+      const response = await axios.get<PaginatedResponse<FollowingWithFollowInfo>>(
+        `/${projectId}/follows/following`,
+        {
+          params: {
+            page,
+            limit,
+          },
+        }
+      );
 
-      return response.data as FollowingResponse;
+      return response.data;
     },
     [axios, projectId, user]
   );

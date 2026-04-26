@@ -11,11 +11,11 @@ import {
   ConnectionStatusResponse,
 } from "../../../interfaces/models/Connection";
 
-interface UseConnectionManagerProps {
+export interface UseConnectionManagerProps {
   userId: string;
 }
 
-interface ConnectionData {
+export interface ConnectionData {
   connectionId: string | null;
   connectedAt?: string;
   requestedAt?: string;
@@ -24,7 +24,21 @@ interface ConnectionData {
   type?: "sent" | "received";
 }
 
-function useConnectionManager({ userId }: UseConnectionManagerProps) {
+export interface UseConnectionManagerValues {
+  connectionStatus: ConnectionStatus;
+  connectionId: string | null;
+  connectionData: ConnectionData;
+  isLoading: boolean;
+  sendConnectionRequest: (message?: string) => Promise<void>;
+  acceptConnectionRequest: () => Promise<void>;
+  declineConnectionRequest: () => Promise<void>;
+  withdrawConnectionRequest: () => Promise<void>;
+  disconnectUser: () => Promise<void>;
+  removeConnectionSmart: () => Promise<void>;
+  refreshConnectionStatus: () => Promise<void>;
+}
+
+function useConnectionManager({ userId }: UseConnectionManagerProps): UseConnectionManagerValues {
   const { user } = useUser();
 
   const [connectionStatus, setConnectionStatus] =

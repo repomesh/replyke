@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
 import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { handleError } from "../../utils/handleError";
 import { EntityCommentsTree } from "../../interfaces/EntityCommentsTree";
 import { addCommentsToTree as addCommentsToTreeHandler } from "../../helpers/addCommentsToTree";
 import { removeCommentFromTree as removeCommentFromTreeHandler } from "../../helpers/removeCommentFromTree";
+import { markCommentAsDeletedInTree as markCommentAsDeletedInTreeHandler } from "../../helpers/markCommentAsDeletedInTree";
 
 export interface UseEntityCommentsProps {
   entityId: string | undefined | null;
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
+  include?: CommentIncludeParam;
 }
 
 export interface UseEntityCommentsValues {
@@ -26,13 +28,14 @@ export interface UseEntityCommentsValues {
     newComments: Comment[] | undefined,
     newlyAdded?: boolean
   ) => void;
-  removeCommentFromTree: (commentId: string) => void;
+  removeCommentFromTree: ({ commentId }: { commentId: string }) => void;
+  markCommentAsDeleted: ({ commentId }: { commentId: string }) => void;
 }
 
 function useEntityComments(
   props: UseEntityCommentsProps
 ): UseEntityCommentsValues {
-  const { entityId, limit = 10, defaultSortBy = "new" } = props;
+  const { entityId, limit = 10, defaultSortBy = "new", include } = props;
 
   const fetchManyComments = useFetchManyComments();
 
@@ -76,9 +79,18 @@ function useEntityComments(
   };
 
   const removeCommentFromTree = useCallback(
-    (commentId: string) => {
+    ({ commentId }: { commentId: string }) => {
       setEntityCommentsTree!((prevTree) =>
         removeCommentFromTreeHandler(prevTree, commentId)
+      );
+    },
+    [setEntityCommentsTree]
+  );
+
+  const markCommentAsDeleted = useCallback(
+    ({ commentId }: { commentId: string }) => {
+      setEntityCommentsTree((prevTree) =>
+        markCommentAsDeletedInTreeHandler(prevTree, commentId)
       );
     },
     [setEntityCommentsTree]
@@ -99,19 +111,19 @@ function useEntityComments(
       setEntityCommentsTree({});
       setPage(1);
 
-      const newComments = await fetchManyComments({
+      const response = await fetchManyComments({
         entityId,
         page: 1,
         sortBy,
         limit,
+        include,
       });
 
-      if (newComments) {
+      if (response) {
+        const { data: newComments, pagination } = response;
         addCommentsToTree(newComments);
-        if (newComments.length < limit) {
-          hasMore.current = false;
-          setHasMoreState(false);
-        }
+        hasMore.current = pagination.hasMore;
+        setHasMoreState(pagination.hasMore);
       }
     } catch (err) {
       handleError(err, "Failed to reset entity comments:");
@@ -143,19 +155,18 @@ function useEntityComments(
         loading.current = true;
         setLoadingState(true);
 
-        const newComments = await fetchManyComments({
+        const response = await fetchManyComments({
           entityId,
           page,
           sortBy,
           limit,
         });
 
-        if (newComments) {
+        if (response) {
+          const { data: newComments, pagination } = response;
           addCommentsToTree(newComments);
-          if (newComments.length < limit) {
-            hasMore.current = false;
-            setHasMoreState(false);
-          }
+          hasMore.current = pagination.hasMore;
+          setHasMoreState(pagination.hasMore);
         }
       } catch (err) {
         handleError(err, "Loading more comments failed:");
@@ -182,6 +193,7 @@ function useEntityComments(
     loadMore,
     addCommentsToTree,
     removeCommentFromTree,
+    markCommentAsDeleted,
   };
 }
 

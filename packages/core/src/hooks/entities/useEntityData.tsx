@@ -1,37 +1,49 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import useEntityVotes from "./useEntityVotes";
 import useFetchEntity from "./useFetchEntity";
 import useFetchEntityByForeignId from "./useFetchEntityByForeignId";
 import useFetchEntityByShortId from "./useFetchEntityByShortId";
 import useUpdateEntity, { UpdateEntityProps } from "./useUpdateEntity";
 import useDeleteEntity from "./useDeleteEntity";
 
-import useIncrementEntityViews from "./useIncrementEntityViews";
 import { Entity } from "../../interfaces/models/Entity";
 import { handleError } from "../../utils/handleError";
-import { useUser } from "../user";
 
-export interface UseEntityDataProps {
-  entity?: Entity;
-  entityId?: string | undefined | null;
-  foreignId?: string | undefined | null;
-  shortId?: string | undefined | null;
-  createIfNotFound?: boolean;
-}
+export type UseEntityDataProps =
+  | {
+      entity: Entity;
+      entityId?: undefined;
+      foreignId?: undefined;
+      shortId?: undefined;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId: string;
+      foreignId?: undefined;
+      shortId?: undefined;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId?: undefined;
+      foreignId?: undefined;
+      shortId: string;
+      createIfNotFound?: undefined;
+    }
+  | {
+      entity?: undefined;
+      entityId?: undefined;
+      foreignId: string;
+      shortId?: undefined;
+      createIfNotFound?: boolean;
+    };
 export interface UseEntityDataValues {
   entity: Entity | null | undefined;
   setEntity: React.Dispatch<React.SetStateAction<Entity | null | undefined>>;
-  userUpvotedEntity: boolean;
-  userDownvotedEntity: boolean;
-  upvoteEntity: () => void;
-  removeEntityUpvote: () => void;
-  downvoteEntity: () => void;
-  removeEntityDownvote: () => void;
   updateEntity(
-    props: Pick<UpdateEntityProps, "update">
+    props: Pick<UpdateEntityProps, "update">,
   ): Promise<Entity | undefined>;
-  incrementEntityViews: () => Promise<void>;
   deleteEntity: () => Promise<void>;
 }
 
@@ -42,43 +54,16 @@ function useEntityData({
   entity: entityProp,
   createIfNotFound,
 }: UseEntityDataProps): UseEntityDataValues {
-  const { user } = useUser();
   const [entity, setEntity] = useState<Entity | undefined | null>(entityProp);
-
-  const entityViewsIncremented = useRef<boolean>(false);
 
   // Cache to store fetched entities keyed by unique identifier
   const entityCache = useRef<Record<string, Entity>>({});
-
-  const userUpvotedEntity = !!(
-    entity?.upvotes &&
-    user?.id &&
-    entity.upvotes.includes(user.id)
-  );
-
-  const userDownvotedEntity = !!(
-    entity?.downvotes &&
-    user?.id &&
-    entity.downvotes.includes(user.id)
-  );
 
   const fetchEntity = useFetchEntity();
   const fetchEntityByForeignId = useFetchEntityByForeignId();
   const fetchEntityByShortId = useFetchEntityByShortId();
 
-  const {
-    upvoteEntity,
-    removeEntityUpvote,
-    downvoteEntity,
-    removeEntityDownvote,
-  } = useEntityVotes({
-    entity,
-    setEntity,
-  });
-
   const updateEntity = useUpdateEntity();
-  const incrementEntityViews = useIncrementEntityViews();
-
   const deleteEntity = useDeleteEntity();
 
   const handleUpdateEntity = useCallback(
@@ -95,18 +80,8 @@ function useEntityData({
         handleError(err, "Failed to update entity");
       }
     },
-    [entity, updateEntity]
+    [entity, updateEntity],
   );
-
-  const handleIncrementEntityViews = useCallback(async () => {
-    if (!entity || entityViewsIncremented.current) return;
-    try {
-      await incrementEntityViews({ entityId: entity.id });
-      entityViewsIncremented.current = true;
-    } catch (err) {
-      handleError(err, "Failed to increment entity views");
-    }
-  }, [entity, incrementEntityViews, entityViewsIncremented]);
 
   const handleDeleteEntity = useCallback(async () => {
     if (!entity) return;
@@ -184,14 +159,7 @@ function useEntityData({
   return {
     entity,
     setEntity,
-    userUpvotedEntity,
-    userDownvotedEntity,
-    upvoteEntity,
-    removeEntityUpvote,
-    downvoteEntity,
-    removeEntityDownvote,
     updateEntity: handleUpdateEntity,
-    incrementEntityViews: handleIncrementEntityViews,
     deleteEntity: handleDeleteEntity,
   };
 }

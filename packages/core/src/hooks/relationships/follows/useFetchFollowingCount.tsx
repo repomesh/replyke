@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 
-function useFetchFollowingCount() {
+function useFetchFollowingCount(): () => Promise<{ count: number }> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
@@ -19,8 +19,7 @@ function useFetchFollowingCount() {
       }
 
       const response = await axios.get(
-        `/${projectId}/follows/following-count`,
-        { withCredentials: true }
+        `/${projectId}/follows/following-count`
       );
 
       return response.data as { count: number };

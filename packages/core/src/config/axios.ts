@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.replyke.com/api/v6";
+export const BASE_URL = "https://api.replyke.com/v7";
 
 export default axios.create({
   baseURL: BASE_URL,
@@ -9,5 +9,4 @@ export default axios.create({
 export const axiosPrivate = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true,
 });

@@ -1,0 +1,166 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
+import useFetchManyComments from "./useFetchManyComments";
+import { handleError } from "../../utils/handleError";
+
+export interface UseFetchManyCommentsWrapperProps {
+  entityId?: string | null;
+  userId?: string | null;
+  parentId?: string | null;
+  sourceId?: string | null;
+  limit?: number;
+  include?: CommentIncludeParam;
+  defaultSortBy?: CommentsSortByOptions;
+}
+
+export interface UseFetchManyCommentsWrapperValues {
+  comments: Comment[];
+  loading: boolean;
+  hasMore: boolean;
+  sortBy: CommentsSortByOptions | null;
+  setSortBy: (newSortBy: CommentsSortByOptions) => void;
+  loadMore: () => void;
+}
+
+function useFetchManyCommentsWrapper(
+  props: UseFetchManyCommentsWrapperProps
+): UseFetchManyCommentsWrapperValues {
+  const {
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    limit = 10,
+    defaultSortBy = "new",
+    include,
+  } = props;
+  const fetchManyComments = useFetchManyComments();
+
+  const loading = useRef(true);
+  const [loadingState, setLoadingState] = useState(true);
+
+  const hasMore = useRef(true);
+  const [hasMoreState, setHasMoreState] = useState(true);
+
+  const [sortBy, setSortBy] = useState<CommentsSortByOptions>(defaultSortBy);
+  const [page, setPage] = useState(1);
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  const resetComments = useCallback(async () => {
+    if (!userId && !entityId && !parentId) {
+      return;
+    }
+
+    try {
+      loading.current = true;
+      setLoadingState(true);
+
+      hasMore.current = true;
+      setHasMoreState(true);
+
+      setPage(1);
+
+      const response = await fetchManyComments({
+        entityId,
+        userId,
+        parentId,
+        sourceId,
+        page: 1,
+        sortBy,
+        limit,
+        include,
+      });
+
+      if (response) {
+        const { data: newComments, pagination } = response;
+        setComments(newComments);
+        hasMore.current = pagination.hasMore;
+        setHasMoreState(pagination.hasMore);
+      }
+    } catch (err) {
+      handleError(err, "Failed to reset comments:");
+    } finally {
+      loading.current = false;
+      setLoadingState(false);
+    }
+  }, [
+    fetchManyComments,
+    limit,
+    sortBy,
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    include,
+  ]);
+
+  const loadMore = () => {
+    if (loading.current || !hasMore.current) return;
+    setPage((prevPage) => {
+      return prevPage + 1;
+    });
+  };
+
+  useEffect(() => {
+    resetComments();
+  }, [resetComments]);
+
+  // useEffect to get a new batch of comments
+  useEffect(() => {
+    const loadMoreComments = async () => {
+      loading.current = true;
+      setLoadingState(true);
+      try {
+        const response = await fetchManyComments({
+          entityId,
+          userId,
+          parentId,
+          sourceId,
+          page,
+          sortBy,
+          limit,
+          include,
+        });
+
+        if (response) {
+          const { data: newComments, pagination } = response;
+          setComments((prevComments) => [...prevComments, ...newComments]);
+          hasMore.current = pagination.hasMore;
+          setHasMoreState(pagination.hasMore);
+        }
+      } catch (err) {
+        handleError(err, "Loading more comments failed:");
+      } finally {
+        loading.current = false;
+        setLoadingState(false);
+      }
+    };
+
+    // We only load more if the page changed
+    if (page > 1 && hasMore.current && !loading.current) {
+      loadMoreComments();
+    }
+  }, [
+    page,
+    fetchManyComments,
+    entityId,
+    userId,
+    parentId,
+    sourceId,
+    sortBy,
+    limit,
+    include,
+  ]);
+
+  return {
+    comments,
+    loading: loadingState,
+    hasMore: hasMoreState,
+    sortBy,
+    setSortBy,
+    loadMore,
+  };
+}
+
+export default useFetchManyCommentsWrapper;

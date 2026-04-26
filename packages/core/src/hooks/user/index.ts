@@ -5,3 +5,6 @@ export {
   type UseUserProps,
   type UseUserValues,
 } from "./useUser";
+
+// Re-export types from userApi for consumers
+export { type UpdateUserParams } from "../../store/api/userApi";

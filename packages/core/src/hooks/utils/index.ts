@@ -1,1 +1,4 @@
-export { default as useGetMetadata } from "./useGetMetadata";
+export {
+  default as useGetMetadata,
+  type GetMetadataProps,
+} from "./useGetMetadata";

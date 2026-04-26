@@ -3,13 +3,23 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 
-function useFetchFollowStatus() {
+export interface FetchFollowStatusProps {
+  userId: string;
+}
+
+export interface FollowStatusResponse {
+  isFollowing: boolean;
+  followId?: string;
+  followedAt?: string;
+}
+
+function useFetchFollowStatus(): (props: FetchFollowStatusProps) => Promise<FollowStatusResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const fetchFollowStatus = useCallback(
-    async (props: { userId: string }) => {
+    async (props: FetchFollowStatusProps) => {
       const { userId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -27,14 +37,8 @@ function useFetchFollowStatus() {
         throw new Error("Users don't follow themselves");
       }
 
-      const response = await axios.get(`/${projectId}/users/${userId}/follow`, {
-        withCredentials: true,
-      });
-      return response.data as {
-        isFollowing: boolean;
-        followId?: string;
-        followedAt?: string;
-      };
+      const response = await axios.get(`/${projectId}/users/${userId}/follow`);
+      return response.data as FollowStatusResponse;
     },
     [axios, projectId, user]
   );

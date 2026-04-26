@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store";
+import { useReplykeDispatch } from "../../store/hooks";
 import {
   setEntityListLoading,
   setEntityListEntities,
@@ -16,8 +15,8 @@ import {
 } from "../../store/api/entityListsApi";
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import useProject from "../projects/useProject";
-import type { Entity } from "../../interfaces/models/Entity";
-import type { EntityListSortByOptions, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
+import type { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
+import type { EntityListSortByOptions, SortByReaction, SortDirection, SortType } from "../../interfaces/EntityListSortByOptions";
 import type { TimeFrame } from "../../interfaces/TimeFrame";
 import type { LocationFilters } from "../../interfaces/entity-filters/LocationFilters";
 import type { MetadataFilters } from "../../interfaces/entity-filters/MetadataFilters";
@@ -28,20 +27,29 @@ import type { KeywordsFilters } from "../../interfaces/entity-filters/KeywordsFi
 
 interface FetchEntitiesOptions {
   page: number;
+
+  // Sort properties
   sortBy: EntityListSortByOptions;
+  sortByReaction?: SortByReaction;
   sortDir?: SortDirection | null;
   sortType?: SortType;
+
+  // Filter properties
   timeFrame?: TimeFrame | null;
   userId?: string | null;
-  sourceId?: string | null;
   followedOnly?: boolean;
-  limit: number;
   locationFilters?: LocationFilters | null;
   keywordsFilters?: KeywordsFilters | null;
   metadataFilters?: MetadataFilters | null;
   titleFilters?: TitleFilters | null;
   contentFilters?: ContentFilters | null;
   attachmentsFilters?: AttachmentsFilters | null;
+
+  // Configuration
+  sourceId?: string | null;
+  spaceId?: string | null;
+  limit: number;
+  include?: EntityIncludeParam | null;
 }
 
 interface CreateEntityOptions {
@@ -56,6 +64,7 @@ interface CreateEntityOptions {
   };
   metadata?: Record<string, any>;
   sourceId?: string | null;
+  spaceId?: string | null;
   insertPosition?: "first" | "last";
 }
 
@@ -63,12 +72,18 @@ interface DeleteEntityOptions {
   entityId: string;
 }
 
+export interface UseEntityListActionsValues {
+  fetchEntities: (listId: string, options: FetchEntitiesOptions) => Promise<Entity[] | null>;
+  createEntity: (listId: string, options: CreateEntityOptions) => Promise<Entity | undefined>;
+  deleteEntity: (listId: string, options: DeleteEntityOptions) => Promise<void>;
+}
+
 /**
  * Redux-powered hook that provides all entity list actions
  * Uses RTK Query for stable function references and proper caching
  */
-export function useEntityListActions() {
-  const dispatch = useDispatch<AppDispatch>();
+export function useEntityListActions(): UseEntityListActionsValues {
+  const dispatch = useReplykeDispatch();
 
   // Get project and user context
   const { projectId } = useProject();
@@ -100,11 +115,13 @@ export function useEntityListActions() {
           projectId,
           page: options.page,
           sortBy: options.sortBy,
+          sortByReaction: options.sortByReaction,
           sortDir: options.sortDir,
           sortType: options.sortType,
           timeFrame: options.timeFrame,
           userId: options.userId,
           sourceId: options.sourceId,
+          spaceId: options.spaceId,
           followedOnly: options.followedOnly ?? false,
           limit: options.limit,
           locationFilters: options.locationFilters,
@@ -113,18 +130,19 @@ export function useEntityListActions() {
           titleFilters: options.titleFilters,
           contentFilters: options.contentFilters,
           attachmentsFilters: options.attachmentsFilters,
+          include: options.include,
         }).unwrap();
 
         if (result) {
           const append = options.page > 1;
-          dispatch(setEntityListEntities({ listId, entities: result, append }));
+          dispatch(setEntityListEntities({ listId, entities: result.data, append }));
           dispatch(
             setEntityListHasMore({
               listId,
-              hasMore: result.length >= options.limit,
+              hasMore: result.pagination.hasMore,
             })
           );
-          return result;
+          return result.data;
         }
 
         return null;
@@ -166,6 +184,7 @@ export function useEntityListActions() {
           location: options.location,
           metadata: options.metadata,
           sourceId: options.sourceId,
+          spaceId: options.spaceId,
         }).unwrap();
 
         // Add to the list

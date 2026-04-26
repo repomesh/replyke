@@ -36,7 +36,7 @@ export const store = configureStore({
         ignoredPaths: [
           'items.dates',
           // RTK Query state paths that may contain functions/metadata
-          'api',
+          'replykeApi',
           'appNotificationsApi',
         ],
       },
@@ -59,3 +59,7 @@ export { store as replykeStore };
 // Export for advanced users who need direct access
 export { rootReducer } from "./rootReducer";
 export * from "./types";
+export * from "./hooks";
+
+// Integration mode exports (for users with their own Redux store)
+export * from "./integration";

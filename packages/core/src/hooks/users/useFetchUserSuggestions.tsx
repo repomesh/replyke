@@ -3,12 +3,16 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { User } from "../../interfaces/models/User";
 
-function useFetchUserSuggestions() {
+export interface FetchUserSuggestionsProps {
+  query: string;
+}
+
+function useFetchUserSuggestions(): (props: FetchUserSuggestionsProps) => Promise<User[]> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const fetchUserSuggestions = useCallback(
-    async ({ query }: { query: string }) => {
+    async ({ query }: FetchUserSuggestionsProps) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }

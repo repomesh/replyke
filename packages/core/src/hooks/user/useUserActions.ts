@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store";
+import { useReplykeDispatch } from "../../store/hooks";
 import type { AuthUser } from "../../interfaces/models/User";
 import {
   setUser,
@@ -20,7 +19,7 @@ import {
  * Focused on current user operations only
  */
 export function useUserActions() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
   
   // RTK Query mutations for current user
   const [updateUserMutation] = useUpdateUserMutation();
@@ -44,7 +43,7 @@ export function useUserActions() {
 
   // Update user with optimistic updates for instant UI feedback
   const updateUser = useCallback(
-    async (projectId: string, userId: string, update: UpdateUserParams, currentUser?: any) => {
+    async ({ projectId, userId, update, currentUser }: { projectId: string; userId: string; update: UpdateUserParams; currentUser?: any }) => {
       if (!projectId || !userId) {
         throw new Error("Project ID and User ID are required");
       }
@@ -55,8 +54,24 @@ export function useUserActions() {
       // Store original user state for potential reversion
       const originalUser = currentUser;
 
+      // Build optimistic update excluding fields that require server transformation:
+      // - File uploads (avatar/banner as File) - we don't know the final URL
+      // - Location - server transforms { latitude, longitude } to GeoJSON format
+      const optimisticUpdate: Partial<AuthUser> = {};
+      if (update.name !== undefined) optimisticUpdate.name = update.name;
+      if (update.username !== undefined) optimisticUpdate.username = update.username;
+      if (update.bio !== undefined) optimisticUpdate.bio = update.bio;
+      if (update.birthdate !== undefined) optimisticUpdate.birthdate = update.birthdate;
+      if (update.metadata !== undefined) optimisticUpdate.metadata = update.metadata;
+      // Only apply avatar optimistically if it's a string URL (not a file upload)
+      if (typeof update.avatar === 'string' || update.avatar === null) {
+        optimisticUpdate.avatar = update.avatar;
+      }
+
       // OPTIMISTIC UPDATE: Apply changes immediately for instant UI feedback
-      dispatch(updateUserOptimistic(update));
+      if (Object.keys(optimisticUpdate).length > 0) {
+        dispatch(updateUserOptimistic(optimisticUpdate));
+      }
 
       try {
         const result = await updateUserMutation({ 

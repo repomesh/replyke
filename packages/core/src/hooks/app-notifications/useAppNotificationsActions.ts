@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 import {
   loadMore as loadMoreAction,
   resetNotifications,
@@ -12,7 +11,6 @@ import {
   selectCurrentProjectId,
   selectAppNotificationsPage,
   selectAppNotificationsLimit,
-  selectNotificationTemplates,
 } from "../../store/slices/appNotificationsSlice";
 import {
   useLazyFetchAppNotificationsQuery,
@@ -21,30 +19,32 @@ import {
   useLazyCountUnreadNotificationsQuery,
 } from "../../store/api/appNotificationsApi";
 import { handleError } from "../../utils/handleError";
-import addNotificationsMessages from "../../helpers/addNotificationsMessages";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
+
+export interface UseAppNotificationsActionsValues {
+  loadMore: () => void;
+  markNotificationAsRead: ({ notificationId }: { notificationId: string }) => Promise<void>;
+  markAllNotificationsAsRead: () => Promise<void>;
+  resetAppNotifications: () => Promise<void>;
+  fetchMoreNotifications: ({ pageToFetch }: { pageToFetch: number }) => Promise<void>;
+  updateUnreadCount: () => Promise<void>;
+}
 
 /**
  * Hook that provides Redux-powered actions for app notifications
  * Integrates RTK Query with Redux slice actions
+ *
+ * Note: Templates are applied at display time in useAppNotifications, not here.
+ * This ensures templates are always fresh and avoids race conditions.
  */
-export function useAppNotificationsActions() {
-  const dispatch = useDispatch<AppDispatch>();
+export function useAppNotificationsActions(): UseAppNotificationsActionsValues {
+  const dispatch = useReplykeDispatch();
 
   // Get current state for actions
-  const projectIdFromSlice = useSelector((state: RootState) =>
-    selectCurrentProjectId(state)
-  );
-  const page = useSelector((state: RootState) =>
-    selectAppNotificationsPage(state)
-  );
-  const limit = useSelector((state: RootState) =>
-    selectAppNotificationsLimit(state)
-  );
-  const notificationTemplates = useSelector((state: RootState) =>
-    selectNotificationTemplates(state)
-  );
+  const projectIdFromSlice = useReplykeSelector(selectCurrentProjectId);
+  const page = useReplykeSelector(selectAppNotificationsPage);
+  const limit = useReplykeSelector(selectAppNotificationsLimit);
 
   // Get project and user context (fallback to current hooks)
   const { projectId: projectIdFromHook } = useProject();
@@ -66,7 +66,7 @@ export function useAppNotificationsActions() {
 
   // Mark notification as read action
   const markNotificationAsRead = useCallback(
-    async (notificationId: string) => {
+    async ({ notificationId }: { notificationId: string }) => {
       if (!projectId || !user) {
         throw new Error("No project ID or authenticated user available");
       }
@@ -99,22 +99,19 @@ export function useAppNotificationsActions() {
       dispatch(resetNotifications());
 
       // Fetch first page
-      const result = await triggerFetchNotifications({
+      const response = await triggerFetchNotifications({
         projectId,
         page: 1,
         limit,
       }).unwrap();
 
-      if (result) {
-        // Apply notification templates
-        const completeNotifications = addNotificationsMessages(
-          result,
-          notificationTemplates
-        );
-
+      if (response) {
+        const { data: notifications, pagination } = response;
+        // Store raw notifications - templates applied at display time
         dispatch(
           addNotifications({
-            notifications: completeNotifications,
+            notifications,
+            hasMore: pagination.hasMore,
             isFirstPage: true,
           })
         );
@@ -129,30 +126,31 @@ export function useAppNotificationsActions() {
     user,
     triggerFetchNotifications,
     limit,
-    notificationTemplates,
   ]);
 
   // Fetch more notifications (internal action triggered by page changes)
   const fetchMoreNotifications = useCallback(
-    async (pageToFetch: number) => {
+    async ({ pageToFetch }: { pageToFetch: number }) => {
       if (!projectId || !user) return;
 
       try {
         dispatch(setLoading(true));
 
-        const result = await triggerFetchNotifications({
+        const response = await triggerFetchNotifications({
           projectId,
           page: pageToFetch,
           limit,
         }).unwrap();
 
-        if (result) {
-          const completeNotifications = addNotificationsMessages(
-            result,
-            notificationTemplates
+        if (response) {
+          const { data: notifications, pagination } = response;
+          // Store raw notifications - templates applied at display time
+          dispatch(
+            addNotifications({
+              notifications,
+              hasMore: pagination.hasMore,
+            })
           );
-
-          dispatch(addNotifications({ notifications: completeNotifications }));
         }
       } catch (error) {
         handleError(error, "Loading more app notifications failed:");
@@ -166,7 +164,6 @@ export function useAppNotificationsActions() {
       user,
       triggerFetchNotifications,
       limit,
-      notificationTemplates,
     ]
   );
 

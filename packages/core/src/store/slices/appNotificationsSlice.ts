@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { UnifiedAppNotification, NotificationTemplates } from "../../interfaces/models/AppNotification";
+import type { ReplykeState } from '../replykeReducers';
 
 // State interface
 export interface AppNotificationsState {
@@ -75,9 +76,9 @@ export const appNotificationsSlice = createSlice({
     },
 
     // Add new notifications (for pagination)
-    addNotifications: (state, action: PayloadAction<{ notifications: UnifiedAppNotification[]; isFirstPage?: boolean }>) => {
-      const { notifications, isFirstPage = false } = action.payload;
-      
+    addNotifications: (state, action: PayloadAction<{ notifications: UnifiedAppNotification[]; hasMore: boolean; isFirstPage?: boolean }>) => {
+      const { notifications, hasMore, isFirstPage = false } = action.payload;
+
       if (isFirstPage) {
         state.notifications = notifications;
       } else {
@@ -86,12 +87,10 @@ export const appNotificationsSlice = createSlice({
         const newNotifications = notifications.filter(n => !existingIds.has(n.id));
         state.notifications.push(...newNotifications);
       }
-      
-      // Update hasMore based on returned count vs limit
-      if (notifications.length < state.limit) {
-        state.hasMore = false;
-      }
-      
+
+      // Update hasMore from pagination metadata
+      state.hasMore = hasMore;
+
       state.loading = false;
     },
 
@@ -146,27 +145,27 @@ export const {
 // Export reducer
 export default appNotificationsSlice.reducer;
 
-// Selectors
-export const selectAppNotifications = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.notifications;
+// Selectors - use namespaced state for dual-mode support
+export const selectAppNotifications = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.notifications;
 
-export const selectUnreadCount = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.unreadCount;
+export const selectUnreadCount = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.unreadCount;
 
-export const selectAppNotificationsLoading = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.loading;
+export const selectAppNotificationsLoading = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.loading;
 
-export const selectAppNotificationsHasMore = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.hasMore;
+export const selectAppNotificationsHasMore = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.hasMore;
 
-export const selectAppNotificationsPage = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.page;
+export const selectAppNotificationsPage = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.page;
 
-export const selectAppNotificationsLimit = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.limit;
+export const selectAppNotificationsLimit = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.limit;
 
-export const selectNotificationTemplates = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.notificationTemplates;
+export const selectNotificationTemplates = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.notificationTemplates;
 
-export const selectCurrentProjectId = (state: { appNotifications: AppNotificationsState }) => 
-  state.appNotifications.currentProjectId;
+export const selectCurrentProjectId = (state: { replyke: ReplykeState }) =>
+  state.replyke.appNotifications.currentProjectId;

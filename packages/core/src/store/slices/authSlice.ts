@@ -1,19 +1,18 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../index';
+import type { ReplykeState } from '../replykeReducers';
 import type { AuthUser } from '../../interfaces/models/User';
 
 export interface AuthState {
   // Token management
   accessToken: string | null;
   refreshToken: string | null;
-  
+
   // User data (DEPRECATED - moved to userSlice)
   user: AuthUser | null;
-  
+
   // Loading states
-  loadingInitial: boolean;
   isAuthenticating: boolean;
-  
+
   // Initialization
   initialized: boolean;
   signedToken: string | null;
@@ -23,7 +22,6 @@ const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
   user: null,
-  loadingInitial: true,
   isAuthenticating: false,
   initialized: false,
   signedToken: null,
@@ -49,11 +47,8 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<AuthUser | null>) => {
       state.user = action.payload;
     },
-    
+
     // Loading states
-    setLoadingInitial: (state, action: PayloadAction<boolean>) => {
-      state.loadingInitial = action.payload;
-    },
     setAuthenticating: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticating = action.payload;
     },
@@ -72,7 +67,7 @@ const authSlice = createSlice({
       state.refreshToken = null;
       state.user = null;
       state.isAuthenticating = false;
-      // Keep loadingInitial and initialized as they are
+      // Keep initialized as it is
     },
 
     // Individual token setter for compatibility
@@ -82,25 +77,29 @@ const authSlice = createSlice({
   },
 });
 
-export const { 
-  setTokens, 
-  clearTokens, 
-  setUser, 
-  setLoadingInitial, 
-  setAuthenticating, 
-  setInitialized, 
-  setSignedToken, 
+export const {
+  setTokens,
+  clearTokens,
+  setUser,
+  setAuthenticating,
+  setInitialized,
+  setSignedToken,
   resetAuth,
   setRefreshToken
 } = authSlice.actions;
 
-// Selectors
-export const selectAccessToken = (state: RootState) => state.auth.accessToken;
-export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
-export const selectUser = (state: RootState) => state.auth.user;
-export const selectLoadingInitial = (state: RootState) => state.auth.loadingInitial;
-export const selectIsAuthenticating = (state: RootState) => state.auth.isAuthenticating;
-export const selectInitialized = (state: RootState) => state.auth.initialized;
-export const selectSignedToken = (state: RootState) => state.auth.signedToken;
+// Selectors - use namespaced state for dual-mode support
+export const selectAccessToken = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.accessToken;
+export const selectRefreshToken = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.refreshToken;
+export const selectUser = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.user;
+export const selectIsAuthenticating = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.isAuthenticating;
+export const selectInitialized = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.initialized;
+export const selectSignedToken = (state: { replyke: ReplykeState }) =>
+  state.replyke.auth.signedToken;
 
 export default authSlice.reducer;

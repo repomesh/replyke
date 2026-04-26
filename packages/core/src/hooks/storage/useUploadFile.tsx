@@ -2,30 +2,49 @@ import { useCallback } from "react";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 
-// Type guard to detect if it’s a real browser File
+// Type guard to detect if it's a real browser File
 function isBrowserFile(file: UniversalFile): file is BrowserFile {
   return typeof File !== "undefined" && file instanceof File;
 }
 
-// 1) Update the hook to accept a “universal” file type:
-type BrowserFile = File; // real File from the browser
-type RNFile = { uri: string; name: string; type?: string };
+type BrowserFile = File;
+
+export interface RNFile {
+  uri: string;
+  name: string;
+  type?: string;
+}
 
 type UniversalFile = BrowserFile | RNFile;
-type UploadResponse = {
+
+export interface UploadFileOptions {
+  entityId?: string;
+  commentId?: string;
+  spaceId?: string;
+  position?: number;
+  metadata?: Record<string, any>;
+}
+
+export interface UploadResponse {
   fileId: string;
+  type: "image" | "video" | "document" | "other";
   relativePath: string;
   publicPath: string;
-};
-function useUploadFile() {
+  size: number;
+  mimeType: string;
+  createdAt: string;
+}
+
+function useUploadFile(): (file: UniversalFile, pathParts: string[], options?: UploadFileOptions) => Promise<UploadResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const uploadFile = useCallback(
     async (
       file: UniversalFile,
-      pathParts: string[]
-    ): Promise<UploadResponse | void> => {
+      pathParts: string[],
+      options?: UploadFileOptions
+    ): Promise<UploadResponse> => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
@@ -36,31 +55,45 @@ function useUploadFile() {
 
       const formData = new FormData();
 
-      // 2) Check if it's a browser File or a React Native { uri, ... } object
+      // Append file (browser or React Native)
       if (isBrowserFile(file)) {
-        // We are dealing with a real browser File
         formData.append("file", file, file.name);
       } else {
-        // We assume it’s a React Native { uri, type, name } shape
         formData.append("file", {
           uri: file.uri,
           type: file.type || "application/octet-stream",
           name: file.name,
-        } as any); // casting to `any` to appease TS if needed
+        } as any);
       }
 
-      // 3) Append other form fields
+      // Append pathParts
       formData.append("pathParts", JSON.stringify(pathParts));
 
-      // 4) Make the request
+      // Append optional associations
+      if (options?.entityId) {
+        formData.append("entityId", options.entityId);
+      }
+      if (options?.commentId) {
+        formData.append("commentId", options.commentId);
+      }
+      if (options?.spaceId) {
+        formData.append("spaceId", options.spaceId);
+      }
+      if (options?.position !== undefined) {
+        formData.append("position", options.position.toString());
+      }
+      if (options?.metadata) {
+        formData.append("metadata", JSON.stringify(options.metadata));
+      }
+
+      // Make the request
       const response = await axios.post(`/${projectId}/storage`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
       });
 
-      return response.data as UploadResponse; // Return the server response
+      return response.data as UploadResponse;
     },
     [projectId, axios]
   );

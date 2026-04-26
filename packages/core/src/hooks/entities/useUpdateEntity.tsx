@@ -3,6 +3,7 @@ import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { Entity } from "../../interfaces/models/Entity";
 import { Mention } from "../../interfaces/models/Mention";
+import useEntity from "./useEntity";
 
 export interface UpdateEntityProps {
   entityId: string;
@@ -20,9 +21,10 @@ export interface UpdateEntityProps {
   };
 }
 
-function useUpdateEntity() {
+function useUpdateEntity(): (props: UpdateEntityProps) => Promise<Entity> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
+  const { setEntity } = useEntity();
 
   const updateEntity = useCallback(
     async (props: UpdateEntityProps) => {
@@ -52,12 +54,13 @@ function useUpdateEntity() {
           metadata,
           mentions,
         },
-        { withCredentials: true }
       );
 
-      return response.data as Entity;
+      const updatedEntity = response.data as Entity;
+      setEntity?.(updatedEntity);
+      return updatedEntity;
     },
-    [projectId, axios]
+    [projectId, axios],
   );
 
   return updateEntity;

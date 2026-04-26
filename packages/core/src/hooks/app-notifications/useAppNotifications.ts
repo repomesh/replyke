@@ -1,23 +1,21 @@
 import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 
 import {
   setProjectContext,
   setLimit,
-  setNotificationTemplates,
   selectAppNotifications,
   selectUnreadCount,
   selectAppNotificationsLoading,
   selectAppNotificationsHasMore,
   selectAppNotificationsPage,
   selectCurrentProjectId,
-  selectNotificationTemplates,
 } from "../../store/slices/appNotificationsSlice";
 import { useAppNotificationsActions } from "./useAppNotificationsActions";
 import useProject from "../projects/useProject";
 import { useUser } from "../user";
 import { NotificationTemplates, UnifiedAppNotification } from "../../interfaces/models/AppNotification";
+import addNotificationsMessages from "../../helpers/addNotificationsMessages";
 
 export interface UseAppNotificationsProps {
   limit?: number;
@@ -30,7 +28,7 @@ export interface UseAppNotificationsValues {
   loading: boolean;
   hasMore: boolean;
   loadMore: () => void;
-  markNotificationAsRead: (notificationId: string) => Promise<void>;
+  markNotificationAsRead: ({ notificationId }: { notificationId: string }) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
   resetAppNotifications: () => Promise<void>;
 }
@@ -43,33 +41,21 @@ function useAppNotifications({
   limit = 10,
   notificationTemplates,
 }: UseAppNotificationsProps = {}): UseAppNotificationsValues {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useReplykeDispatch();
 
   // Get external context
   const { projectId } = useProject();
   const { user } = useUser();
 
   // Get Redux state
-  const appNotifications = useSelector((state: RootState) =>
-    selectAppNotifications(state)
-  );
-  const unreadAppNotificationsCount = useSelector((state: RootState) =>
-    selectUnreadCount(state)
-  );
-  const loading = useSelector((state: RootState) =>
-    selectAppNotificationsLoading(state)
-  );
-  const hasMore = useSelector((state: RootState) =>
-    selectAppNotificationsHasMore(state)
-  );
-  const currentPage = useSelector((state: RootState) =>
-    selectAppNotificationsPage(state)
-  );
-  const currentProjectId = useSelector((state: RootState) =>
-    selectCurrentProjectId(state)
-  );
+  const appNotifications = useReplykeSelector(selectAppNotifications);
+  const unreadAppNotificationsCount = useReplykeSelector(selectUnreadCount);
+  const loading = useReplykeSelector(selectAppNotificationsLoading);
+  const hasMore = useReplykeSelector(selectAppNotificationsHasMore);
+  const currentPage = useReplykeSelector(selectAppNotificationsPage);
+  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
 
-  // Get actions
+  // Get actions (templates are applied at display time, not fetch time)
   const {
     loadMore,
     markNotificationAsRead,
@@ -90,27 +76,6 @@ function useAppNotifications({
     dispatch(setLimit(limit));
   }, [dispatch, limit]);
 
-  // Prevent infinite re-renders by comparing current vs new templates
-  const currentTemplates = useSelector((state: RootState) =>
-    selectNotificationTemplates(state)
-  );
-
-  const templatesChanged = useMemo(() => {
-    // If no templates provided, skip comparison
-    if (!notificationTemplates) return false;
-
-    // Deep comparison using JSON stringify
-    return (
-      JSON.stringify(currentTemplates) !== JSON.stringify(notificationTemplates)
-    );
-  }, [currentTemplates, notificationTemplates]);
-
-  useEffect(() => {
-    if (notificationTemplates && templatesChanged) {
-      dispatch(setNotificationTemplates(notificationTemplates));
-    }
-  }, [dispatch, notificationTemplates, templatesChanged]);
-
   // Fetch unread count on mount and when dependencies change
   useEffect(() => {
     if (projectId && user) {
@@ -128,14 +93,21 @@ function useAppNotifications({
   // Handle page changes (load more notifications)
   useEffect(() => {
     if (currentPage > 1 && projectId && user) {
-      fetchMoreNotifications(currentPage);
+      fetchMoreNotifications({ pageToFetch: currentPage });
     }
   }, [currentPage, fetchMoreNotifications, projectId, user]);
+
+  // Apply templates at display time (not at fetch time)
+  // This ensures templates are always applied fresh from props
+  const templatedNotifications = useMemo(
+    () => addNotificationsMessages(appNotifications, notificationTemplates),
+    [appNotifications, notificationTemplates]
+  );
 
   // Return the same interface as the original hook
   return useMemo(
     () => ({
-      appNotifications,
+      appNotifications: templatedNotifications,
       unreadAppNotificationsCount,
       loading,
       hasMore,
@@ -145,7 +117,7 @@ function useAppNotifications({
       resetAppNotifications,
     }),
     [
-      appNotifications,
+      templatedNotifications,
       unreadAppNotificationsCount,
       loading,
       hasMore,

@@ -3,20 +3,18 @@ import { Comment } from "../../interfaces/models/Comment";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 
-function useUpdateComment() {
+export interface UpdateCommentProps {
+  commentId: string;
+  content?: string;
+  metadata?: Record<string, any>;
+}
+
+function useUpdateComment(): (props: UpdateCommentProps) => Promise<Comment> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const updateComment = useCallback(
-    async ({
-      commentId,
-      content,
-      metadata,
-    }: {
-      commentId: string;
-      content?: string;
-      metadata?: Record<string, any>;
-    }) => {
+    async ({ commentId, content, metadata }: UpdateCommentProps) => {
       if (!projectId) {
         throw new Error("No project specified");
       }

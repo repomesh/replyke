@@ -1,13 +1,19 @@
 import { useCallback } from "react";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
 import { isAbsoluteUrl } from "../../utils/isAbsoluteUrl";
+import { UrlMetadata } from "../../interfaces/UrlMetadata";
 
-function useGetMetadata() {
+export interface GetMetadataProps {
+  url: string;
+}
+
+function useGetMetadata(): (props: GetMetadataProps) => Promise<UrlMetadata> {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const getMetadata = useCallback(
-    async ({ url }: { url: string }) => {
+    async ({ url }: GetMetadataProps): Promise<UrlMetadata> => {
       if (!projectId) {
         throw new Error("No project specified");
       }
@@ -22,15 +28,18 @@ function useGetMetadata() {
         throw new Error("Please provide an absolute URL");
       }
 
-      const response = await axios.get(`/${projectId}/utils/get-metadata`, {
-        params: {
-          url,
-        },
-      });
+      const response = await axios.get<UrlMetadata>(
+        `/${projectId}/utils/get-metadata`,
+        {
+          params: {
+            url,
+          },
+        }
+      );
 
       return response.data;
     },
-    [projectId]
+    [projectId, axios]
   );
 
   return getMetadata;

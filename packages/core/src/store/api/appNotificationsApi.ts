@@ -1,5 +1,6 @@
 import { baseApi } from "./baseApi";
 import type { UnifiedAppNotification } from "../../interfaces/models/AppNotification";
+import type { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 
 // API parameters types
 interface FetchAppNotificationsParams {
@@ -30,7 +31,7 @@ export const appNotificationsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch paginated app notifications
     fetchAppNotifications: builder.query<
-      UnifiedAppNotification[],
+      PaginatedResponse<UnifiedAppNotification>,
       FetchAppNotificationsParams
     >({
       query: ({ projectId, page, limit }) => ({
@@ -43,7 +44,7 @@ export const appNotificationsApi = baseApi.injectEndpoints({
       }),
       providesTags: (result, error, { projectId }) => [
         { type: "AppNotification" as const, id: `${projectId}-LIST` },
-        ...(result?.map(({ id }) => ({
+        ...(result?.data?.map(({ id }) => ({
           type: "AppNotification" as const,
           id,
         })) ?? []),
@@ -61,8 +62,8 @@ export const appNotificationsApi = baseApi.injectEndpoints({
         body: {},
         responseHandler: async (response) => {
           // Handle text responses (like "OK" from res.sendStatus(200))
-          const contentType = response.headers.get('content-type') || '';
-          if (contentType.includes('application/json')) {
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
             return response.json();
           }
           // For text responses, just return void since we don't need the content
@@ -83,7 +84,9 @@ export const appNotificationsApi = baseApi.injectEndpoints({
             // We need to find all queries for this projectId - this is a simplified approach
             { projectId, page: 1, limit: 10 }, // This should be more dynamic in practice
             (draft) => {
-              const notification = draft.find((n) => n.id === notificationId);
+              const notification = draft.data.find(
+                (n) => n.id === notificationId
+              );
               if (notification) {
                 notification.isRead = true;
               }
@@ -140,7 +143,7 @@ export const appNotificationsApi = baseApi.injectEndpoints({
             // We need to find all queries for this projectId - this is a simplified approach
             { projectId, page: 1, limit: 10 }, // This should be more dynamic in practice
             (draft) => {
-              draft.forEach((notification) => {
+              draft.data.forEach((notification) => {
                 notification.isRead = true;
               });
             }

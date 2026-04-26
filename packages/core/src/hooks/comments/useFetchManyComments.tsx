@@ -1,23 +1,27 @@
 import { useCallback } from "react";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
-import { Comment } from "../../interfaces/models/Comment";
+import { Comment, CommentIncludeParam } from "../../interfaces/models/Comment";
+import { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 import useProject from "../projects/useProject";
-import axios from "../../config/axios";
+import useAxiosPrivate from "../../config/useAxiosPrivate";
 
-function useFetchManyComments() {
+export interface FetchManyCommentsProps {
+  entityId?: string | null | undefined;
+  userId?: string | null | undefined;
+  parentId?: string | null | undefined;
+  sortBy?: CommentsSortByOptions;
+  page: number;
+  limit?: number;
+  include?: CommentIncludeParam;
+  sourceId?: string | null | undefined;
+}
+
+function useFetchManyComments(): (props: FetchManyCommentsProps) => Promise<PaginatedResponse<Comment>> {
   const { projectId } = useProject();
+  const axios = useAxiosPrivate();
 
   const fetchComments = useCallback(
-    async (props: {
-      entityId?: string | null | undefined;
-      userId?: string | null | undefined;
-      parentId?: string | null | undefined;
-      sortBy?: CommentsSortByOptions;
-      page: number;
-      limit?: number;
-      includeEntity?: boolean;
-      sourceId?: string | null | undefined;
-    }): Promise<Comment[]> => {
+    async (props: FetchManyCommentsProps): Promise<PaginatedResponse<Comment>> => {
       const {
         entityId,
         userId,
@@ -25,7 +29,7 @@ function useFetchManyComments() {
         sortBy,
         page,
         limit,
-        includeEntity,
+        include,
         sourceId,
       } = props;
 
@@ -35,10 +39,6 @@ function useFetchManyComments() {
 
       if (limit === 0) {
         throw new Error("Can't fetch with limit 0");
-      }
-
-      if (!sortBy) {
-        throw new Error("Can't fetch without sortBy property");
       }
 
       if (!projectId) {
@@ -54,15 +54,21 @@ function useFetchManyComments() {
       if (entityId) params.entityId = entityId;
       if (userId) params.userId = userId;
       if (parentId) params.parentId = parentId;
-      if (includeEntity) params.includeEntity = includeEntity;
       if (sourceId) params.sourceId = sourceId;
 
-      const response = await axios.get(`/${projectId}/comments`, {
-        params,
-      });
-      return response.data as Comment[];
+      if (include) {
+        params.include = Array.isArray(include) ? include.join(',') : include;
+      }
+
+      const response = await axios.get<PaginatedResponse<Comment>>(
+        `/${projectId}/comments`,
+        {
+          params,
+        }
+      );
+      return response.data;
     },
-    [projectId]
+    [projectId, axios]
   );
 
   return fetchComments;

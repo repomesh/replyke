@@ -4,13 +4,17 @@ import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 import { RemoveConnectionByUserIdResponse } from "../../../interfaces/models/Connection";
 
-function useRemoveConnectionByUserId() {
+export interface RemoveConnectionByUserIdProps {
+  userId: string;
+}
+
+function useRemoveConnectionByUserId(): (props: RemoveConnectionByUserIdProps) => Promise<RemoveConnectionByUserIdResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const removeConnectionByUserId = useCallback(
-    async (props: { userId: string }): Promise<RemoveConnectionByUserIdResponse> => {
+    async (props: RemoveConnectionByUserIdProps): Promise<RemoveConnectionByUserIdResponse> => {
       const { userId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -29,8 +33,7 @@ function useRemoveConnectionByUserId() {
       }
 
       const response = await axios.delete(
-        `/users/${userId}/connection`,
-        { withCredentials: true }
+        `/users/${userId}/connection`
       );
 
       return response.data as RemoveConnectionByUserIdResponse;

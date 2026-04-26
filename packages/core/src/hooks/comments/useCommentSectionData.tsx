@@ -9,6 +9,8 @@ import { Mention } from "../../interfaces/models/Mention";
 import { handleError } from "../../utils/handleError";
 import useDeleteComment from "./useDeleteComment";
 import useUpdateComment from "./useUpdateComment";
+import useAddReaction from "../reactions/useAddReaction";
+import { ReactionType } from "../../interfaces/models/Reaction";
 import useEntityComments from "./useEntityComments";
 import useFetchComment from "./useFetchComment";
 import { useUser } from "../user";
@@ -23,6 +25,11 @@ import {
 import { isUUID } from "../../utils/isUUID";
 import { useStableObject } from "../useStableObject";
 
+export interface MentionTriggers {
+  user?: string;
+  space?: string;
+}
+
 export interface UseCommentSectionDataProps {
   entity?: Entity | undefined | null;
   entityId?: string | undefined | null;
@@ -34,6 +41,24 @@ export interface UseCommentSectionDataProps {
   limit?: number;
   defaultSortBy?: CommentsSortByOptions;
   highlightedCommentId?: string | null;
+  mentionTriggers?: MentionTriggers;
+}
+
+export interface CommentSectionCreateCommentProps {
+  parentId?: string;
+  content?: string;
+  gif?: GifData;
+  mentions?: Mention[];
+  autoReaction?: ReactionType;
+}
+
+export interface CommentSectionUpdateCommentProps {
+  commentId: string;
+  content: string;
+}
+
+export interface CommentSectionDeleteCommentProps {
+  commentId: string;
 }
 
 export interface UseCommentSectionDataValues {
@@ -58,30 +83,22 @@ export interface UseCommentSectionDataValues {
   repliedToComment: Partial<Comment> | null;
   setRepliedToComment: (newRepliedToComment: Comment | null) => void;
   showReplyBanner: boolean;
-  setShowReplyBanner: (newState: boolean) => void;
+  setShowReplyBanner: ({ newState }: { newState: boolean }) => void;
   addCommentsToTree: (
     newComments: Comment[] | undefined,
-    newlyAdded?: boolean
+    newlyAdded?: boolean,
   ) => void;
-  removeCommentFromTree: (commentId: string) => void;
+  removeCommentFromTree: ({ commentId }: { commentId: string }) => void;
   handleDeepReply: (comment: Comment) => void;
   handleShallowReply: (comment: Comment) => void;
 
-  createComment: (props: {
-    parentId?: string;
-    content?: string;
-    gif?: GifData;
-    mentions: Mention[];
-  }) => Promise<void>;
-  updateComment: (props: {
-    commentId: string;
-    content: string;
-  }) => Promise<void>;
-  deleteComment: (props: { commentId: string }) => Promise<void>;
+  createComment: (props: CommentSectionCreateCommentProps) => Promise<Comment | undefined>;
+  updateComment: (props: CommentSectionUpdateCommentProps) => Promise<void>;
+  deleteComment: (props: CommentSectionDeleteCommentProps) => Promise<void>;
 }
 
 function useCommentSectionData(
-  props: UseCommentSectionDataProps
+  props: UseCommentSectionDataProps,
 ): UseCommentSectionDataValues {
   const {
     entity: entityProp,
@@ -94,7 +111,13 @@ function useCommentSectionData(
     limit = 15,
     callbacks: callbacksProp = {},
     highlightedCommentId,
+    mentionTriggers: mentionTriggersProp,
   } = props;
+
+  const mentionTriggers = {
+    user: mentionTriggersProp?.user ?? "@",
+    space: mentionTriggersProp?.space ?? "#",
+  };
 
   // Stabilize callbacks reference to prevent unnecessary re-renders
   const callbacks = useStableObject(callbacksProp);
@@ -102,7 +125,7 @@ function useCommentSectionData(
   const { entity: entityFromContext, setEntity: setContextEntity } =
     useEntity();
   const [entity, setEntity] = useState<Entity | null | undefined>(
-    entityProp ?? entityFromContext
+    entityProp ?? entityFromContext,
   );
 
   const { user } = useUser();
@@ -118,11 +141,18 @@ function useCommentSectionData(
     loadMore,
     addCommentsToTree,
     removeCommentFromTree,
-  } = useEntityComments({ entityId: entity?.id, defaultSortBy, limit });
+    markCommentAsDeleted,
+  } = useEntityComments({
+    entityId: entity?.id,
+    defaultSortBy,
+    limit,
+    include: "user",
+  });
 
   const createComment = useCreateComment();
   const deleteComment = useDeleteComment();
   const updateComment = useUpdateComment();
+  const addReaction = useAddReaction();
   const fetchComment = useFetchComment();
   const fetchEntity = useFetchEntity();
   const fetchEntityByForeignId = useFetchEntityByForeignId();
@@ -144,6 +174,9 @@ function useCommentSectionData(
   const [repliedToComment, setRepliedToComment] =
     useState<Partial<Comment> | null>(null);
   const [showReplyBanner, setShowReplyBanner] = useState(false);
+  const setShowReplyBannerHandler = useCallback(({ newState }: { newState: boolean }) => {
+    setShowReplyBanner(newState);
+  }, []);
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
 
   // const handleSetPushMention = (user: User | null) => {
@@ -163,26 +196,22 @@ function useCommentSectionData(
       setRepliedToComment!(comment);
       setShowReplyBanner(true);
     },
-    [setRepliedToComment]
+    [setRepliedToComment],
   );
 
   // For replies that appear at the same level as the comment they are replying to. Includes a mention (e.g. @username).
   const handleShallowReply = useCallback(
     (comment: Comment) => {
       setRepliedToComment!({ id: comment.parentId ?? undefined });
-      setPushMention(comment.user);
+
+      if (comment.user) setPushMention(comment.user);
     },
-    [setRepliedToComment]
+    [setRepliedToComment],
   );
 
   const handleCreateComment = useCallback(
-    async (props: {
-      parentId?: string;
-      content?: string;
-      gif?: GifData;
-      mentions?: Mention[];
-    }) => {
-      const { parentId, content, gif, mentions } = props;
+    async (props: CommentSectionCreateCommentProps) => {
+      const { parentId, content, gif, mentions, autoReaction } = props;
 
       if (submittingComment.current) return;
 
@@ -209,16 +238,13 @@ function useCommentSectionData(
       submittingComment.current = true;
       setSubmittingCommentState(true);
 
-      // Filter mentions to include only those with "@username" in the content
+      // Filter mentions to include only those whose trigger + identifier appears in the content
       const filteredMentions = content
         ? (mentions || []).filter((mention) => {
-            const mentionRegex = new RegExp(`@${mention.username}\\b`, "g");
-            // const mentionRegex = new RegExp(
-            //   `@(${mention.username}|${mention.name})\\b`,
-            //   "g"
-            // );
-
-            return mentionRegex.test(content);
+            if (mention.type === "space") {
+              return content.includes(mentionTriggers.space + mention.slug);
+            }
+            return content.includes(mentionTriggers.user + mention.username);
           })
         : [];
 
@@ -240,15 +266,34 @@ function useCommentSectionData(
           birthdate: new Date(),
           location: null,
           createdAt: new Date(),
+          avatarFileId: null,
+          bannerFileId: null,
         } as User,
         upvotes: [],
         downvotes: [],
+        userReaction: autoReaction ?? null,
+        reactionCounts: {
+          upvote: autoReaction === "upvote" ? 1 : 0,
+          downvote: autoReaction === "downvote" ? 1 : 0,
+          like: autoReaction === "like" ? 1 : 0,
+          love: autoReaction === "love" ? 1 : 0,
+          wow: autoReaction === "wow" ? 1 : 0,
+          sad: autoReaction === "sad" ? 1 : 0,
+          angry: autoReaction === "angry" ? 1 : 0,
+          funny: autoReaction === "funny" ? 1 : 0,
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
         parentDeletedAt: null,
+        userDeletedAt: null,
         repliesCount: 0,
         metadata: {},
+        moderationStatus: null,
+        moderatedAt: null,
+        moderatedById: null,
+        moderatedByType: null,
+        moderationReason: null,
       };
 
       setRepliedToComment(null);
@@ -266,17 +311,38 @@ function useCommentSectionData(
         });
 
         if (newCommentData) {
-          removeCommentFromTree(TEMP_ID);
-          addCommentsToTree([newCommentData], true);
+          removeCommentFromTree({ commentId: TEMP_ID });
+
+          if (autoReaction) {
+            // Add comment with optimistic reaction data while the API call is in flight
+            addCommentsToTree(
+              [{ ...newCommentData, userReaction: autoReaction, reactionCounts: { ...newCommentData.reactionCounts, [autoReaction]: (newCommentData.reactionCounts?.[autoReaction] ?? 0) + 1 } }],
+              true,
+            );
+            // Fire-and-forget: update the tree with server truth when the reaction API resolves
+            addReaction({
+              targetType: "comment",
+              targetId: newCommentData.id,
+              reactionType: autoReaction,
+            })
+              .then((updatedComment) => {
+                addCommentsToTree([updatedComment as Comment], true);
+              })
+              .catch(() => {});
+          } else {
+            addCommentsToTree([newCommentData], true);
+          }
         }
         setContextEntity?.((prevEntity) => {
           if (!prevEntity) return prevEntity;
           return { ...prevEntity, repliesCount: prevEntity.repliesCount + 1 };
         });
+        return newCommentData;
       } catch (err: unknown) {
         // TODO: currently we remove the temp comment from the tree but don't offer the user any option to retry. It's as if they've never sent anything and all they typed is gone. We need to add a flag for comment in the tree that says t failed so we can give he user a try again button
-        removeCommentFromTree(TEMP_ID);
+        removeCommentFromTree({ commentId: TEMP_ID });
         handleError(err, "Failed to submit a new comment: ");
+        return undefined;
       } finally {
         submittingComment.current = false;
         setSubmittingCommentState(false);
@@ -288,16 +354,18 @@ function useCommentSectionData(
       removeCommentFromTree,
       entity,
       createComment,
+      addReaction,
       repliedToComment,
       callbacks,
-    ]
+    ],
   );
 
   const handleDeleteComment = useCallback(
-    async ({ commentId }: { commentId: string }) => {
+    async ({ commentId }: CommentSectionDeleteCommentProps) => {
       if (!isUUID(commentId)) return;
       try {
-        removeCommentFromTree(commentId);
+        // Reddit-style: mark as deleted placeholder instead of removing from tree
+        markCommentAsDeleted({ commentId });
         await deleteComment({ commentId });
         setContextEntity?.((prevEntity) => {
           if (!prevEntity) return prevEntity;
@@ -307,11 +375,11 @@ function useCommentSectionData(
         handleError(err, "Failed to delete comment");
       }
     },
-    [deleteComment, removeCommentFromTree]
+    [deleteComment, markCommentAsDeleted],
   );
 
   const handleUpdateComment = useCallback(
-    async ({ commentId, content }: { commentId: string; content: string }) => {
+    async ({ commentId, content }: CommentSectionUpdateCommentProps) => {
       try {
         const updatedComment = await updateComment({ commentId, content });
 
@@ -322,7 +390,7 @@ function useCommentSectionData(
         handleError(err, "Failed to update comment");
       }
     },
-    [updateComment]
+    [updateComment],
   );
 
   useEffect(() => {
@@ -336,7 +404,7 @@ function useCommentSectionData(
       try {
         const fetchedCommentData = await fetchComment({
           commentId: highlightedCommentId!,
-          withParent: true,
+          include: ["user", "parent"],
         });
 
         if (!fetchedCommentData) {
@@ -346,13 +414,20 @@ function useCommentSectionData(
 
         if (!fetchedCommentData.comment) {
           console.error("Highlighted comment not found");
+          return;
         }
 
-        setHighlightedComment(fetchedCommentData);
-        const { comment: targetComment, parentComment } = fetchedCommentData;
+        const targetComment = fetchedCommentData.comment;
+        const parentComment = targetComment.parentComment ?? null;
+
+        // Maintain backward-compatible state structure
+        setHighlightedComment({
+          comment: targetComment,
+          parentComment: parentComment,
+        });
 
         addCommentsToTree?.(
-          parentComment ? [targetComment, parentComment] : [targetComment]
+          parentComment ? [targetComment, parentComment] : [targetComment],
         );
       } catch (err) {
         handleError(err, "Fetching single comment failed");
@@ -439,7 +514,7 @@ function useCommentSectionData(
     repliedToComment,
     setRepliedToComment,
     showReplyBanner,
-    setShowReplyBanner,
+    setShowReplyBanner: setShowReplyBannerHandler,
 
     addCommentsToTree,
     removeCommentFromTree,

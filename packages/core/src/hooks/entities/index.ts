@@ -2,15 +2,25 @@ export { default as useEntity } from "./useEntity";
 export { default as useEntityData } from "./useEntityData";
 
 export { default as useCreateEntity } from "./useCreateEntity";
+export type { CreateEntityProps } from "./useCreateEntity";
 export { default as useDeleteEntity } from "./useDeleteEntity";
-export { default as useDownvoteEntity } from "./useDownvoteEntity";
-export { default as useEntityVotes } from "./useEntityVotes";
+export type { DeleteEntityProps } from "./useDeleteEntity";
 export { default as useFetchEntity } from "./useFetchEntity";
+export type { FetchEntityProps } from "./useFetchEntity";
 export { default as useFetchEntityByForeignId } from "./useFetchEntityByForeignId";
+export type { FetchEntityByForeignIdProps } from "./useFetchEntityByForeignId";
 export { default as useFetchEntityByShortId } from "./useFetchEntityByShortId";
-export { default as useIncrementEntityViews } from "./useIncrementEntityViews";
-export { default as useRemoveEntityDownvote } from "./useRemoveEntityDownvote";
-export { default as useRemoveEntityUpvote } from "./useRemoveEntityUpvote";
+export type { FetchEntityByShortIdProps } from "./useFetchEntityByShortId";
+export { default as useFetchManyEntities } from "./useFetchManyEntities";
+export { default as useFetchManyEntitiesWrapper } from "./useFetchManyEntitiesWrapper";
+export type {
+  UseFetchManyEntitiesWrapperProps,
+  UseFetchManyEntitiesWrapperValues,
+} from "./useFetchManyEntitiesWrapper";
 export { default as useUpdateEntity } from "./useUpdateEntity";
-export { default as useUpvoteEntity } from "./useUpvoteEntity";
+export { default as useFetchDrafts } from "./useFetchDrafts";
+export { default as usePublishDraft } from "./usePublishDraft";
+export type { PublishDraftProps } from "./usePublishDraft";
+export { default as useIsEntitySaved } from "./useIsEntitySaved";
+export type { UseIsEntitySavedValues } from "./useIsEntitySaved";
 

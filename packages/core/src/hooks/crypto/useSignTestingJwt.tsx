@@ -1,19 +1,7 @@
-import axios from "axios";
+import axios from "../../config/axios";
 import { handleError } from "../../utils/handleError";
 
-function useSignTestingJwt() {
-  const signTestingJwt = async ({
-    projectId,
-    privateKey,
-    payload,
-  }: {
-    projectId: string;
-    privateKey: string;
-    payload: Record<string, any>;
-  }) => {
-    try {
-      // Warn developers about the security risks
-      console.warn(`
+const WARNING = `
     WARNING: You are using a testing function to generate JWTs in your client application.
     This is NOT secure and should ONLY be used for initial development and testing purposes.
 
@@ -23,15 +11,34 @@ function useSignTestingJwt() {
     - Rotate your secret key periodically, especially after moving from testing to production.
 
     Failure to follow these practices can lead to security vulnerabilities.
-  `);
+  `;
 
+export interface SignTestingJwtProps {
+  projectId: string;
+  privateKey: string;
+  userData: { id: string } & Record<string, any>;
+}
+
+function useSignTestingJwt(): (props: SignTestingJwtProps) => Promise<string | undefined> {
+  const signTestingJwt = async ({
+    projectId,
+    privateKey,
+    userData,
+  }: SignTestingJwtProps) => {
+    try {
+      if (!projectId) {
+        throw new Error("No project specified");
+      }
+
+      // Warn developers about the security risks
+      console.warn(WARNING);
       const response = await axios.post(
-        "https://api.replyke.com/internal/crypto/sign-testing-jwt",
+        `/${projectId}/crypto/sign-testing-jwt/v2`,
         {
           projectId,
           privateKey,
-          payload,
-        }
+          userData,
+        },
       );
 
       return response.data as string;

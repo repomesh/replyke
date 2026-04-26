@@ -1,13 +1,28 @@
 import {
-  NotificationTemplate,
+  CommentMentionTemplateVars,
+  CommentReactionMilestoneSpecificTemplateVars,
+  CommentReactionMilestoneTotalTemplateVars,
+  CommentReactionTemplateVars,
+  CommentReplyTemplateVars,
+  CommentUpvoteTemplateVars,
+  ConnectionAcceptedTemplateVars,
+  ConnectionRequestTemplateVars,
+  SpaceMembershipApprovedTemplateVars,
+  EntityCommentTemplateVars,
+  EntityMentionTemplateVars,
+  EntityReactionMilestoneSpecificTemplateVars,
+  EntityReactionMilestoneTotalTemplateVars,
+  EntityReactionTemplateVars,
+  EntityUpvoteTemplateVars,
+  NewFollowTemplateVars,
   NotificationTemplates,
   PotentiallyPopulatedUnifiedAppNotification,
+  TemplateField,
+  TypedNotificationTemplate,
 } from "../interfaces/models/AppNotification";
 import { getUserName } from "./getUserName";
 
-
-
-// Utility function to replace variables in a template
+// Utility function to replace $variable placeholders in a template string
 const replaceTemplateVariables = (
   template: string,
   variables: Record<string, string>
@@ -19,50 +34,62 @@ const replaceTemplateVariables = (
   );
 };
 
-// Centralized logic to build variable replacements
-const getReplacementVariables = (notification: any) => {
-  return {
-    initiatorName: getUserName(
-      {
-        id: notification.metadata.initiatorId,
-        name: notification.metadata.initiatorName,
-        username: notification.metadata.initiatorUsername,
-      },
-      "name"
-    ),
-    initiatorUsername: getUserName(
-      {
-        id: notification.metadata.initiatorId,
-        name: notification.metadata.initiatorName,
-        username: notification.metadata.initiatorUsername,
-      },
-      "username"
-    ),
-    entityTitle: notification.metadata.entityTitle || "",
-    entityContent: notification.metadata.entityContent || "",
-    commentContent: notification.metadata.commentContent || "",
-    replyContent: notification.metadata.replyContent || "",
-  };
+// Resolves a template field: calls the function with vars, or replaces placeholders in the string.
+// Falls back to the default string template when no custom field is provided.
+const resolveField = <TVars>(
+  field: TemplateField<TVars> | undefined,
+  defaultTemplate: string,
+  vars: TVars
+): string => {
+  if (field === undefined) {
+    return replaceTemplateVariables(defaultTemplate, vars as Record<string, string>);
+  }
+  if (typeof field === "function") {
+    return field(vars);
+  }
+  return replaceTemplateVariables(field, vars as Record<string, string>);
 };
 
-// Generalized message configuration function
-const configureMessage = (
-  notification: any,
+const configureMessage = <TVars>(
+  vars: TVars,
   defaultTitleTemplate: string,
   defaultContentTemplate: string,
-  notificationTemplate?: NotificationTemplate
+  notificationTemplate?: TypedNotificationTemplate<TVars>
 ): { title: string; content: string } => {
-  const variables = getReplacementVariables(notification);
-
-  const titleTemplate = notificationTemplate?.title ?? defaultTitleTemplate;
-  const contentTemplate =
-    notificationTemplate?.content ?? defaultContentTemplate;
-
-  const title = replaceTemplateVariables(titleTemplate, variables);
-  const content = replaceTemplateVariables(contentTemplate, variables);
-
+  const title = resolveField(
+    notificationTemplate?.title,
+    defaultTitleTemplate,
+    vars
+  );
+  const content = resolveField(
+    notificationTemplate?.content,
+    defaultContentTemplate,
+    vars
+  );
   return { title: title.trim(), content: content.trim() };
 };
+
+// Builds initiator name/username from notification metadata
+const getInitiatorVars = (
+  notification: any
+): { initiatorName: string; initiatorUsername: string } => ({
+  initiatorName: getUserName(
+    {
+      id: notification.metadata.initiatorId,
+      name: notification.metadata.initiatorName,
+      username: notification.metadata.initiatorUsername,
+    },
+    "name"
+  ),
+  initiatorUsername: getUserName(
+    {
+      id: notification.metadata.initiatorId,
+      name: notification.metadata.initiatorName,
+      username: notification.metadata.initiatorUsername,
+    },
+    "username"
+  ),
+});
 
 // Main notification mapping logic
 export default (
@@ -80,64 +107,254 @@ export default (
         title = notification.metadata.title || "System message";
         content =
           notification.metadata.content || "You have a new system message";
-
         break;
-      case "entity-comment":
+
+      case "entity-comment": {
+        const vars: EntityCommentTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername commented on your post`,
           `$commentContent`,
           notificationTemplates?.entityComment
         ));
         break;
-      case "comment-reply":
+      }
+
+      case "comment-reply": {
+        const vars: CommentReplyTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+          replyContent: notification.metadata.replyContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername replied to your comment`,
           `$replyContent`,
           notificationTemplates?.commentReply
         ));
         break;
-      case "entity-mention":
+      }
+
+      case "entity-mention": {
+        const vars: EntityMentionTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername mentioned you in their post`,
           `$entityTitle`,
           notificationTemplates?.entityMention
         ));
         break;
-      case "comment-mention":
+      }
+
+      case "comment-mention": {
+        const vars: CommentMentionTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername mentioned you in their comment`,
           `$commentContent`,
           notificationTemplates?.commentMention
         ));
         break;
-      case "entity-upvote":
+      }
+
+      case "entity-upvote": {
+        const vars: EntityUpvoteTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername upvoted your post`,
           ``,
           notificationTemplates?.entityUpvote
         ));
         break;
-      case "comment-upvote":
+      }
+
+      case "comment-upvote": {
+        const vars: CommentUpvoteTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername upvoted your comment`,
           `$commentContent`,
           notificationTemplates?.commentUpvote
         ));
         break;
-      case "new-follow":
+      }
+
+      case "new-follow": {
+        const vars: NewFollowTemplateVars = {
+          ...getInitiatorVars(notification),
+        };
         ({ title, content } = configureMessage(
-          notification,
+          vars,
           `$initiatorUsername started following you`,
           ``,
           notificationTemplates?.newFollow
         ));
         break;
+      }
+
+      case "entity-reaction": {
+        const vars: EntityReactionTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          reactionType: notification.metadata.reactionType || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `$initiatorUsername reacted $reactionType to your post`,
+          ``,
+          notificationTemplates?.entityReaction
+        ));
+        break;
+      }
+
+      case "comment-reaction": {
+        const vars: CommentReactionTemplateVars = {
+          ...getInitiatorVars(notification),
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+          reactionType: notification.metadata.reactionType || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `$initiatorUsername reacted $reactionType to your comment`,
+          `$commentContent`,
+          notificationTemplates?.commentReaction
+        ));
+        break;
+      }
+
+      case "entity-reaction-milestone-specific": {
+        const vars: EntityReactionMilestoneSpecificTemplateVars = {
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          reactionType: notification.metadata.reactionType || "",
+          milestoneCount: notification.metadata.milestoneCount?.toString() || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your post reached $milestoneCount $reactionType reactions`,
+          ``,
+          notificationTemplates?.entityReactionMilestoneSpecific
+        ));
+        break;
+      }
+
+      case "entity-reaction-milestone-total": {
+        const vars: EntityReactionMilestoneTotalTemplateVars = {
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          milestoneCount: notification.metadata.milestoneCount?.toString() || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your post reached $milestoneCount reactions`,
+          ``,
+          notificationTemplates?.entityReactionMilestoneTotal
+        ));
+        break;
+      }
+
+      case "comment-reaction-milestone-specific": {
+        const vars: CommentReactionMilestoneSpecificTemplateVars = {
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+          reactionType: notification.metadata.reactionType || "",
+          milestoneCount: notification.metadata.milestoneCount?.toString() || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your comment reached $milestoneCount $reactionType reactions`,
+          `$commentContent`,
+          notificationTemplates?.commentReactionMilestoneSpecific
+        ));
+        break;
+      }
+
+      case "comment-reaction-milestone-total": {
+        const vars: CommentReactionMilestoneTotalTemplateVars = {
+          entityTitle: notification.metadata.entityTitle || "",
+          entityContent: notification.metadata.entityContent || "",
+          commentContent: notification.metadata.commentContent || "",
+          milestoneCount: notification.metadata.milestoneCount?.toString() || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your comment reached $milestoneCount reactions`,
+          `$commentContent`,
+          notificationTemplates?.commentReactionMilestoneTotal
+        ));
+        break;
+      }
+
+      case "connection-request": {
+        const vars: ConnectionRequestTemplateVars = {
+          ...getInitiatorVars(notification),
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `$initiatorUsername sent you a connection request`,
+          ``,
+          notificationTemplates?.connectionRequest
+        ));
+        break;
+      }
+
+      case "connection-accepted": {
+        const vars: ConnectionAcceptedTemplateVars = {
+          ...getInitiatorVars(notification),
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `$initiatorUsername accepted your connection request`,
+          ``,
+          notificationTemplates?.connectionAccepted
+        ));
+        break;
+      }
+
+      case "space-membership-approved": {
+        const vars: SpaceMembershipApprovedTemplateVars = {
+          spaceName: notification.metadata.spaceName || "",
+          spaceShortId: notification.metadata.spaceShortId || "",
+          spaceSlug: notification.metadata.spaceSlug || "",
+        };
+        ({ title, content } = configureMessage(
+          vars,
+          `Your request to join $spaceName has been approved`,
+          ``,
+          notificationTemplates?.spaceMembershipApproved
+        ));
+        break;
+      }
+
       default:
         break;
     }

@@ -3,7 +3,7 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { ConnectionRequestParams, ConnectionActionResponse } from "../../../interfaces/models/Connection";
 
-function useRequestConnection() {
+function useRequestConnection(): (props: ConnectionRequestParams) => Promise<ConnectionActionResponse> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
@@ -20,8 +20,7 @@ function useRequestConnection() {
 
       const response = await axios.post(
         `/users/${userId}/connection`,
-        { message },
-        { withCredentials: true }
+        { message }
       );
 
       return response.data as ConnectionActionResponse;

@@ -3,13 +3,17 @@ import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 import { useUser } from "../../user";
 
-function useUnfollowUserByUserId() {
+export interface UnfollowUserByUserIdProps {
+  userId: string;
+}
+
+function useUnfollowUserByUserId(): (props: UnfollowUserByUserIdProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
   const { user } = useUser();
 
   const unfollowUserByUserId = useCallback(
-    async (props: { userId: string }) => {
+    async (props: UnfollowUserByUserIdProps) => {
       const { userId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -27,9 +31,7 @@ function useUnfollowUserByUserId() {
         throw new Error("Users can't unfollow themselves");
       }
 
-      await axios.delete(`/${projectId}/users/${userId}/follow`, {
-        withCredentials: true,
-      });
+      await axios.delete(`/${projectId}/users/${userId}/follow`);
     },
     [axios, projectId, user]
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Comment } from "../../interfaces/models/Comment";
 import { handleError } from "../../utils/handleError";
 import useCommentSection from "./useCommentSection";
@@ -6,13 +6,20 @@ import useFetchManyComments from "./useFetchManyComments";
 import { CommentsSortByOptions } from "../../interfaces/CommentsSortByOptions";
 import { isUUID } from "../../utils/isUUID";
 
-function useReplies({
-  commentId,
-  sortBy,
-}: {
+export interface UseRepliesProps {
   commentId: string;
   sortBy: CommentsSortByOptions;
-}) {
+}
+
+export interface UseRepliesValues {
+  replies: (Comment & { new: boolean })[];
+  newReplies: (Comment & { new: boolean })[];
+  loading: boolean;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+}
+
+function useReplies({ commentId, sortBy }: UseRepliesProps): UseRepliesValues {
   const fetchManyComments = useFetchManyComments();
   const { addCommentsToTree, entityCommentsTree } = useCommentSection();
 
@@ -52,14 +59,18 @@ function useReplies({
       try {
         setLoadingState(true);
 
-        const fetchedReplies: Comment[] = await fetchManyComments({
+        const response = await fetchManyComments({
           parentId: commentId,
           page,
           sortBy,
           limit: 5,
+          include: "user", // Always include user for replies display
         });
 
-        addCommentsToTree?.(fetchedReplies);
+        if (response) {
+          const { data: fetchedReplies } = response;
+          addCommentsToTree?.(fetchedReplies);
+        }
       } catch (err: unknown) {
         handleError(err, "Failed to fetch replies: ");
       } finally {

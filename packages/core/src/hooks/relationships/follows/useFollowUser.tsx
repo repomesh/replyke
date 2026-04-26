@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
 
-function useFollowUser() {
+export interface FollowUserProps {
+  userId: string;
+}
+
+function useFollowUser(): (props: FollowUserProps) => Promise<void> {
   const axios = useAxiosPrivate();
   const { projectId } = useProject();
 
   const followUser = useCallback(
-    async (props: { userId: string }) => {
+    async (props: FollowUserProps) => {
       const { userId } = props;
       if (!projectId) {
         throw new Error("No project specified");
@@ -19,8 +23,7 @@ function useFollowUser() {
 
       await axios.post(
         `/${projectId}/users/${userId}/follow`,
-        {},
-        { withCredentials: true }
+        {}
       );
     },
     [axios, projectId]

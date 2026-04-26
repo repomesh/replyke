@@ -1,12 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../config/axios";
-import { isReactNative } from "../../utils/isReactNative";
+
 import { handleError } from "../../utils/handleError";
 import type { RootState } from "../index";
 import {
   setTokens,
   setUser,
-  setLoadingInitial,
   setAuthenticating,
   setInitialized,
   resetAuth,
@@ -15,6 +14,8 @@ import {
   setUser as setUserInUserSlice,
   clearUser as clearUserInUserSlice,
 } from "./userSlice";
+import { removeAccount, clearAllAccounts } from "./accountsSlice";
+import { baseApi } from "../api/baseApi";
 
 // Auth service functions - calling existing API patterns directly
 const authService = {
@@ -31,8 +32,55 @@ const authService = {
       birthdate?: Date;
       metadata?: Record<string, any>;
       secureMetadata?: Record<string, any>;
+      avatarFile?: File | Blob;
+      avatarOptions?: any;
+      bannerFile?: File | Blob;
+      bannerOptions?: any;
     }
   ) {
+    // Check if we need to use FormData (when files are present)
+    if (data.avatarFile || data.bannerFile) {
+      const formData = new FormData();
+
+      // Append regular fields
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      if (data.name?.trim()) formData.append("name", data.name.trim());
+      if (data.username?.trim()) formData.append("username", data.username.trim());
+      if (data.bio?.trim()) formData.append("bio", data.bio.trim());
+      if (data.location) formData.append("location", JSON.stringify(data.location));
+      if (data.birthdate) formData.append("birthdate", data.birthdate.toISOString());
+      if (data.metadata) formData.append("metadata", JSON.stringify(data.metadata));
+      if (data.secureMetadata) formData.append("secureMetadata", JSON.stringify(data.secureMetadata));
+
+      // Append avatar file and options
+      if (data.avatarFile) {
+        formData.append("avatarFile", data.avatarFile);
+        if (data.avatarOptions) {
+          formData.append("avatarFile.options", JSON.stringify(data.avatarOptions));
+        }
+      }
+
+      // Append banner file and options
+      if (data.bannerFile) {
+        formData.append("bannerFile", data.bannerFile);
+        if (data.bannerOptions) {
+          formData.append("bannerFile.options", JSON.stringify(data.bannerOptions));
+        }
+      }
+
+      const response = await axios.post(
+        `/${projectId}/auth/sign-up`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      return response.data;
+    }
+
+    // Fallback to regular JSON request (backward compatibility)
     const response = await axios.post(
       `/${projectId}/auth/sign-up`,
       {
@@ -47,7 +95,6 @@ const authService = {
         metadata: data.metadata,
         secureMetadata: data.secureMetadata,
       },
-      { withCredentials: !isReactNative() }
     );
 
     return response.data;
@@ -57,26 +104,21 @@ const authService = {
     projectId: string,
     data: { email: string; password: string }
   ) {
-    const response = await axios.post(`/${projectId}/auth/sign-in`, data, {
-      withCredentials: !isReactNative(),
-    });
+    const response = await axios.post(`/${projectId}/auth/sign-in`, data);
 
     return response.data;
   },
 
   async signOut(projectId: string, refreshToken: string | null) {
-    await axios.post(
-      `/${projectId}/auth/sign-out`,
-      { refreshToken },
-      { withCredentials: !isReactNative() }
-    );
+    const payload = refreshToken ? { refreshToken } : {};
+    await axios.post(`/${projectId}/auth/sign-out`, payload);
   },
 
   async requestNewAccessToken(projectId: string, refreshToken: string | null) {
+    const payload = refreshToken ? { refreshToken } : {};
     const response = await axios.post(
       `/${projectId}/auth/request-new-access-token`,
-      { refreshToken },
-      { withCredentials: !isReactNative() }
+      payload
     );
 
     return response.data;
@@ -95,9 +137,7 @@ const authService = {
     projectId: string,
     data: { password: string; newPassword: string }
   ) {
-    await axios.post(`/${projectId}/auth/change-password`, data, {
-      withCredentials: !isReactNative(),
-    });
+    await axios.post(`/${projectId}/auth/change-password`, data);
   },
 };
 
@@ -118,6 +158,10 @@ export const signUpWithEmailAndPasswordThunk = createAsyncThunk(
       birthdate?: Date;
       metadata?: Record<string, any>;
       secureMetadata?: Record<string, any>;
+      avatarFile?: File | Blob;
+      avatarOptions?: any;
+      bannerFile?: File | Blob;
+      bannerOptions?: any;
     },
     { dispatch, rejectWithValue }
   ) => {
@@ -194,10 +238,11 @@ export const signOutThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.auth.refreshToken;
+    const refreshToken = state.replyke.auth.refreshToken;
+    const activeAccountId = state.replyke.accounts.activeAccountId;
+    const accounts = state.replyke.accounts.accounts;
 
-    // If React Native and no refresh token, throw error (matches original logic)
-    if (isReactNative() && !refreshToken) {
+    if (!refreshToken) {
       throw new Error("No refresh token");
     }
 
@@ -206,9 +251,42 @@ export const signOutThunk = createAsyncThunk(
 
       await authService.signOut(data.projectId, refreshToken);
 
-      // Clear auth state
-      dispatch(resetAuth());
-      dispatch(clearUserInUserSlice()); // Clear user from user slice
+      // Remove current account from the multi-account map
+      if (activeAccountId) {
+        dispatch(removeAccount(activeAccountId));
+      }
+
+      // Check for remaining accounts
+      const remainingIds = Object.keys(accounts).filter(
+        (id) => id !== activeAccountId
+      );
+
+      if (remainingIds.length > 0) {
+        // Switch to the first remaining account
+        const nextId = remainingIds[0];
+        const nextAccount = accounts[nextId];
+
+        dispatch(resetAuth());
+        dispatch(clearUserInUserSlice());
+        dispatch(baseApi.util.resetApiState());
+        dispatch(
+          setTokens({
+            accessToken: null,
+            refreshToken: nextAccount.refreshToken,
+          })
+        );
+        dispatch(setInitialized(false));
+
+        await dispatch(
+          requestNewAccessTokenThunk({ projectId: data.projectId })
+        );
+        dispatch(setInitialized(true));
+      } else {
+        // No remaining accounts — standard sign-out
+        dispatch(resetAuth());
+        dispatch(clearUserInUserSlice());
+        dispatch(baseApi.util.resetApiState());
+      }
 
       return;
     } catch (error) {
@@ -229,10 +307,9 @@ export const requestNewAccessTokenThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.auth.refreshToken;
+    const refreshToken = state.replyke.auth.refreshToken;
 
-    // If React Native and no refresh token, return early
-    if (isReactNative() && !refreshToken) {
+    if (!refreshToken) {
       return;
     }
 
@@ -242,8 +319,11 @@ export const requestNewAccessTokenThunk = createAsyncThunk(
         refreshToken
       );
 
-      // Update auth state
-      dispatch(setTokens({ accessToken: result.accessToken }));
+      // Update auth state (store rotated refresh token from server)
+      dispatch(setTokens({
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      }));
       dispatch(setUser(result.user));
       dispatch(setUserInUserSlice(result.user)); // Sync user to user slice
 
@@ -297,7 +377,7 @@ export const changePasswordThunk = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
 
-    if (!state.auth.user) {
+    if (!state.replyke.auth.user) {
       throw new Error("No user is authenticated");
     }
 
@@ -318,7 +398,49 @@ export const changePasswordThunk = createAsyncThunk(
   }
 );
 
-// Initialize auth - handles the startup flow from useAuthData
+export const signOutAllThunk = createAsyncThunk(
+  "auth/signOutAll",
+  async (
+    data: { projectId: string },
+    { dispatch, getState, rejectWithValue }
+  ) => {
+    const state = getState() as RootState;
+    const accounts = state.replyke.accounts.accounts;
+
+    try {
+      dispatch(setAuthenticating(true));
+
+      // Sign out from each account on the server (best-effort)
+      const signOutPromises = Object.values(accounts).map(async (account) => {
+        try {
+          await authService.signOut(data.projectId, account.refreshToken);
+        } catch (err) {
+          // Best-effort: log but don't fail the entire operation
+          handleError(err, `Failed to sign out account on server:`);
+        }
+      });
+
+      await Promise.all(signOutPromises);
+
+      // Clear all local state
+      dispatch(clearAllAccounts());
+      dispatch(resetAuth());
+      dispatch(clearUserInUserSlice());
+      dispatch(baseApi.util.resetApiState());
+
+      return;
+    } catch (error) {
+      handleError(error, "Failed to sign out all accounts:");
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    } finally {
+      dispatch(setAuthenticating(false));
+    }
+  }
+);
+
+// Initialize auth - handles the startup flow
 export const initializeAuthThunk = createAsyncThunk(
   "auth/initialize",
   async (
@@ -326,8 +448,6 @@ export const initializeAuthThunk = createAsyncThunk(
     { dispatch }
   ) => {
     try {
-      dispatch(setLoadingInitial(true));
-
       // Step 1: If we have a signed token, verify external user
       if (data.signedToken) {
         await dispatch(
@@ -338,18 +458,14 @@ export const initializeAuthThunk = createAsyncThunk(
         );
       }
 
-      // Step 2: Try to refresh access token (matches original setTimeout logic)
-      setTimeout(async () => {
-        await dispatch(
-          requestNewAccessTokenThunk({ projectId: data.projectId })
-        );
-        dispatch(setLoadingInitial(false));
-        dispatch(setInitialized(true));
-      }, 0);
+      // Step 2: Try to refresh access token
+      await dispatch(
+        requestNewAccessTokenThunk({ projectId: data.projectId })
+      );
     } catch (error) {
-      dispatch(setLoadingInitial(false));
-      dispatch(setInitialized(true));
       handleError(error, "Auth initialization failed:");
+    } finally {
+      dispatch(setInitialized(true));
     }
   }
 );
