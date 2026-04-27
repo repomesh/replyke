@@ -42,36 +42,17 @@ function useSpacePermissions({
       };
     }
 
-    const isAdmin = memberPermissions.isAdmin;
-    const isModerator = memberPermissions.isModerator;
-    const isActiveMember = memberPermissions.status === "active";
-    const isPending = memberPermissions.status === "pending";
-    const isBanned = memberPermissions.status === "banned";
-
-    let canPost = false;
-    if (postingPermission === "anyone") {
-      canPost = !isBanned;
-    } else if (postingPermission === "members") {
-      canPost = isActiveMember && !isBanned;
-    } else if (postingPermission === "admins") {
-      canPost = isAdmin && isActiveMember && !isBanned;
-    }
-
-    // canRead logic: if readingPermission is "members", only active members can read
-    let canRead = true;
-    if (readingPermission === "members") {
-      canRead = isActiveMember && !isBanned;
-    }
-
+    // Use server-computed permission booleans directly so the server stays the
+    // single source of truth and client/server logic can't drift.
     return {
       isMember: memberPermissions.isMember,
-      isAdmin,
-      isModerator,
-      canPost,
-      canModerate: (isAdmin || isModerator) && isActiveMember && !isBanned,
-      canRead,
-      isPending,
-      isBanned,
+      isAdmin: memberPermissions.isAdmin,
+      isModerator: memberPermissions.isModerator,
+      canPost: memberPermissions.canPost,
+      canModerate: memberPermissions.canModerate,
+      canRead: memberPermissions.canRead,
+      isPending: memberPermissions.status === "pending",
+      isBanned: memberPermissions.status === "banned",
     };
   }, [memberPermissions, postingPermission, readingPermission]);
 }
