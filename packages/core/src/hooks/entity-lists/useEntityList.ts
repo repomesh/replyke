@@ -132,7 +132,7 @@ function useEntityList({
   const infusedEntities = useInfusedData({ entities, infuseData });
 
   // Debounce timer for filter changes
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch entities function (always triggers a fetch)
   const handleFetchEntities = useCallback(
@@ -356,8 +356,8 @@ function useEntityList({
       try {
         const newEntity = await entityActions.createEntity(listId, {
           ...restOfProps,
-          sourceId: config?.sourceId || null,
-          spaceId: config?.spaceId || null,
+          sourceId: config?.sourceId || undefined,
+          spaceId: config?.spaceId || undefined,
           insertPosition,
         });
 

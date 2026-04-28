@@ -49,7 +49,7 @@ const useUserMentions = ({
   const [isMentionActive, setIsMentionActive] = useState(false);
   const [mentionTrigger, setMentionTrigger] = useState("");
   const [mentionSuggestions, setMentionSuggestions] = useState<User[]>([]);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const resetMentions = () => {
     setMentions([]);

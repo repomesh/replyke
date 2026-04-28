@@ -51,7 +51,7 @@ const useSpaceMentions = ({
   const [spaceMentionSuggestions, setSpaceMentionSuggestions] = useState<
     Space[]
   >([]);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const resetSpaceMentions = () => {
     setMentions([]);

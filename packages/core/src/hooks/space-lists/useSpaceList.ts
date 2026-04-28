@@ -105,7 +105,7 @@ function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
   const spaceActions = useSpaceListActions();
 
   // Debounce timer for filter changes
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch spaces function (always triggers a fetch)
   const handleFetchSpaces = useCallback(
