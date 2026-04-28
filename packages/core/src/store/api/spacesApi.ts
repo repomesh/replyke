@@ -3,6 +3,7 @@ import type { Space, SpaceDetailed, SpacePreview } from "../../interfaces/models
 import type { SpaceMember } from "../../interfaces/models/SpaceMember";
 import type { SpaceBreadcrumb } from "../../interfaces/SpaceBreadcrumb";
 import type { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
+import type { PaginatedResponse } from "../../interfaces/PaginatedResponse";
 
 // ===== API Parameter Types =====
 
@@ -173,7 +174,7 @@ export const spacesApi = baseApi.injectEndpoints({
     }),
 
     // Fetch many spaces (list with filters)
-    fetchSpaces: builder.query<Space[], FetchSpacesParams>({
+    fetchSpaces: builder.query<PaginatedResponse<Space>, FetchSpacesParams>({
       query: ({ projectId, ...params }) => {
         const queryParams = new URLSearchParams();
 
@@ -198,7 +199,7 @@ export const spacesApi = baseApi.injectEndpoints({
       },
       providesTags: (result) => [
         { type: "Space", id: "LIST" },
-        ...(result?.map(({ id }) => ({ type: "Space" as const, id })) ?? []),
+        ...(result?.data?.map(({ id }) => ({ type: "Space" as const, id })) ?? []),
       ],
     }),
 

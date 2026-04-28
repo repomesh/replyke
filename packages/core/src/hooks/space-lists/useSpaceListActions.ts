@@ -98,14 +98,14 @@ export function useSpaceListActions() {
 
         if (result) {
           const append = options.page > 1;
-          dispatch(setSpaceListSpaces({ listId, spaces: result, append }));
+          dispatch(setSpaceListSpaces({ listId, spaces: result.data, append }));
           dispatch(
             setSpaceListHasMore({
               listId,
-              hasMore: result.length >= options.limit,
+              hasMore: result.pagination.hasMore,
             })
           );
-          return result;
+          return result.data;
         }
 
         return null;
