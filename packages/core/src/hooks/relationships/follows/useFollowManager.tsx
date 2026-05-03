@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useFollowUser from "./useFollowUser";
 import useUnfollowUserByUserId from "./useUnfollowUserByUserId";
 import useFetchFollowStatus from "./useFetchFollowStatus";
@@ -24,11 +24,15 @@ function useFollowManager({ userId }: UseFollowToggleProps): UseFollowManagerVal
   const unfollowUserByUserId = useUnfollowUserByUserId();
   const fetchFollowStatus = useFetchFollowStatus();
 
+  // Keep a ref so the effect always calls the latest version without being in deps
+  const fetchFollowStatusRef = useRef(fetchFollowStatus);
+  fetchFollowStatusRef.current = fetchFollowStatus;
+
   useEffect(() => {
     const loadFollowStatus = async () => {
       try {
         setIsLoading(true);
-        const result = await fetchFollowStatus({ userId });
+        const result = await fetchFollowStatusRef.current({ userId });
         setIsFollowing(result.isFollowing);
       } catch (error) {
         console.error("Failed to fetch follow status:", error);
@@ -38,10 +42,10 @@ function useFollowManager({ userId }: UseFollowToggleProps): UseFollowManagerVal
       }
     };
 
-    if (userId && user?.id !== userId) {
+    if (userId && user?.id && user.id !== userId) {
       loadFollowStatus();
     }
-  }, [userId, fetchFollowStatus]);
+  }, [userId, user?.id]);
 
   const toggleFollow = useCallback(async () => {
     if (isFollowing === null || isLoading || user?.id === userId) return;

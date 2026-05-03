@@ -40,7 +40,7 @@ function useFetchFollowStatus(): (props: FetchFollowStatusProps) => Promise<Foll
       const response = await axios.get(`/${projectId}/users/${userId}/follow`);
       return response.data as FollowStatusResponse;
     },
-    [axios, projectId, user]
+    [axios, projectId, user?.id]
   );
 
   return fetchFollowStatus;
