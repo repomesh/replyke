@@ -4,6 +4,12 @@ import { useLazyFetchCollectionEntitiesQuery } from "../../store/api/collections
 import { handleError } from "../../utils/handleError";
 import useProject from "../projects/useProject";
 import useCollections from "./useCollections";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import {
+  setCollectionEntities,
+  appendCollectionEntities,
+  selectCollectionEntities,
+} from "../../store/slices/collectionsSlice";
 
 export interface UseCollectionEntitiesWrapperProps {
   collectionId?: string | null; // Optional - defaults to current collection from Redux
@@ -36,14 +42,16 @@ function useCollectionEntitiesWrapper(
     include,
   } = props;
 
+  const dispatch = useReplykeDispatch();
   const { projectId } = useProject();
   const { currentCollection } = useCollections();
   const [fetchCollectionEntitiesQuery] = useLazyFetchCollectionEntitiesQuery();
 
-  // Use passed collectionId if provided, otherwise default to current collection
   const effectiveCollectionId = passedCollectionId ?? currentCollection?.id;
 
-  // Serialize include to stable string to prevent infinite loops from array reference changes
+  // Read entities from shared Redux state — written here and by useCollectionsActions for optimistic updates
+  const entities = useReplykeSelector(selectCollectionEntities(effectiveCollectionId));
+
   const includeString = useMemo(
     () => (Array.isArray(include) ? include.join(",") : include),
     [include]
@@ -55,14 +63,10 @@ function useCollectionEntitiesWrapper(
   const hasMore = useRef(true);
   const [hasMoreState, setHasMoreState] = useState(true);
 
-  const [sortBy, setSortBy] = useState<"new" | "top" | "hot" | "added">(
-    defaultSortBy
-  );
+  const [sortBy, setSortBy] = useState<"new" | "top" | "hot" | "added">(defaultSortBy);
   const [sortDir, setSortDir] = useState<"asc" | "desc">(defaultSortDir);
   const [page, setPage] = useState(1);
-  const [entities, setEntities] = useState<Entity[]>([]);
 
-  // Reset entities when filters or collection change
   const resetEntities = useCallback(async () => {
     if (!projectId || !effectiveCollectionId) {
       return;
@@ -89,7 +93,7 @@ function useCollectionEntitiesWrapper(
 
       if (response) {
         const { data: newEntities, pagination } = response;
-        setEntities(newEntities);
+        dispatch(setCollectionEntities({ collectionId: effectiveCollectionId, entities: newEntities }));
         hasMore.current = pagination.hasMore;
         setHasMoreState(pagination.hasMore);
       }
@@ -100,6 +104,7 @@ function useCollectionEntitiesWrapper(
       setLoadingState(false);
     }
   }, [
+    dispatch,
     fetchCollectionEntitiesQuery,
     projectId,
     effectiveCollectionId,
@@ -109,18 +114,15 @@ function useCollectionEntitiesWrapper(
     includeString,
   ]);
 
-  // Load more entities
   const loadMore = useCallback(() => {
     if (loading.current || !hasMore.current) return;
     setPage((prevPage) => prevPage + 1);
   }, []);
 
-  // Initial load
   useEffect(() => {
     resetEntities();
   }, [resetEntities]);
 
-  // Load more pages
   useEffect(() => {
     const loadMoreEntities = async () => {
       if (!projectId || !effectiveCollectionId) {
@@ -143,7 +145,7 @@ function useCollectionEntitiesWrapper(
 
         if (response) {
           const { data: newEntities, pagination } = response;
-          setEntities((prevEntities) => [...prevEntities, ...newEntities]);
+          dispatch(appendCollectionEntities({ collectionId: effectiveCollectionId, entities: newEntities }));
           hasMore.current = pagination.hasMore;
           setHasMoreState(pagination.hasMore);
         }
@@ -155,12 +157,12 @@ function useCollectionEntitiesWrapper(
       }
     };
 
-    // Only load more if page > 1 (not initial load)
     if (page > 1 && hasMore.current && !loading.current) {
       loadMoreEntities();
     }
   }, [
     page,
+    dispatch,
     fetchCollectionEntitiesQuery,
     projectId,
     effectiveCollectionId,

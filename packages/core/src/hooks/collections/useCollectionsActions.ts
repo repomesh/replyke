@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useCallback, useMemo, useRef } from "react";
+import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
 import {
   setLoading,
   openCollection,
@@ -10,6 +10,9 @@ import {
   updateCollectionInSubCollections,
   addNewCollectionAndNavigate,
   handleCollectionDeletion,
+  prependCollectionEntity,
+  removeCollectionEntity,
+  insertCollectionEntityAt,
   resetCollections,
   handleError,
 } from "../../store/slices/collectionsSlice";
@@ -24,6 +27,7 @@ import {
 } from "../../store/api/collectionsApi";
 import { handleError as handleErrorUtil } from "../../utils/handleError";
 import type { Collection } from "../../interfaces/models/Collection";
+import type { Entity } from "../../interfaces/models/Entity";
 
 export interface UseCollectionsActionsValues {
   openCollection: (collection: Collection) => void;
@@ -34,7 +38,7 @@ export interface UseCollectionsActionsValues {
   createCollection: ({ projectId, parentCollectionId, collectionName }: { projectId: string; parentCollectionId: string; collectionName: string }) => Promise<void>;
   updateCollection: ({ projectId, collectionId, update }: { projectId: string; collectionId: string; update: Partial<{ name: string }> }) => Promise<void>;
   deleteCollection: ({ projectId, collection }: { projectId: string; collection: Collection }) => Promise<void>;
-  addToCollection: ({ projectId, collectionId, entityId }: { projectId: string; collectionId: string; entityId: string }) => Promise<void>;
+  addToCollection: ({ projectId, collectionId, entity }: { projectId: string; collectionId: string; entity: Entity }) => Promise<void>;
   removeFromCollection: ({ projectId, collectionId, entityId }: { projectId: string; collectionId: string; entityId: string }) => Promise<void>;
   resetCollections: () => void;
 }
@@ -45,6 +49,13 @@ export interface UseCollectionsActionsValues {
  */
 export function useCollectionsActions(): UseCollectionsActionsValues {
   const dispatch = useReplykeDispatch();
+
+  // Use a ref so removeFromCollection can read the latest entities without being in deps
+  const entitiesByCollectionId = useReplykeSelector(
+    (state) => state.replyke.collections.entitiesByCollectionId
+  );
+  const entitiesByCollectionIdRef = useRef(entitiesByCollectionId);
+  entitiesByCollectionIdRef.current = entitiesByCollectionId;
 
   // RTK Query hooks
   const [fetchRootCollectionQuery] = useLazyFetchRootCollectionQuery();
@@ -200,35 +211,37 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
     }
   }, [deleteCollectionMutation, dispatch]);
 
-  // Add entity to collection
+  // Add entity to collection — optimistically prepends to Redux state, reverts on error
   const addToCollection = useCallback(async ({
     projectId,
     collectionId,
-    entityId,
+    entity,
   }: {
     projectId: string;
     collectionId: string;
-    entityId: string;
+    entity: Entity;
   }): Promise<void> => {
-    if (!projectId || !collectionId || !entityId) {
+    if (!projectId || !collectionId || !entity?.id) {
       console.error("Missing required parameters for adding to collection.");
       return;
     }
+
+    dispatch(prependCollectionEntity({ collectionId, entity }));
 
     try {
       await addToCollectionMutation({
         projectId,
         collectionId,
-        entityId,
+        entityId: entity.id,
       }).unwrap();
-      // Note: Entity data is no longer stored in collections.
-      // RTK Query will handle cache invalidation for CollectionEntities.
     } catch (err) {
+      dispatch(removeCollectionEntity({ collectionId, entityId: entity.id }));
       handleErrorUtil(err, "Failed to add entity to collection");
+      throw err;
     }
-  }, [addToCollectionMutation]);
+  }, [addToCollectionMutation, dispatch]);
 
-  // Remove entity from collection
+  // Remove entity from collection — optimistically removes from Redux state, reverts on error
   const removeFromCollection = useCallback(async ({
     projectId,
     collectionId,
@@ -243,18 +256,25 @@ export function useCollectionsActions(): UseCollectionsActionsValues {
       return;
     }
 
+    const currentList = entitiesByCollectionIdRef.current[collectionId] ?? [];
+    const originalIndex = currentList.findIndex((e) => e.id === entityId);
+    const entityToRestore = originalIndex !== -1 ? currentList[originalIndex] : undefined;
+    dispatch(removeCollectionEntity({ collectionId, entityId }));
+
     try {
       await removeFromCollectionMutation({
         projectId,
         collectionId,
         entityId,
       }).unwrap();
-      // Note: Entity data is no longer stored in collections.
-      // RTK Query will handle cache invalidation for CollectionEntities.
     } catch (err) {
+      if (entityToRestore) {
+        dispatch(insertCollectionEntityAt({ collectionId, entity: entityToRestore, index: originalIndex }));
+      }
       handleErrorUtil(err, "Failed to remove entity from collection");
+      throw err;
     }
-  }, [removeFromCollectionMutation]);
+  }, [removeFromCollectionMutation, dispatch]);
 
   // Reset collections
   const resetCollectionsAction = useCallback(() => {

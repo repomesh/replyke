@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import type { Collection } from "../../interfaces/models/Collection";
+import type { Entity } from "../../interfaces/models/Entity";
 import type { ReplykeState } from '../replykeReducers';
 
 // State interface
@@ -21,6 +22,9 @@ export interface CollectionsState {
 
   // Project context (needed for API calls)
   currentProjectId?: string;
+
+  // Entity lists per collection (shared source of truth for optimistic updates)
+  entitiesByCollectionId: Record<string, Entity[]>;
 }
 
 // Initial state
@@ -31,6 +35,7 @@ const initialState: CollectionsState = {
   collectionHistory: [],
   loading: false,
   currentProjectId: undefined,
+  entitiesByCollectionId: {},
 };
 
 // Create the slice
@@ -190,6 +195,9 @@ export const collectionsSlice = createSlice({
       // Remove its own sub-collections mapping
       delete state.subcollectionsMap[collectionId];
 
+      // Remove its entity list
+      delete state.entitiesByCollectionId[collectionId];
+
       // If deleted collection is current collection, go back
       if (state.currentCollectionId === collectionId) {
         if (state.collectionHistory.length === 0) {
@@ -207,6 +215,60 @@ export const collectionsSlice = createSlice({
       }
     },
 
+    // Entity list management (shared state for optimistic add/remove)
+    setCollectionEntities: (
+      state,
+      action: PayloadAction<{ collectionId: string; entities: Entity[] }>
+    ) => {
+      const { collectionId, entities } = action.payload;
+      state.entitiesByCollectionId[collectionId] = entities;
+    },
+
+    appendCollectionEntities: (
+      state,
+      action: PayloadAction<{ collectionId: string; entities: Entity[] }>
+    ) => {
+      const { collectionId, entities } = action.payload;
+      if (!state.entitiesByCollectionId[collectionId]) {
+        state.entitiesByCollectionId[collectionId] = [];
+      }
+      state.entitiesByCollectionId[collectionId].push(...entities);
+    },
+
+    prependCollectionEntity: (
+      state,
+      action: PayloadAction<{ collectionId: string; entity: Entity }>
+    ) => {
+      const { collectionId, entity } = action.payload;
+      if (!state.entitiesByCollectionId[collectionId]) {
+        state.entitiesByCollectionId[collectionId] = [];
+      }
+      state.entitiesByCollectionId[collectionId].unshift(entity);
+    },
+
+    removeCollectionEntity: (
+      state,
+      action: PayloadAction<{ collectionId: string; entityId: string }>
+    ) => {
+      const { collectionId, entityId } = action.payload;
+      if (state.entitiesByCollectionId[collectionId]) {
+        state.entitiesByCollectionId[collectionId] =
+          state.entitiesByCollectionId[collectionId].filter((e) => e.id !== entityId);
+      }
+    },
+
+    insertCollectionEntityAt: (
+      state,
+      action: PayloadAction<{ collectionId: string; entity: Entity; index: number }>
+    ) => {
+      const { collectionId, entity, index } = action.payload;
+      if (!state.entitiesByCollectionId[collectionId]) {
+        state.entitiesByCollectionId[collectionId] = [];
+      }
+      const clamped = Math.min(index, state.entitiesByCollectionId[collectionId].length);
+      state.entitiesByCollectionId[collectionId].splice(clamped, 0, entity);
+    },
+
     // Reset all collections data
     resetCollections: (state) => {
       state.collectionsById = {};
@@ -214,6 +276,7 @@ export const collectionsSlice = createSlice({
       state.currentCollectionId = null;
       state.collectionHistory = [];
       state.loading = false;
+      state.entitiesByCollectionId = {};
     },
 
     // Handle errors by stopping loading
@@ -237,6 +300,11 @@ export const {
   addNewCollectionAndNavigate,
   removeCollectionFromSubCollections,
   handleCollectionDeletion,
+  setCollectionEntities,
+  appendCollectionEntities,
+  prependCollectionEntity,
+  removeCollectionEntity,
+  insertCollectionEntityAt,
   resetCollections,
   handleError,
 } = collectionsSlice.actions;
@@ -292,3 +360,13 @@ export const selectCurrentProjectId = (state: { replyke: ReplykeState }) =>
 // Selector for current collection ID
 export const selectCurrentCollectionId = (state: { replyke: ReplykeState }) =>
   state.replyke.collections.currentCollectionId;
+
+const EMPTY_ENTITIES: Entity[] = [];
+
+// Selector for entities in a specific collection
+export const selectCollectionEntities =
+  (collectionId: string | null | undefined) =>
+  (state: { replyke: ReplykeState }): Entity[] =>
+    collectionId
+      ? (state.replyke.collections.entitiesByCollectionId[collectionId] ?? EMPTY_ENTITIES)
+      : EMPTY_ENTITIES;

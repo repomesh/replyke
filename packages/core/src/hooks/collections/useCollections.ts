@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import type { Entity } from "../../interfaces/models/Entity";
 
 import {
   setProjectContext,
@@ -31,7 +32,7 @@ export interface DeleteCollectionProps {
 }
 
 export interface AddToCollectionProps {
-  entityId: string;
+  entity: Entity;
 }
 
 export interface RemoveFromCollectionProps {
@@ -228,9 +229,9 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
   );
 
   const handleAddToCollection = useCallback(
-    async ({ entityId }: AddToCollectionProps) => {
-      if (!entityId) {
-        console.error("No entityId provided.");
+    async ({ entity }: AddToCollectionProps) => {
+      if (!entity?.id) {
+        console.error("No entity provided.");
         return;
       }
 
@@ -247,7 +248,7 @@ function useCollections(_: UseCollectionsProps = {}): UseCollectionsValues {
       await addToCollectionAction({
         projectId,
         collectionId: currentCollection.id,
-        entityId,
+        entity,
       });
     },
     [addToCollectionAction, currentCollection, projectId],
