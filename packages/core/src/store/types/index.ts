@@ -1,17 +1,17 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import type { RootState } from "../rootReducer";
-import type { ReplykeState } from "../replykeReducers";
+import type { SublayState } from "../sublayReducers";
 import type { store } from "../index";
 
 // Main store type
 export type AppStore = typeof store;
 
 // Root state type (re-exported for convenience)
-// Shape: { replyke: ReplykeState, replykeApi: {...} }
+// Shape: { sublay: SublayState, sublayApi: {...} }
 export type { RootState };
 
-// Replyke feature state type (for selectors)
-export type { ReplykeState };
+// Sublay feature state type (for selectors)
+export type { SublayState };
 
 // App dispatch type with thunk support
 export type AppDispatch = AppStore['dispatch'];
@@ -25,4 +25,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 // Utility type for typed selectors (with namespaced state)
-export type TypedSelector<T> = (state: { replyke: ReplykeState }) => T;
+export type TypedSelector<T> = (state: { sublay: SublayState }) => T;

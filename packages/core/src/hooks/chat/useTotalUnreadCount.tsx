@@ -1,4 +1,4 @@
-import { useReplykeSelector } from "../../store/hooks";
+import { useSublaySelector } from "../../store/hooks";
 import { selectTotalUnreadCount } from "../../store/slices/chatSlice";
 
 /**
@@ -7,7 +7,7 @@ import { selectTotalUnreadCount } from "../../store/slices/chatSlice";
  * conversation list is ever loaded. Kept in sync via socket events.
  */
 function useTotalUnreadCount(): number {
-  return useReplykeSelector(selectTotalUnreadCount) ?? 0;
+  return useSublaySelector(selectTotalUnreadCount) ?? 0;
 }
 
 export default useTotalUnreadCount;

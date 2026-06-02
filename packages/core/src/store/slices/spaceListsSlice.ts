@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import type { ReplykeState } from '../replykeReducers';
+import type { SublayState } from '../sublayReducers';
 import { Space } from "../../interfaces/models/Space";
 import { SpaceListSortByOptions } from "../../interfaces/SpaceListSortByOptions";
 
@@ -325,9 +325,9 @@ export const {
 } = spaceListsSlice.actions;
 
 // Base selectors - use namespaced state for dual-mode support
-const selectSpaceListsState = (state: { replyke: ReplykeState }) =>
-  state.replyke.spaceLists;
-const selectListId = (_: { replyke: ReplykeState }, listId: string) => listId;
+const selectSpaceListsState = (state: { sublay: SublayState }) =>
+  state.sublay.spaceLists;
+const selectListId = (_: { sublay: SublayState }, listId: string) => listId;
 
 // Memoized selectors using createSelector
 export const selectSpaceList = createSelector(

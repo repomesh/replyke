@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 
 import {
   setProjectContext,
@@ -35,18 +35,18 @@ export interface UseUserValues {
  * This replaces useUserData and provides the same interface with Redux state management
  */
 function useUser(_: UseUserProps = {}): UseUserValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get external context
   const { projectId } = useProject();
 
   // Get Redux state
-  const user = useReplykeSelector(selectUser);
-  const authUser = useReplykeSelector(selectAuthUser); // Fallback to auth user
-  const loading = useReplykeSelector(selectUserLoading);
-  const updating = useReplykeSelector(selectUserUpdating);
-  const error = useReplykeSelector(selectUserError);
-  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
+  const user = useSublaySelector(selectUser);
+  const authUser = useSublaySelector(selectAuthUser); // Fallback to auth user
+  const loading = useSublaySelector(selectUserLoading);
+  const updating = useSublaySelector(selectUserUpdating);
+  const error = useSublaySelector(selectUserError);
+  const currentProjectId = useSublaySelector(selectCurrentProjectId);
 
   // Get actions
   const {

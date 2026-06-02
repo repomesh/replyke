@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import { resetAuth } from "../../store/slices/authSlice";
 import { clearUser } from "../../store/slices/userSlice";
 import {
@@ -15,8 +15,8 @@ export interface UseAddAccountReturn {
 }
 
 export default function useAddAccount(): UseAddAccountReturn {
-  const dispatch = useReplykeDispatch();
-  const accounts = useReplykeSelector(selectAccounts);
+  const dispatch = useSublayDispatch();
+  const accounts = useSublaySelector(selectAccounts);
   const canAddAccount = Object.keys(accounts).length < MAX_ACCOUNTS;
 
   const addAccount = useCallback(() => {

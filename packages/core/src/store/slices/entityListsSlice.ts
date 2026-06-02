@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import type { ReplykeState } from '../replykeReducers';
+import type { SublayState } from '../sublayReducers';
 import { Entity, EntityIncludeParam } from "../../interfaces/models/Entity";
 import {
   EntityListSortByOptions,
@@ -464,9 +464,9 @@ export const {
 } = entityListsSlice.actions;
 
 // Base selectors - use namespaced state for dual-mode support
-const selectEntityListsState = (state: { replyke: ReplykeState }) =>
-  state.replyke.entityLists;
-const selectListId = (_: { replyke: ReplykeState }, listId: string) => listId;
+const selectEntityListsState = (state: { sublay: SublayState }) =>
+  state.sublay.entityLists;
+const selectListId = (_: { sublay: SublayState }, listId: string) => listId;
 
 // Memoized selectors using createSelector
 export const selectEntityList = createSelector(

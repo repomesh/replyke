@@ -1,4 +1,4 @@
-import { useReplykeSelector } from "../../store/hooks";
+import { useSublaySelector } from "../../store/hooks";
 import { selectUnreadConversationCount } from "../../store/slices/chatSlice";
 
 /**
@@ -12,7 +12,7 @@ import { selectUnreadConversationCount } from "../../store/slices/chatSlice";
  * the next ChatProvider mount.
  */
 function useUnreadConversationCount(): number {
-  return useReplykeSelector(selectUnreadConversationCount) ?? 0;
+  return useSublaySelector(selectUnreadConversationCount) ?? 0;
 }
 
 export default useUnreadConversationCount;

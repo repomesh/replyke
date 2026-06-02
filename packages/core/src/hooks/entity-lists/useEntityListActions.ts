@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import {
   setEntityListLoading,
   setEntityListEntities,
@@ -83,7 +83,7 @@ export interface UseEntityListActionsValues {
  * Uses RTK Query for stable function references and proper caching
  */
 export function useEntityListActions(): UseEntityListActionsValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get project and user context
   const { projectId } = useProject();

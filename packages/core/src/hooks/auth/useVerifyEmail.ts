@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import axios from "../../config/axios";
 import useProject from "../projects/useProject";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import { updateUserOptimistic } from "../../store/slices/userSlice";
 
 export interface VerifyEmailProps {
@@ -10,7 +10,7 @@ export interface VerifyEmailProps {
 
 function useVerifyEmail(): (props: VerifyEmailProps) => Promise<{ success: boolean }> {
   const { projectId } = useProject();
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   const verifyEmail = useCallback(
     async ({ token }: VerifyEmailProps) => {

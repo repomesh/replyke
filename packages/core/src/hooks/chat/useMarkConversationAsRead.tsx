@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import { clearUnread } from "../../store/slices/chatSlice";
 import useAxiosPrivate from "../../config/useAxiosPrivate";
 import useProject from "../projects/useProject";
@@ -17,7 +17,7 @@ export interface UseMarkConversationAsReadProps {
 function useMarkConversationAsRead({
   conversationId,
 }: UseMarkConversationAsReadProps): ({ messageId }: { messageId: string }) => Promise<void> {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

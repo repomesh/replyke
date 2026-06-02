@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../../store/hooks";
 import {
   selectConversationList,
   selectConversationListHasMore,
@@ -39,13 +39,13 @@ interface CursorState {
 function useConversations({
   types,
 }: UseConversationsProps = {}): UseConversationsValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
-  const conversations = useReplykeSelector(selectConversationList);
-  const loading = useReplykeSelector(selectConversationListLoading);
-  const hasMore = useReplykeSelector(selectConversationListHasMore);
+  const conversations = useSublaySelector(selectConversationList);
+  const loading = useSublaySelector(selectConversationListLoading);
+  const hasMore = useSublaySelector(selectConversationListHasMore);
 
   const typesKey = types ? [...types].sort().join(",") : "";
 

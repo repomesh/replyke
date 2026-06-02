@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { ReplykeState } from "../replykeReducers";
+import type { SublayState } from "../sublayReducers";
 
 // Types
 
@@ -92,13 +92,13 @@ export const {
 } = accountsSlice.actions;
 
 // Selectors — namespaced for dual-mode support
-export const selectAccounts = (state: { replyke: ReplykeState }) =>
-  state.replyke.accounts.accounts;
-export const selectActiveAccountId = (state: { replyke: ReplykeState }) =>
-  state.replyke.accounts.activeAccountId;
-export const selectAccountsReady = (state: { replyke: ReplykeState }) =>
-  state.replyke.accounts.isReady;
-export const selectAccountManagerRegistered = (state: { replyke: ReplykeState }) =>
-  state.replyke.accounts.accountManagerRegistered;
+export const selectAccounts = (state: { sublay: SublayState }) =>
+  state.sublay.accounts.accounts;
+export const selectActiveAccountId = (state: { sublay: SublayState }) =>
+  state.sublay.accounts.activeAccountId;
+export const selectAccountsReady = (state: { sublay: SublayState }) =>
+  state.sublay.accounts.isReady;
+export const selectAccountManagerRegistered = (state: { sublay: SublayState }) =>
+  state.sublay.accounts.accountManagerRegistered;
 
 export default accountsSlice.reducer;

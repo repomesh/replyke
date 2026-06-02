@@ -1,12 +1,12 @@
 {
-  "name": "@replyke/core",
+  "name": "@sublay/core",
   "version": "7.0.3",
   "private": false,
   "license": "Apache-2.0",
-  "author": "Replyke, maintained by Yanay Tsabary",
-  "description": "Replyke: Build interactive apps with social features like comments, votes, feeds, user lists, notifications, and more.",
+  "author": "Sublay, maintained by Yanay Tsabary",
+  "description": "Sublay: Build interactive apps with social features like comments, votes, feeds, user lists, notifications, and more.",
   "keywords": [
-    "replyke",
+    "sublay",
     "authentication",
     "social",
     "comments",
@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://discord.gg/A94q4kC6"
   },
-  "homepage": "https://docs.replyke.com",
+  "homepage": "https://docs.sublay.io",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

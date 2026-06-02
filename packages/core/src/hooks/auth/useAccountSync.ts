@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   setAccountMap,
   upsertAccount,
@@ -41,12 +41,12 @@ export default function useAccountSync(
   storage: AccountStorage,
   projectId: string
 ): void {
-  const dispatch = useReplykeDispatch();
-  const refreshToken = useReplykeSelector(selectRefreshToken);
-  const user = useReplykeSelector(selectUser); // from userSlice (canonical)
-  const accounts = useReplykeSelector(selectAccounts);
-  const activeAccountId = useReplykeSelector(selectActiveAccountId);
-  const isReady = useReplykeSelector(selectAccountsReady);
+  const dispatch = useSublayDispatch();
+  const refreshToken = useSublaySelector(selectRefreshToken);
+  const user = useSublaySelector(selectUser); // from userSlice (canonical)
+  const accounts = useSublaySelector(selectAccounts);
+  const activeAccountId = useSublaySelector(selectActiveAccountId);
+  const isReady = useSublaySelector(selectAccountsReady);
   const isInitialLoadRef = useRef(true);
 
   // Phase A: Mount — register + load from storage
@@ -82,7 +82,7 @@ export default function useAccountSync(
     };
 
     loadAccounts();
-  }, []); // projectId is stable for lifetime of ReplykeProvider
+  }, []); // projectId is stable for lifetime of SublayProvider
 
   // Phase B: Watch refreshToken + user — upsert account entries
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function useAccountSync(
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const storageKey = `replyke-accounts:${projectId}`;
+    const storageKey = `sublay-accounts:${projectId}`;
 
     const handleStorageEvent = (event: StorageEvent) => {
       if (event.key !== storageKey || !event.newValue) return;

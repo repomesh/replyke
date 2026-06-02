@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import type { Collection } from "../../interfaces/models/Collection";
 import type { Entity } from "../../interfaces/models/Entity";
-import type { ReplykeState } from '../replykeReducers';
+import type { SublayState } from '../sublayReducers';
 
 // State interface
 export interface CollectionsState {
@@ -313,15 +313,15 @@ export const {
 export default collectionsSlice.reducer;
 
 // Selectors - use namespaced state for dual-mode support
-export const selectCurrentCollection = (state: { replyke: ReplykeState }): Collection | null => {
-  const { currentCollectionId, collectionsById } = state.replyke.collections;
+export const selectCurrentCollection = (state: { sublay: SublayState }): Collection | null => {
+  const { currentCollectionId, collectionsById } = state.sublay.collections;
   return currentCollectionId ? collectionsById[currentCollectionId] || null : null;
 };
 
 export const selectSubCollections = createSelector(
-  [(state: { replyke: ReplykeState }) => state.replyke.collections.currentCollectionId,
-   (state: { replyke: ReplykeState }) => state.replyke.collections.subcollectionsMap,
-   (state: { replyke: ReplykeState }) => state.replyke.collections.collectionsById],
+  [(state: { sublay: SublayState }) => state.sublay.collections.currentCollectionId,
+   (state: { sublay: SublayState }) => state.sublay.collections.subcollectionsMap,
+   (state: { sublay: SublayState }) => state.sublay.collections.collectionsById],
   (currentCollectionId, subcollectionsMap, collectionsById): Collection[] => {
     if (!currentCollectionId || !subcollectionsMap[currentCollectionId]) {
       return [];
@@ -333,12 +333,12 @@ export const selectSubCollections = createSelector(
   }
 );
 
-export const selectCollectionsLoading = (state: { replyke: ReplykeState }) =>
-  state.replyke.collections.loading;
+export const selectCollectionsLoading = (state: { sublay: SublayState }) =>
+  state.sublay.collections.loading;
 
 export const selectCollectionHistory = createSelector(
-  [(state: { replyke: ReplykeState }) => state.replyke.collections.collectionHistory,
-   (state: { replyke: ReplykeState }) => state.replyke.collections.collectionsById],
+  [(state: { sublay: SublayState }) => state.sublay.collections.collectionHistory,
+   (state: { sublay: SublayState }) => state.sublay.collections.collectionsById],
   (collectionHistory, collectionsById): Collection[] => {
     return collectionHistory
       .map(collectionId => collectionsById[collectionId])
@@ -347,26 +347,26 @@ export const selectCollectionHistory = createSelector(
 );
 
 // Selector for the sub-collections mapping
-export const selectSubCollectionsMap = (state: { replyke: ReplykeState }) =>
-  state.replyke.collections.subcollectionsMap;
+export const selectSubCollectionsMap = (state: { sublay: SublayState }) =>
+  state.sublay.collections.subcollectionsMap;
 
 // Selector for all collections
-export const selectCollectionsById = (state: { replyke: ReplykeState }) =>
-  state.replyke.collections.collectionsById;
+export const selectCollectionsById = (state: { sublay: SublayState }) =>
+  state.sublay.collections.collectionsById;
 
-export const selectCurrentProjectId = (state: { replyke: ReplykeState }) =>
-  state.replyke.collections.currentProjectId;
+export const selectCurrentProjectId = (state: { sublay: SublayState }) =>
+  state.sublay.collections.currentProjectId;
 
 // Selector for current collection ID
-export const selectCurrentCollectionId = (state: { replyke: ReplykeState }) =>
-  state.replyke.collections.currentCollectionId;
+export const selectCurrentCollectionId = (state: { sublay: SublayState }) =>
+  state.sublay.collections.currentCollectionId;
 
 const EMPTY_ENTITIES: Entity[] = [];
 
 // Selector for entities in a specific collection
 export const selectCollectionEntities =
   (collectionId: string | null | undefined) =>
-  (state: { replyke: ReplykeState }): Entity[] =>
+  (state: { sublay: SublayState }): Entity[] =>
     collectionId
-      ? (state.replyke.collections.entitiesByCollectionId[collectionId] ?? EMPTY_ENTITIES)
+      ? (state.sublay.collections.entitiesByCollectionId[collectionId] ?? EMPTY_ENTITIES)
       : EMPTY_ENTITIES;

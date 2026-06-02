@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import useProject from "../projects/useProject";
-import { useReplykeSelector } from "../../store/hooks";
+import { useSublaySelector } from "../../store/hooks";
 import { selectAccessToken } from "../../store/slices/authSlice";
 import { BASE_URL } from "../../config/axios";
 import { ContentSearchResult } from "./useSearchContent";
@@ -61,7 +61,7 @@ function parseSseChunk(buffer: string): { events: SseEvent[]; remainder: string 
 
 export default function useAskContent(): UseAskContentReturn {
   const { projectId } = useProject();
-  const accessToken = useReplykeSelector(selectAccessToken);
+  const accessToken = useSublaySelector(selectAccessToken);
 
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<ContentSearchResult[]>([]);

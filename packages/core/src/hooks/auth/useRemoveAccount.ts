@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   selectAccounts,
   selectActiveAccountId,
@@ -20,10 +20,10 @@ export interface UseRemoveAccountReturn {
 }
 
 export default function useRemoveAccount(): UseRemoveAccountReturn {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
-  const accounts = useReplykeSelector(selectAccounts);
-  const activeAccountId = useReplykeSelector(selectActiveAccountId);
+  const accounts = useSublaySelector(selectAccounts);
+  const activeAccountId = useSublaySelector(selectActiveAccountId);
   const [isRemoving, setIsRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

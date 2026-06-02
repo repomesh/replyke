@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import type { AuthUser } from "../../interfaces/models/User";
 import {
   setUser,
@@ -19,7 +19,7 @@ import {
  * Focused on current user operations only
  */
 export function useUserActions() {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   
   // RTK Query mutations for current user
   const [updateUserMutation] = useUpdateUserMutation();

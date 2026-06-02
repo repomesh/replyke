@@ -9,26 +9,26 @@ import accountsReducer from "./slices/accountsSlice";
 import chatReducer from "./slices/chatSlice";
 
 /**
- * Combined reducer for all Replyke feature slices.
+ * Combined reducer for all Sublay feature slices.
  * Used by both standalone mode (internal) and integration mode (user's store).
  *
- * For integration mode, add this to your store under the 'replyke' key:
+ * For integration mode, add this to your store under the 'sublay' key:
  *
  * @example
  * ```typescript
- * import { replykeReducers, replykeApiReducer, replykeMiddleware } from '@replyke/react-js';
+ * import { sublayReducers, sublayApiReducer, sublayMiddleware } from '@sublay/react-js';
  *
  * const store = configureStore({
  *   reducer: {
- *     replyke: replykeReducers,
- *     replykeApi: replykeApiReducer,
+ *     sublay: sublayReducers,
+ *     sublayApi: sublayApiReducer,
  *     ...yourReducers
  *   },
- *   middleware: (getDefault) => getDefault().concat(...replykeMiddleware)
+ *   middleware: (getDefault) => getDefault().concat(...sublayMiddleware)
  * });
  * ```
  */
-export const replykeReducers = combineReducers({
+export const sublayReducers = combineReducers({
   auth: authReducer,
   appNotifications: appNotificationsSlice.reducer,
   collections: collectionsReducer,
@@ -39,4 +39,4 @@ export const replykeReducers = combineReducers({
   chat: chatReducer,
 });
 
-export type ReplykeState = ReturnType<typeof replykeReducers>;
+export type SublayState = ReturnType<typeof sublayReducers>;

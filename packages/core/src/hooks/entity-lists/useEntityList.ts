@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 
 import {
   initializeList,
@@ -100,28 +100,28 @@ function useEntityList({
   listId,
   infuseData,
 }: UseEntityListProps): UseEntityListValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get state from Redux (parameterized selectors)
-  const entityList = useReplykeSelector((state) =>
+  const entityList = useSublaySelector((state) =>
     selectEntityList(state, listId)
   );
-  const entities = useReplykeSelector((state) =>
+  const entities = useSublaySelector((state) =>
     selectEntityListEntities(state, listId)
   );
-  const loading = useReplykeSelector((state) =>
+  const loading = useSublaySelector((state) =>
     selectEntityListLoading(state, listId)
   );
-  const hasMore = useReplykeSelector((state) =>
+  const hasMore = useSublaySelector((state) =>
     selectEntityListHasMore(state, listId)
   );
-  const filters = useReplykeSelector((state) =>
+  const filters = useSublaySelector((state) =>
     selectEntityListFilters(state, listId)
   );
-  const sort = useReplykeSelector((state) =>
+  const sort = useSublaySelector((state) =>
     selectEntityListSort(state, listId)
   );
-  const config = useReplykeSelector((state) =>
+  const config = useSublaySelector((state) =>
     selectEntityListConfig(state, listId)
   );
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../../store/hooks";
 import {
   selectConversation,
   selectConversationLoading,
@@ -28,11 +28,11 @@ export interface UseConversationValues {
 function useConversation({
   conversationId,
 }: UseConversationProps): UseConversationValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
 
-  const conversation = useReplykeSelector(selectConversation(conversationId));
-  const loading = useReplykeSelector(selectConversationLoading(conversationId));
+  const conversation = useSublaySelector(selectConversation(conversationId));
+  const loading = useSublaySelector(selectConversationLoading(conversationId));
 
   const fetchConversation = useFetchConversation();
   const _update = useUpdateConversation();

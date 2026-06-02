@@ -1,18 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
 import type { AppDispatch } from "./types";
-import type { ReplykeState } from "./replykeReducers";
+import type { SublayState } from "./sublayReducers";
 
 /**
- * Typed dispatch hook for Replyke.
+ * Typed dispatch hook for Sublay.
  * Works in both standalone and integration modes.
  */
-export const useReplykeDispatch = () => useDispatch<AppDispatch>();
+export const useSublayDispatch = () => useDispatch<AppDispatch>();
 
 /**
- * Typed selector hook for Replyke state.
+ * Typed selector hook for Sublay state.
  * Works in both standalone and integration modes.
  *
- * State is always accessed via the 'replyke' namespace.
+ * State is always accessed via the 'sublay' namespace.
  */
-export const useReplykeSelector: TypedUseSelectorHook<{ replyke: ReplykeState }> = useSelector;
+export const useSublaySelector: TypedUseSelectorHook<{ sublay: SublayState }> = useSelector;

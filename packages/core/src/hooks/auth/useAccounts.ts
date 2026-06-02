@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useReplykeSelector } from "../../store/hooks";
+import { useSublaySelector } from "../../store/hooks";
 import {
   selectAccounts,
   selectActiveAccountId,
@@ -13,8 +13,8 @@ export interface UseAccountsReturn {
 }
 
 export default function useAccounts(): UseAccountsReturn {
-  const accountsMap = useReplykeSelector(selectAccounts);
-  const activeAccountId = useReplykeSelector(selectActiveAccountId);
+  const accountsMap = useSublaySelector(selectAccounts);
+  const activeAccountId = useSublaySelector(selectActiveAccountId);
 
   return useMemo(() => {
     const accountSummaries = Object.values(accountsMap).map(

@@ -4,7 +4,7 @@ import type {
   ConversationPreview,
 } from "../../interfaces/models/Conversation";
 import type { ChatMessage } from "../../interfaces/models/ChatMessage";
-import type { ReplykeState } from "../replykeReducers";
+import type { SublayState } from "../sublayReducers";
 
 // ─── Sub-state shapes ────────────────────────────────────────────────────────
 
@@ -519,80 +519,80 @@ export default chatSlice.reducer;
 
 export const selectConversation =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.conversations[conversationId]?.data ?? null;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.conversations[conversationId]?.data ?? null;
 
 export const selectConversationLoading =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.conversations[conversationId]?.loading ?? false;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.conversations[conversationId]?.loading ?? false;
 
-export const selectConversationList = (state: { replyke: ReplykeState }) =>
-  state.replyke.chat.conversationList.items;
+export const selectConversationList = (state: { sublay: SublayState }) =>
+  state.sublay.chat.conversationList.items;
 
 export const selectConversationListLoading = (state: {
-  replyke: ReplykeState;
-}) => state.replyke.chat.conversationList.loading;
+  sublay: SublayState;
+}) => state.sublay.chat.conversationList.loading;
 
 export const selectConversationListHasMore = (state: {
-  replyke: ReplykeState;
-}) => state.replyke.chat.conversationList.hasMore;
+  sublay: SublayState;
+}) => state.sublay.chat.conversationList.hasMore;
 
 export const selectConversationListCursor = (state: {
-  replyke: ReplykeState;
-}) => state.replyke.chat.conversationList.cursor;
+  sublay: SublayState;
+}) => state.sublay.chat.conversationList.cursor;
 
 export const selectMessages =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.messages[conversationId]?.items ?? [];
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.messages[conversationId]?.items ?? [];
 
 export const selectMessagesLoading =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.messages[conversationId]?.loading ?? false;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.messages[conversationId]?.loading ?? false;
 
 export const selectMessagesHasMore =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.messages[conversationId]?.hasMore ?? true;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.messages[conversationId]?.hasMore ?? true;
 
 export const selectOldestMessageId =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.messages[conversationId]?.oldestMessageId ?? null;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.messages[conversationId]?.oldestMessageId ?? null;
 
 export const selectNewestMessageId =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.messages[conversationId]?.newestMessageId ?? null;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.messages[conversationId]?.newestMessageId ?? null;
 
 export const selectThreadReplies =
   (parentMessageId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.threads[parentMessageId]?.items ?? [];
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.threads[parentMessageId]?.items ?? [];
 
 export const selectThreadLoading =
   (parentMessageId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.threads[parentMessageId]?.loading ?? false;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.threads[parentMessageId]?.loading ?? false;
 
 export const selectThreadHasMore =
   (parentMessageId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.threads[parentMessageId]?.hasMore ?? true;
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.threads[parentMessageId]?.hasMore ?? true;
 
 export const selectTypingUsers =
   (conversationId: string) =>
-  (state: { replyke: ReplykeState }) =>
-    state.replyke.chat.typingUsers[conversationId] ?? [];
+  (state: { sublay: SublayState }) =>
+    state.sublay.chat.typingUsers[conversationId] ?? [];
 
-export const selectSocketConnected = (state: { replyke: ReplykeState }) =>
-  state.replyke.chat.socketConnected;
+export const selectSocketConnected = (state: { sublay: SublayState }) =>
+  state.sublay.chat.socketConnected;
 
-export const selectTotalUnreadCount = (state: { replyke: ReplykeState }) =>
-  state.replyke.chat.totalUnreadCount;
+export const selectTotalUnreadCount = (state: { sublay: SublayState }) =>
+  state.sublay.chat.totalUnreadCount;
 
 export const selectUnreadConversationCount = (state: {
-  replyke: ReplykeState;
-}) => state.replyke.chat.unreadConversationCount;
+  sublay: SublayState;
+}) => state.sublay.chat.unreadConversationCount;

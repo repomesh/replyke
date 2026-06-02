@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../../store/hooks";
 import { updateReactions } from "../../../store/slices/chatSlice";
 import { selectUser } from "../../../store/slices/userSlice";
 import { selectUser as selectAuthUser } from "../../../store/slices/authSlice";
@@ -21,12 +21,12 @@ export interface ToggleReactionResult {
 function useToggleReaction(): (
   params: ToggleReactionParams
 ) => Promise<ToggleReactionResult> {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
-  const user = useReplykeSelector(selectUser);
-  const authUser = useReplykeSelector(selectAuthUser);
+  const user = useSublaySelector(selectUser);
+  const authUser = useSublaySelector(selectAuthUser);
   const currentUserId = (user || authUser)?.id ?? "";
 
   const toggle = useCallback(

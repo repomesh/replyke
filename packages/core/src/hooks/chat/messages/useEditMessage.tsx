@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../../store/hooks";
+import { useSublayDispatch } from "../../../store/hooks";
 import { upsertMessage } from "../../../store/slices/chatSlice";
 import { ChatMessage } from "../../../interfaces/models/ChatMessage";
 import { GifData } from "../../../interfaces/models/Comment";
@@ -18,7 +18,7 @@ export interface EditMessageParams {
 }
 
 function useEditMessage(): (params: EditMessageParams) => Promise<ChatMessage> {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

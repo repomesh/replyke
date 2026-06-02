@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../../store/hooks";
 import {
   addOptimisticMessage,
   upsertMessage,
@@ -31,13 +31,13 @@ export interface UseSendMessageProps {
 function useSendMessage({
   conversationId,
 }: UseSendMessageProps): (params: SendMessageParams) => Promise<ChatMessage> {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   // Get current user for the optimistic message
-  const user = useReplykeSelector(selectUser);
-  const authUser = useReplykeSelector(selectAuthUser);
+  const user = useSublaySelector(selectUser);
+  const authUser = useSublaySelector(selectAuthUser);
   const currentUser = user || authUser;
 
   const send = useCallback(
