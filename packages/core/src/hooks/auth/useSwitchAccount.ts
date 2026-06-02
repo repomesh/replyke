@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   selectAccounts,
   selectActiveAccountId,
@@ -18,10 +18,10 @@ export interface UseSwitchAccountReturn {
 }
 
 export default function useSwitchAccount(): UseSwitchAccountReturn {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
-  const accounts = useReplykeSelector(selectAccounts);
-  const activeAccountId = useReplykeSelector(selectActiveAccountId);
+  const accounts = useSublaySelector(selectAccounts);
+  const activeAccountId = useSublaySelector(selectActiveAccountId);
   const [isSwitching, setIsSwitching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

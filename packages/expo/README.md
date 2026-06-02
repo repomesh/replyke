@@ -1,10 +1,10 @@
-# Replyke Core - Expo
+# Sublay Core - Expo
 
-> **Note:** This package is built for Expo-managed React Native projects. It provides a fully compatible integration with Expo's ecosystem while leveraging `@replyke/core` internally. Use this instead of `@replyke/react-native` if you are working within an Expo project.
+> **Note:** This package is built for Expo-managed React Native projects. It provides a fully compatible integration with Expo's ecosystem while leveraging `@sublay/core` internally. Use this instead of `@sublay/react-native` if you are working within an Expo project.
 
 ## Overview
 
-Replyke Core is the foundational package that powers the Replyke platform, providing developers with an easy-to-integrate solution for adding social and interactive features to their applications. It includes all the core client functionality needed to interact with Replyke’s backend services, allowing for seamless authentication, entity management, commenting, voting, notifications, and more.
+Sublay Core is the foundational package that powers the Sublay platform, providing developers with an easy-to-integrate solution for adding social and interactive features to their applications. It includes all the core client functionality needed to interact with Sublay’s backend services, allowing for seamless authentication, entity management, commenting, voting, notifications, and more.
 
 This package is designed to be flexible, efficient, and developer-friendly, offering powerful hooks and methods to streamline the integration process.
 
@@ -20,22 +20,22 @@ This package is designed to be flexible, efficient, and developer-friendly, offe
 - **App Notifications** – Generate in-app notifications for key user actions.
 - **Follows** – Establish follow relationships between users to build social connections.
 
-## Why Use Replyke Core?
+## Why Use Sublay Core?
 
-Replyke Core eliminates the complexity of building essential social features from scratch. Instead of developing authentication, feeds, comments, and notifications independently, developers can leverage Replyke’s streamlined API and prebuilt functionality, saving time and ensuring best practices in security and performance.
+Sublay Core eliminates the complexity of building essential social features from scratch. Instead of developing authentication, feeds, comments, and notifications independently, developers can leverage Sublay’s streamlined API and prebuilt functionality, saving time and ensuring best practices in security and performance.
 
 ## Installation
 
 Install the package via NPM:
 
 ```sh
-npm install @replyke/core
+npm install @sublay/core
 ```
 
 ## Documentation
 
-Full documentation, including API references and integration guides, is available at [Replyke Documentation](https://docs.replyke.com).
+Full documentation, including API references and integration guides, is available at [Sublay Documentation](https://docs.sublay.io).
 
 ## License
 
-Replyke Expo is licensed under the Apache 2.0 License.
+Sublay Expo is licensed under the Apache 2.0 License.

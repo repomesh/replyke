@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useReplykeDispatch } from "../../../store/hooks";
+import { useSublayDispatch } from "../../../store/hooks";
 import { setConversation } from "../../../store/slices/chatSlice";
 import { Conversation } from "../../../interfaces/models/Conversation";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
@@ -18,7 +18,7 @@ export interface UseFetchSpaceConversationValues {
 function useFetchSpaceConversation({
   spaceId,
 }: UseFetchSpaceConversationProps): UseFetchSpaceConversationValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

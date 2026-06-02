@@ -7,7 +7,7 @@ const WARNING = `
 
     In production:
     - NEVER expose your secret key in client-side code.
-    - Refer to the documentation at https://docs.replyke.com to implement JWT signing on your backend.
+    - Refer to the documentation at https://docs.sublay.io to implement JWT signing on your backend.
     - Rotate your secret key periodically, especially after moving from testing to production.
 
     Failure to follow these practices can lead to security vulnerabilities.

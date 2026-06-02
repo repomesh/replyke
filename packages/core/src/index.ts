@@ -17,8 +17,8 @@ export type { ReportReasonKey } from "./constants/reportReasons";
 
 // Context providers (Redux-powered by default)
 export {
-  ReplykeProvider,
-  ReplykeIntegrationProvider,
+  SublayProvider,
+  SublayIntegrationProvider,
   EntityProvider,
   CommentSectionProvider,
   SpaceProvider,
@@ -38,11 +38,11 @@ export {
 
 // Integration mode exports (for users with their own Redux store)
 export {
-  replykeReducers,
-  replykeApiReducer,
-  replykeMiddleware,
-  replykeApi,
-  type ReplykeState,
+  sublayReducers,
+  sublayApiReducer,
+  sublayMiddleware,
+  sublayApi,
+  type SublayState,
 } from "./store/integration";
 
 // -- projects
@@ -89,7 +89,7 @@ export {
 } from "./hooks/auth";
 
 // -- store internals (for platform-specific hooks in react-js / react-native)
-export { useReplykeDispatch, useReplykeSelector } from "./store/hooks";
+export { useSublayDispatch, useSublaySelector } from "./store/hooks";
 export {
   setTokens,
   setInitialized,

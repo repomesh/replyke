@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "https://api.replyke.com/v7";
+export const BASE_URL = "https://api.sublay.io/v7";
 
 export default axios.create({
   baseURL: BASE_URL,

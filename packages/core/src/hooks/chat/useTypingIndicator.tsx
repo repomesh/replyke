@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useReplykeSelector } from "../../store/hooks";
+import { useSublaySelector } from "../../store/hooks";
 import { selectTypingUsers } from "../../store/slices/chatSlice";
 import { useChatContext } from "../../context/chat-context";
 
@@ -30,7 +30,7 @@ function useTypingIndicator({
   const { socket } = useChatContext();
 
   // Array of other users currently typing (current user already excluded by ChatProvider)
-  const typingUsers = useReplykeSelector(selectTypingUsers(conversationId));
+  const typingUsers = useSublaySelector(selectTypingUsers(conversationId));
 
   // Whether we (the current user) are currently emitting typing events
   const isTypingRef = useRef(false);

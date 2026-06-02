@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-import { replykeStore } from "../store";
+import { sublayStore } from "../store";
 import type { ReactNode } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../store/hooks";
 import { initializeAuthThunk } from "../store/slices/authThunks";
 import {
   selectAccountsReady,
   selectAccountManagerRegistered,
 } from "../store/slices/accountsSlice";
 
-export interface ReplykeStoreProviderProps {
+export interface SublayStoreProviderProps {
   children: ReactNode;
   projectId: string;
   signedToken?: string | null;
@@ -24,9 +24,9 @@ const AuthInitializer: React.FC<{
   projectId: string;
   signedToken?: string | null;
 }> = ({ children, projectId, signedToken }) => {
-  const dispatch = useReplykeDispatch();
-  const accountsReady = useReplykeSelector(selectAccountsReady);
-  const accountManagerRegistered = useReplykeSelector(selectAccountManagerRegistered);
+  const dispatch = useSublayDispatch();
+  const accountsReady = useSublaySelector(selectAccountsReady);
+  const accountManagerRegistered = useSublaySelector(selectAccountManagerRegistered);
   const [hasWaitedForManager, setHasWaitedForManager] = useState(false);
 
   // Give AccountManager one microtask to register itself
@@ -49,16 +49,16 @@ const AuthInitializer: React.FC<{
 };
 
 /**
- * Redux store provider for Replyke
+ * Redux store provider for Sublay
  * This component provides the Redux store and initializes auth state
  */
-export const ReplykeStoreProvider: React.FC<ReplykeStoreProviderProps> = ({ 
+export const SublayStoreProvider: React.FC<SublayStoreProviderProps> = ({ 
   children,
   projectId,
   signedToken
 }) => {
   return (
-    <Provider store={replykeStore}>
+    <Provider store={sublayStore}>
       <AuthInitializer projectId={projectId} signedToken={signedToken}>
         {children}
       </AuthInitializer>
@@ -67,6 +67,6 @@ export const ReplykeStoreProvider: React.FC<ReplykeStoreProviderProps> = ({
 };
 
 // Clean Redux-only architecture
-// Always integrated with ReplykeProvider
+// Always integrated with SublayProvider
 
-export default ReplykeStoreProvider;
+export default SublayStoreProvider;

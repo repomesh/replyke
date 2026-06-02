@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { ReplykeState } from '../replykeReducers';
+import type { SublayState } from '../sublayReducers';
 import type { AuthUser } from '../../interfaces/models/User';
 
 export interface UserState {
@@ -87,20 +87,20 @@ export const {
 } = userSlice.actions;
 
 // Selectors - use namespaced state for dual-mode support
-export const selectUser = (state: { replyke: ReplykeState }) =>
-  state.replyke.user.user;
-export const selectUserLoading = (state: { replyke: ReplykeState }) =>
-  state.replyke.user.loading;
-export const selectUserUpdating = (state: { replyke: ReplykeState }) =>
-  state.replyke.user.updating;
-export const selectCurrentProjectId = (state: { replyke: ReplykeState }) =>
-  state.replyke.user.currentProjectId;
-export const selectUserError = (state: { replyke: ReplykeState }) =>
-  state.replyke.user.error;
+export const selectUser = (state: { sublay: SublayState }) =>
+  state.sublay.user.user;
+export const selectUserLoading = (state: { sublay: SublayState }) =>
+  state.sublay.user.loading;
+export const selectUserUpdating = (state: { sublay: SublayState }) =>
+  state.sublay.user.updating;
+export const selectCurrentProjectId = (state: { sublay: SublayState }) =>
+  state.sublay.user.currentProjectId;
+export const selectUserError = (state: { sublay: SublayState }) =>
+  state.sublay.user.error;
 
 // Complex selectors
 export const selectUserById = (userId: string) =>
-  (state: { replyke: ReplykeState }) => {
+  (state: { sublay: SublayState }) => {
     const user = selectUser(state);
     return user?.id === userId ? user : null;
   };

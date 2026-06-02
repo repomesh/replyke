@@ -1,6 +1,6 @@
-export { ReplykeProvider } from "./replyke-context";
-export { ReplykeStoreProvider } from "./replyke-store-context";
-export { ReplykeIntegrationProvider } from "./replyke-integration-context";
+export { SublayProvider } from "./sublay-context";
+export { SublayStoreProvider } from "./sublay-store-context";
+export { SublayIntegrationProvider } from "./sublay-integration-context";
 export { EntityProvider } from "./entity-context";
 export { CommentSectionProvider } from "./comment-section-context";
 export { SpaceProvider } from "./space-context";

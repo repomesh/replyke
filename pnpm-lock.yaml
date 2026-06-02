@@ -90,7 +90,7 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.0.0
         version: 2.11.2(react-redux@9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
-      '@replyke/core':
+      '@sublay/core':
         specifier: workspace:*
         version: link:../core
       '@types/react':
@@ -118,7 +118,7 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.0.0
         version: 2.11.2(react-redux@9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
-      '@replyke/core':
+      '@sublay/core':
         specifier: workspace:*
         version: link:../core
       '@types/react':
@@ -139,7 +139,7 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.0.0
         version: 2.11.2(react-redux@9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
-      '@replyke/core':
+      '@sublay/core':
         specifier: workspace:*
         version: link:../core
       '@types/react':

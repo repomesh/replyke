@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 
 import {
   initializeList,
@@ -13,7 +13,6 @@ import {
   selectSpaceListHasMore,
   selectSpaceListFilters,
   selectSpaceListConfig,
-  type SpaceListState,
   type SpaceListFilters,
   type SpaceListConfig,
   type SpaceListFetchOptions,
@@ -79,25 +78,25 @@ export interface UseSpaceListValues {
 }
 
 function useSpaceList({ listId }: UseSpaceListProps): UseSpaceListValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get state from Redux (parameterized selectors)
-  const spaceList = useReplykeSelector((state) =>
+  const spaceList = useSublaySelector((state) =>
     selectSpaceList(state, listId)
   );
-  const spaces = useReplykeSelector((state) =>
+  const spaces = useSublaySelector((state) =>
     selectSpaceListSpaces(state, listId)
   );
-  const loading = useReplykeSelector((state) =>
+  const loading = useSublaySelector((state) =>
     selectSpaceListLoading(state, listId)
   );
-  const hasMore = useReplykeSelector((state) =>
+  const hasMore = useSublaySelector((state) =>
     selectSpaceListHasMore(state, listId)
   );
-  const filters = useReplykeSelector((state) =>
+  const filters = useSublaySelector((state) =>
     selectSpaceListFilters(state, listId)
   );
-  const config = useReplykeSelector((state) =>
+  const config = useSublaySelector((state) =>
     selectSpaceListConfig(state, listId)
   );
 

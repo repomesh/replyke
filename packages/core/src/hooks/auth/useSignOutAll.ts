@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import { signOutAllThunk } from "../../store/slices/authThunks";
 import useProject from "../projects/useProject";
 
@@ -8,7 +8,7 @@ export interface UseSignOutAllReturn {
 }
 
 export default function useSignOutAll(): UseSignOutAllReturn {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
 
   const signOutAll = useCallback(async () => {

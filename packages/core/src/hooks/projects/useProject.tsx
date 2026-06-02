@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import {
-  ReplykeContext,
-  ReplykeContextValues,
-} from "../../context/replyke-context";
+  SublayContext,
+  SublayContextValues,
+} from "../../context/sublay-context";
 
-export default function useProject(): Partial<ReplykeContextValues> {
-  return useContext(ReplykeContext);
+export default function useProject(): Partial<SublayContextValues> {
+  return useContext(SublayContext);
 }

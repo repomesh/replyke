@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import type { ReplykeState } from '../replykeReducers';
+import type { SublayState } from '../sublayReducers';
 import type { AuthUser } from '../../interfaces/models/User';
 
 export interface AuthState {
@@ -89,17 +89,17 @@ export const {
 } = authSlice.actions;
 
 // Selectors - use namespaced state for dual-mode support
-export const selectAccessToken = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.accessToken;
-export const selectRefreshToken = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.refreshToken;
-export const selectUser = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.user;
-export const selectIsAuthenticating = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.isAuthenticating;
-export const selectInitialized = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.initialized;
-export const selectSignedToken = (state: { replyke: ReplykeState }) =>
-  state.replyke.auth.signedToken;
+export const selectAccessToken = (state: { sublay: SublayState }) =>
+  state.sublay.auth.accessToken;
+export const selectRefreshToken = (state: { sublay: SublayState }) =>
+  state.sublay.auth.refreshToken;
+export const selectUser = (state: { sublay: SublayState }) =>
+  state.sublay.auth.user;
+export const selectIsAuthenticating = (state: { sublay: SublayState }) =>
+  state.sublay.auth.isAuthenticating;
+export const selectInitialized = (state: { sublay: SublayState }) =>
+  state.sublay.auth.initialized;
+export const selectSignedToken = (state: { sublay: SublayState }) =>
+  state.sublay.auth.signedToken;
 
 export default authSlice.reducer;

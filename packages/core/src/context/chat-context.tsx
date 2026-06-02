@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { useReplykeDispatch, useReplykeSelector } from "../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../store/hooks";
 import { selectAccessToken } from "../store/slices/authSlice";
 import { selectUser } from "../store/slices/userSlice";
 import { selectUser as selectAuthUser } from "../store/slices/authSlice";
@@ -65,18 +65,18 @@ function getSocketUrl(): string {
   try {
     return new URL(BASE_URL).origin;
   } catch {
-    return "https://api.replyke.com";
+    return "https://api.sublay.io";
   }
 }
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axiosPrivate = useAxiosPrivate();
 
-  const accessToken = useReplykeSelector(selectAccessToken);
-  const user = useReplykeSelector(selectUser);
-  const authUser = useReplykeSelector(selectAuthUser);
+  const accessToken = useSublaySelector(selectAccessToken);
+  const user = useSublaySelector(selectUser);
+  const authUser = useSublaySelector(selectAuthUser);
   const currentUser = user || authUser;
 
   // Keep mutable refs for values the socket handlers need without closing over stale state
@@ -87,14 +87,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   // Fresh snapshot of messages for socket handlers that need to find a message by id
   const messagesRef = useRef<Record<string, { items: ChatMessage[] }>>({});
-  const allMessages = useReplykeSelector((state: any) => state.replyke.chat.messages as Record<string, { items: ChatMessage[] }>);
+  const allMessages = useSublaySelector((state: any) => state.sublay.chat.messages as Record<string, { items: ChatMessage[] }>);
   useEffect(() => {
     messagesRef.current = allMessages;
   }, [allMessages]);
 
   // Fresh snapshot of conversations for conversation:updated merging
   const conversationsRef = useRef<Record<string, { data: Conversation | null }>>({});
-  const allConversations = useReplykeSelector((state: any) => state.replyke.chat.conversations as Record<string, { data: Conversation | null }>);
+  const allConversations = useSublaySelector((state: any) => state.sublay.chat.conversations as Record<string, { data: Conversation | null }>);
   useEffect(() => {
     conversationsRef.current = allConversations;
   }, [allConversations]);

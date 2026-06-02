@@ -4,7 +4,7 @@ import { useLazyFetchCollectionEntitiesQuery } from "../../store/api/collections
 import { handleError } from "../../utils/handleError";
 import useProject from "../projects/useProject";
 import useCollections from "./useCollections";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   setCollectionEntities,
   appendCollectionEntities,
@@ -42,7 +42,7 @@ function useCollectionEntitiesWrapper(
     include,
   } = props;
 
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const { currentCollection } = useCollections();
   const [fetchCollectionEntitiesQuery] = useLazyFetchCollectionEntitiesQuery();
@@ -50,7 +50,7 @@ function useCollectionEntitiesWrapper(
   const effectiveCollectionId = passedCollectionId ?? currentCollection?.id;
 
   // Read entities from shared Redux state — written here and by useCollectionsActions for optimistic updates
-  const entities = useReplykeSelector(selectCollectionEntities(effectiveCollectionId));
+  const entities = useSublaySelector(selectCollectionEntities(effectiveCollectionId));
 
   const includeString = useMemo(
     () => (Array.isArray(include) ? include.join(",") : include),

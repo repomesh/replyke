@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Building
 - `pnpm run build-all` - Builds all packages in the monorepo in dependency order
-- Individual package builds: `pnpm --filter @replyke/[package-name] run build`
+- Individual package builds: `pnpm --filter @sublay/[package-name] run build`
 - Each package builds to ESM and CJS formats using TypeScript
 
 ### Publishing
@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is a **monorepo** for Replyke, an open-source social features framework. The project uses pnpm workspaces and follows a layered architecture:
+This is a **monorepo** for Sublay, an open-source social features framework. The project uses pnpm workspaces and follows a layered architecture:
 
 ### Core Architecture Layers
 
@@ -27,25 +27,15 @@ This is a **monorepo** for Replyke, an open-source social features framework. Th
 
 The monorepo is organized into these main packages:
 
-- **`@replyke/core`** - Core hooks, context providers, and utilities for both React and React Native
-- **`@replyke/react-js`** - React-specific implementations and re-exports from core
-- **`@replyke/react-native`** - React Native-specific implementations with token management
-- **`@replyke/expo`** - Expo-specific implementations with secure token storage
-
-#### UI Packages
-- **`@replyke/ui-core`** - Shared UI utilities and interfaces
-- **`@replyke/ui-core-react-js`** - React-specific UI components (avatars, skeletons, icons)
-- **`@replyke/ui-core-react-native`** - React Native-specific UI components
-
-#### Comments System
-- **`@replyke/comments-social-core`** - Core styling and configuration for social comments
-- **`@replyke/comments-social-react-js`** - Complete React comment system with modals
-- **`@replyke/comments-social-react-native`** - Complete React Native comment system with sheets
+- **`@sublay/core`** - Core hooks, context providers, and utilities for both React and React Native
+- **`@sublay/react-js`** - React-specific implementations and re-exports from core
+- **`@sublay/react-native`** - React Native-specific implementations with token management
+- **`@sublay/expo`** - Expo-specific implementations with secure token storage
 
 ### Key Context Providers
 
 The framework uses React Context for state management:
-- `ReplykeProvider` - Root provider with project configuration
+- `SublayProvider` - Root provider with project configuration
 - `EntityProvider` - Manages individual entities (posts, articles, etc.)
 - `EntityListProvider` - Manages collections of entities with filtering/sorting
 - `CommentSectionProvider` - Manages comment threads and interactions
@@ -62,7 +52,7 @@ The framework uses React Context for state management:
 
 ### Usage Flow
 
-1. Wrap app in `ReplykeProvider` with project ID and authentication token
+1. Wrap app in `SublayProvider` with project ID and authentication token
 2. Use `EntityProvider` to define the content being discussed
 3. Add social components like `SocialCommentSection` which self-contain all UI and logic
 4. Components automatically handle API calls, state management, and real-time updates

@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getApiBaseUrl } from "../../utils/env";
 
-// Type for state that includes replyke namespace
+// Type for state that includes sublay namespace
 // Used by prepareHeaders to access auth token from namespaced state
-interface StateWithReplyke {
-  replyke: {
+interface StateWithSublay {
+  sublay: {
     auth: {
       accessToken: string | null;
     };
@@ -20,8 +20,8 @@ const createBaseQuery = () => {
       headers.set('Content-Type', 'application/json');
 
       // Get access token from namespaced Redux state
-      const state = getState() as StateWithReplyke;
-      const accessToken = state.replyke?.auth?.accessToken;
+      const state = getState() as StateWithSublay;
+      const accessToken = state.sublay?.auth?.accessToken;
 
       // Add Authorization header if we have a token
       if (accessToken) {
@@ -35,7 +35,7 @@ const createBaseQuery = () => {
 
 // Create the base API slice
 export const baseApi = createApi({
-  reducerPath: 'replykeApi',
+  reducerPath: 'sublayApi',
   baseQuery: createBaseQuery(),
   tagTypes: [
     'AppNotification',
@@ -55,5 +55,5 @@ export const baseApi = createApi({
 export const {} = baseApi;
 
 // Exports for integration mode (users who have their own Redux store)
-export const replykeApiReducer = baseApi.reducer;
-export const replykeApiMiddleware = baseApi.middleware;
+export const sublayApiReducer = baseApi.reducer;
+export const sublayApiMiddleware = baseApi.middleware;

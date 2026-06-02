@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 
 import {
   setProjectContext,
@@ -41,19 +41,19 @@ function useAppNotifications({
   limit = 10,
   notificationTemplates,
 }: UseAppNotificationsProps = {}): UseAppNotificationsValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get external context
   const { projectId } = useProject();
   const { user } = useUser();
 
   // Get Redux state
-  const appNotifications = useReplykeSelector(selectAppNotifications);
-  const unreadAppNotificationsCount = useReplykeSelector(selectUnreadCount);
-  const loading = useReplykeSelector(selectAppNotificationsLoading);
-  const hasMore = useReplykeSelector(selectAppNotificationsHasMore);
-  const currentPage = useReplykeSelector(selectAppNotificationsPage);
-  const currentProjectId = useReplykeSelector(selectCurrentProjectId);
+  const appNotifications = useSublaySelector(selectAppNotifications);
+  const unreadAppNotificationsCount = useSublaySelector(selectUnreadCount);
+  const loading = useSublaySelector(selectAppNotificationsLoading);
+  const hasMore = useSublaySelector(selectAppNotificationsHasMore);
+  const currentPage = useSublaySelector(selectAppNotificationsPage);
+  const currentProjectId = useSublaySelector(selectCurrentProjectId);
 
   // Get actions (templates are applied at display time, not fetch time)
   const {

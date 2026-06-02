@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
 import {
   useProject,
-  useReplykeDispatch,
-  useReplykeSelector,
+  useSublayDispatch,
+  useSublaySelector,
   setTokens,
   setInitialized,
   selectAccessToken,
   requestNewAccessTokenThunk,
-} from "@replyke/core";
+} from "@sublay/core";
 
-const BASE_URL = "https://api.replyke.com/v7";
+const BASE_URL = "https://api.sublay.io/v7";
 
 export interface UseOAuthSignInReturn {
   /** Initiate OAuth sign-in / sign-up (unauthenticated). */
@@ -39,8 +39,8 @@ export interface UseOAuthSignInReturn {
  */
 function useOAuthSignIn(): UseOAuthSignInReturn {
   const { projectId } = useProject();
-  const dispatch = useReplykeDispatch();
-  const accessToken = useReplykeSelector(selectAccessToken);
+  const dispatch = useSublayDispatch();
+  const accessToken = useSublaySelector(selectAccessToken);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

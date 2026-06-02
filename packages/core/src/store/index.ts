@@ -36,7 +36,7 @@ export const store = configureStore({
         ignoredPaths: [
           'items.dates',
           // RTK Query state paths that may contain functions/metadata
-          'replykeApi',
+          'sublayApi',
           'appNotificationsApi',
         ],
       },
@@ -54,7 +54,7 @@ export const store = configureStore({
 export type { RootState, AppDispatch, AppStore, AppThunk } from "./types";
 
 // Export store for provider
-export { store as replykeStore };
+export { store as sublayStore };
 
 // Export for advanced users who need direct access
 export { rootReducer } from "./rootReducer";

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../../store/hooks";
+import { useSublayDispatch } from "../../../store/hooks";
 import { removeMessage } from "../../../store/slices/chatSlice";
 import useAxiosPrivate from "../../../config/useAxiosPrivate";
 import useProject from "../../projects/useProject";
@@ -11,7 +11,7 @@ export interface DeleteMessageParams {
 }
 
 function useDeleteMessage(): (params: DeleteMessageParams) => Promise<void> {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 

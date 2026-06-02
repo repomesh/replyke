@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   loadMore as loadMoreAction,
   resetNotifications,
@@ -39,12 +39,12 @@ export interface UseAppNotificationsActionsValues {
  * This ensures templates are always fresh and avoids race conditions.
  */
 export function useAppNotificationsActions(): UseAppNotificationsActionsValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get current state for actions
-  const projectIdFromSlice = useReplykeSelector(selectCurrentProjectId);
-  const page = useReplykeSelector(selectAppNotificationsPage);
-  const limit = useReplykeSelector(selectAppNotificationsLimit);
+  const projectIdFromSlice = useSublaySelector(selectCurrentProjectId);
+  const page = useSublaySelector(selectAppNotificationsPage);
+  const limit = useSublaySelector(selectAppNotificationsLimit);
 
   // Get project and user context (fallback to current hooks)
   const { projectId: projectIdFromHook } = useProject();

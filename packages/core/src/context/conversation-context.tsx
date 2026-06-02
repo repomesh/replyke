@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { useChatContext } from "./chat-context";
-import { useReplykeDispatch, useReplykeSelector } from "../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../store/hooks";
 import { selectNewestMessageId } from "../store/slices/chatSlice";
 import useConversationData, {
   UseConversationDataValues,
@@ -48,7 +48,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
   onDeleted,
   children,
 }) => {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
@@ -56,7 +56,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
     useChatContext();
 
   // Read the newest message id from Redux for reconnect catch-up
-  const newestMessageId = useReplykeSelector(
+  const newestMessageId = useSublaySelector(
     selectNewestMessageId(conversationId),
   );
   const newestMessageIdRef = useRef(newestMessageId);
@@ -85,8 +85,8 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({
 
   // Keep a ref to the messages state so socket handlers can find latest messages
   const messagesRef = useRef<ChatMessage[]>([]);
-  const reduxMessages = useReplykeSelector(
-    (state: any) => state.replyke.chat.messages[conversationId]?.items ?? [],
+  const reduxMessages = useSublaySelector(
+    (state: any) => state.sublay.chat.messages[conversationId]?.items ?? [],
   );
   useEffect(() => {
     messagesRef.current = reduxMessages;

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../store/hooks";
 import {
   setLoading,
   openCollection,
@@ -48,11 +48,11 @@ export interface UseCollectionsActionsValues {
  * This replaces the individual hooks and provides a centralized way to manage collections
  */
 export function useCollectionsActions(): UseCollectionsActionsValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Use a ref so removeFromCollection can read the latest entities without being in deps
-  const entitiesByCollectionId = useReplykeSelector(
-    (state) => state.replyke.collections.entitiesByCollectionId
+  const entitiesByCollectionId = useSublaySelector(
+    (state) => state.sublay.collections.entitiesByCollectionId
   );
   const entitiesByCollectionIdRef = useRef(entitiesByCollectionId);
   entitiesByCollectionIdRef.current = entitiesByCollectionId;

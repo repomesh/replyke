@@ -5,34 +5,34 @@
  * ```typescript
  * import { configureStore } from '@reduxjs/toolkit';
  * import {
- *   replykeReducers,
- *   replykeApiReducer,
- *   replykeMiddleware
- * } from '@replyke/react-js';
+ *   sublayReducers,
+ *   sublayApiReducer,
+ *   sublayMiddleware
+ * } from '@sublay/react-js';
  *
  * const store = configureStore({
  *   reducer: {
- *     replyke: replykeReducers,
- *     replykeApi: replykeApiReducer,
+ *     sublay: sublayReducers,
+ *     sublayApi: sublayApiReducer,
  *     ...yourReducers
  *   },
- *   middleware: (getDefault) => getDefault().concat(...replykeMiddleware)
+ *   middleware: (getDefault) => getDefault().concat(...sublayMiddleware)
  * });
  * ```
  */
 
-// Feature reducers (combined under 'replyke' key)
-export { replykeReducers, type ReplykeState } from "./replykeReducers";
+// Feature reducers (combined under 'sublay' key)
+export { sublayReducers, type SublayState } from "./sublayReducers";
 
 // RTK Query API reducer and middleware
 export {
-  baseApi as replykeApi,
-  replykeApiReducer,
-  replykeApiMiddleware,
+  baseApi as sublayApi,
+  sublayApiReducer,
+  sublayApiMiddleware,
 } from "./api/baseApi";
 
 // Custom middleware (error handling, logging)
-export { customMiddleware as replykeCustomMiddleware } from "./middleware";
+export { customMiddleware as sublayCustomMiddleware } from "./middleware";
 
 // Import for combined middleware array
 import { baseApi } from "./api/baseApi";
@@ -44,10 +44,10 @@ import { customMiddleware } from "./middleware";
  *
  * @example
  * ```typescript
- * middleware: (getDefault) => getDefault().concat(...replykeMiddleware)
+ * middleware: (getDefault) => getDefault().concat(...sublayMiddleware)
  * ```
  */
-export const replykeMiddleware = [
+export const sublayMiddleware = [
   baseApi.middleware,
   ...customMiddleware,
 ];

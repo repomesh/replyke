@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../../../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../../../store/hooks";
 import {
   selectMessages,
   selectMessagesLoading,
@@ -38,22 +38,22 @@ function useChatMessages({
   limit = 50,
   includeFiles,
 }: UseChatMessagesProps): UseChatMessagesValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
   const axios = useAxiosPrivate();
 
   const isThread = Boolean(parentId);
 
   // Read from the correct Redux bucket
-  const mainMessages = useReplykeSelector(selectMessages(conversationId));
-  const mainLoading = useReplykeSelector(selectMessagesLoading(conversationId));
-  const mainHasMore = useReplykeSelector(selectMessagesHasMore(conversationId));
+  const mainMessages = useSublaySelector(selectMessages(conversationId));
+  const mainLoading = useSublaySelector(selectMessagesLoading(conversationId));
+  const mainHasMore = useSublaySelector(selectMessagesHasMore(conversationId));
 
-  const threadMessages = useReplykeSelector(
+  const threadMessages = useSublaySelector(
     selectThreadReplies(parentId ?? "")
   );
-  const threadLoading = useReplykeSelector(selectThreadLoading(parentId ?? ""));
-  const threadHasMore = useReplykeSelector(
+  const threadLoading = useSublaySelector(selectThreadLoading(parentId ?? ""));
+  const threadHasMore = useSublaySelector(
     selectThreadHasMore(parentId ?? "")
   );
 

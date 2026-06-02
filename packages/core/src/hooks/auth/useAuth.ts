@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useReplykeDispatch, useReplykeSelector } from '../../store/hooks';
+import { useSublayDispatch, useSublaySelector } from '../../store/hooks';
 import {
   selectAccessToken,
   selectRefreshToken,
@@ -59,13 +59,13 @@ export interface UseAuthValues {
 }
 
 export default function useAuth(): UseAuthValues {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
   const { projectId } = useProject();
 
   // Selectors
-  const initialized = useReplykeSelector(selectInitialized);
-  const accessToken = useReplykeSelector(selectAccessToken);
-  const refreshToken = useReplykeSelector(selectRefreshToken);
+  const initialized = useSublaySelector(selectInitialized);
+  const accessToken = useSublaySelector(selectAccessToken);
+  const refreshToken = useSublaySelector(selectRefreshToken);
 
   // Actions
   const handleSignUpWithEmailAndPassword = useCallback(

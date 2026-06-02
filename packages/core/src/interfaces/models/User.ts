@@ -22,7 +22,7 @@ export type UserFull = {
   } | null; // Optional location stored as GeoJSON
   metadata: Record<string, any>; // JSON object that could contain any other data about the user which is relevant to the project. Limited to 10KB size.
   secureMetadata: Record<string, any>; // Same as metadata only it is excluded when user is added to entity and comment data
-  reputation: number; // Automatically managed by replyke based on usr activity
+  reputation: number; // Automatically managed by sublay based on usr activity
   isVerified: boolean; // Whether the user is verified
   isActive: boolean; // Whether the user account is active
   lastActive: Date; // Timestamp for last activity

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useReplykeDispatch } from "../../store/hooks";
+import { useSublayDispatch } from "../../store/hooks";
 import {
   setSpaceListLoading,
   setSpaceListSpaces,
@@ -54,7 +54,7 @@ export interface DeleteSpaceOptions {
 }
 
 export function useSpaceListActions() {
-  const dispatch = useReplykeDispatch();
+  const dispatch = useSublayDispatch();
 
   // Get project context
   const { projectId } = useProject();

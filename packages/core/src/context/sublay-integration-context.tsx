@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { useReplykeDispatch, useReplykeSelector } from "../store/hooks";
+import { useSublayDispatch, useSublaySelector } from "../store/hooks";
 import { initializeAuthThunk } from "../store/slices/authThunks";
 import {
   selectAccountsReady,
   selectAccountManagerRegistered,
 } from "../store/slices/accountsSlice";
 import { selectInitialized } from "../store/slices/authSlice";
-import { ReplykeContext } from "./replyke-context";
+import { SublayContext } from "./sublay-context";
 import useProjectData from "../hooks/projects/useProjectData";
 
-export interface ReplykeIntegrationProviderProps {
+export interface SublayIntegrationProviderProps {
   children: ReactNode;
   projectId: string;
   signedToken?: string | null;
@@ -25,10 +25,10 @@ const AuthInitializer: React.FC<{
   projectId: string;
   signedToken?: string | null;
 }> = ({ children, projectId, signedToken }) => {
-  const dispatch = useReplykeDispatch();
-  const accountsReady = useReplykeSelector(selectAccountsReady);
-  const accountManagerRegistered = useReplykeSelector(selectAccountManagerRegistered);
-  const initialized = useReplykeSelector(selectInitialized);
+  const dispatch = useSublayDispatch();
+  const accountsReady = useSublaySelector(selectAccountsReady);
+  const accountManagerRegistered = useSublaySelector(selectAccountManagerRegistered);
+  const initialized = useSublaySelector(selectInitialized);
   const [hasWaitedForManager, setHasWaitedForManager] = useState(false);
 
   // Give AccountManager one microtask to register itself
@@ -54,49 +54,49 @@ const AuthInitializer: React.FC<{
 };
 
 /**
- * Integration provider for Replyke (Integration Mode).
+ * Integration provider for Sublay (Integration Mode).
  *
  * Use this when you HAVE your own Redux store and want to integrate
- * Replyke's reducers into it. This provider does NOT create a Redux store -
+ * Sublay's reducers into it. This provider does NOT create a Redux store -
  * you must wrap your app with your own Redux Provider.
  *
  * Prerequisites:
- * 1. Add replykeReducers under the 'replyke' key in your store
- * 2. Add replykeApiReducer under the 'replykeApi' key
- * 3. Add replykeMiddleware to your middleware chain
+ * 1. Add sublayReducers under the 'sublay' key in your store
+ * 2. Add sublayApiReducer under the 'sublayApi' key
+ * 3. Add sublayMiddleware to your middleware chain
  *
  * @example
  * ```tsx
  * import { configureStore } from '@reduxjs/toolkit';
  * import { Provider } from 'react-redux';
  * import {
- *   ReplykeIntegrationProvider,
- *   replykeReducers,
- *   replykeApiReducer,
- *   replykeMiddleware
- * } from '@replyke/react-js';
+ *   SublayIntegrationProvider,
+ *   sublayReducers,
+ *   sublayApiReducer,
+ *   sublayMiddleware
+ * } from '@sublay/react-js';
  *
  * const store = configureStore({
  *   reducer: {
- *     replyke: replykeReducers,
- *     replykeApi: replykeApiReducer,
+ *     sublay: sublayReducers,
+ *     sublayApi: sublayApiReducer,
  *     ...yourReducers
  *   },
- *   middleware: (getDefault) => getDefault().concat(...replykeMiddleware)
+ *   middleware: (getDefault) => getDefault().concat(...sublayMiddleware)
  * });
  *
  * function App() {
  *   return (
  *     <Provider store={store}>
- *       <ReplykeIntegrationProvider projectId="..." signedToken={token}>
+ *       <SublayIntegrationProvider projectId="..." signedToken={token}>
  *         <YourApp />
- *       </ReplykeIntegrationProvider>
+ *       </SublayIntegrationProvider>
  *     </Provider>
  *   );
  * }
  * ```
  */
-export const ReplykeIntegrationProvider: React.FC<ReplykeIntegrationProviderProps> = ({
+export const SublayIntegrationProvider: React.FC<SublayIntegrationProviderProps> = ({
   children,
   projectId,
   signedToken,
@@ -106,12 +106,12 @@ export const ReplykeIntegrationProvider: React.FC<ReplykeIntegrationProviderProp
 
   // No Redux Provider here - user provides their own
   return (
-    <ReplykeContext.Provider value={data}>
+    <SublayContext.Provider value={data}>
       <AuthInitializer projectId={projectId} signedToken={signedToken}>
         {children}
       </AuthInitializer>
-    </ReplykeContext.Provider>
+    </SublayContext.Provider>
   );
 };
 
-export default ReplykeIntegrationProvider;
+export default SublayIntegrationProvider;

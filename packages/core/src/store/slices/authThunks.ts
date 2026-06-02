@@ -238,9 +238,9 @@ export const signOutThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.replyke.auth.refreshToken;
-    const activeAccountId = state.replyke.accounts.activeAccountId;
-    const accounts = state.replyke.accounts.accounts;
+    const refreshToken = state.sublay.auth.refreshToken;
+    const activeAccountId = state.sublay.accounts.activeAccountId;
+    const accounts = state.sublay.accounts.accounts;
 
     if (!refreshToken) {
       throw new Error("No refresh token");
@@ -307,7 +307,7 @@ export const requestNewAccessTokenThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const refreshToken = state.replyke.auth.refreshToken;
+    const refreshToken = state.sublay.auth.refreshToken;
 
     if (!refreshToken) {
       return;
@@ -377,7 +377,7 @@ export const changePasswordThunk = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
 
-    if (!state.replyke.auth.user) {
+    if (!state.sublay.auth.user) {
       throw new Error("No user is authenticated");
     }
 
@@ -405,7 +405,7 @@ export const signOutAllThunk = createAsyncThunk(
     { dispatch, getState, rejectWithValue }
   ) => {
     const state = getState() as RootState;
-    const accounts = state.replyke.accounts.accounts;
+    const accounts = state.sublay.accounts.accounts;
 
     try {
       dispatch(setAuthenticating(true));
