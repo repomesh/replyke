@@ -5,6 +5,9 @@ import { SublayProvider as OriginalSublayProvider } from "@sublay/core";
 export * from "@sublay/core";
 import AccountManager from "./AccountManager";
 
+// Expo-specific OAuth hook (system browser + deep-link return)
+export { default as useOAuthSignIn, type UseOAuthSignInReturn } from "./hooks/useOAuthSignIn";
+
 // Override SublayProvider
 export const SublayProvider: React.FC<{
   projectId: string;
