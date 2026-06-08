@@ -126,7 +126,7 @@ export function handleOAuthRedirect({
   params,
 }: {
   dispatch: AppDispatch;
-  projectId: string | null;
+  projectId: string | null | undefined;
   url?: string;
   params?: OAuthRedirectParams;
 }): HandleOAuthRedirectResult {
