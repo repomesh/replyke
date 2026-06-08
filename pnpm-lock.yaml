@@ -47,7 +47,7 @@ importers:
     devDependencies:
       '@reduxjs/toolkit':
         specifier: ^2.0.1
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
+        version: 2.11.2(react-redux@9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
@@ -77,7 +77,7 @@ importers:
         version: 15.8.1
       react-redux:
         specifier: ^9.0.4
-        version: 9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1)
+        version: 9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1)
       vite:
         specifier: ^4.3.9
         version: 4.5.14(@types/node@20.19.27)(lightningcss@1.30.2)(terser@5.44.1)
@@ -109,9 +109,15 @@ importers:
         specifier: ^9.0.0
         version: 9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1)
     devDependencies:
+      expo-linking:
+        specifier: ^8.0.12
+        version: 8.0.12(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
       expo-secure-store:
         specifier: ^15.0.7
         version: 15.0.8(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))
+      expo-web-browser:
+        specifier: ^15.0.11
+        version: 15.0.11(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))
 
   packages/react-js:
     dependencies:
@@ -1204,24 +1210,28 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@swc/core-linux-arm64-musl@1.15.8':
     resolution: {integrity: sha512-koiCqL09EwOP1S2RShCI7NbsQuG6r2brTqUYE7pV7kZm9O17wZ0LSz22m6gVibpwEnw8jI3IE1yYsQTVpluALw==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@swc/core-linux-x64-gnu@1.15.8':
     resolution: {integrity: sha512-4p6lOMU3bC+Vd5ARtKJ/FxpIC5G8v3XLoPEZ5s7mLR8h7411HWC/LmTXDHcrSXRC55zvAVia1eldy6zDLz8iFQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@swc/core-linux-x64-musl@1.15.8':
     resolution: {integrity: sha512-z3XBnbrZAL+6xDGAhJoN4lOueIxC/8rGrJ9tg+fEaeqLEuAtHSW2QHDHxDwkxZMjuF/pZ6MUTjHjbp8wLbuRLA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@swc/core-win32-arm64-msvc@1.15.8':
     resolution: {integrity: sha512-djQPJ9Rh9vP8GTS/Df3hcc6XP6xnG5c8qsngWId/BLA9oX6C7UzCPAn74BG/wGb9a6j4w3RINuoaieJB3t+7iQ==}
@@ -1307,9 +1317,6 @@ packages:
   '@types/react@18.3.28':
     resolution: {integrity: sha512-z9VXpC7MWrhfWipitjNdgCauoMLRdIILQsAEV+ZesIzBq/oUlxk0m3ApZuMFCXdnS4U7KrI+l3WRUEGQ8K1QKw==}
 
-  '@types/react@19.2.7':
-    resolution: {integrity: sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg==}
-
   '@types/semver@7.7.1':
     resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
@@ -1385,6 +1392,7 @@ packages:
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
 
   '@urql/core@5.2.0':
     resolution: {integrity: sha512-/n0ieD0mvvDnVAXEQgX/7qJiVcvYvNkOHeBvkwtylfjydar123caCXcl58PXFY11oU1oquJocVXHxLAbtv4x1A==}
@@ -1402,6 +1410,7 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -2028,6 +2037,12 @@ packages:
       expo: '*'
       react-native: '*'
 
+  expo-constants@18.0.13:
+    resolution: {integrity: sha512-FnZn12E1dRYKDHlAdIyNFhBurKTS3F9CrfrBDJI5m3D7U17KBHMQ6JEfYlSj7LG7t+Ulr+IKaj58L1k5gBwTcQ==}
+    peerDependencies:
+      expo: '*'
+      react-native: '*'
+
   expo-file-system@19.0.21:
     resolution: {integrity: sha512-s3DlrDdiscBHtab/6W1osrjGL+C2bvoInPJD7sOwmxfJ5Woynv2oc+Fz1/xVXaE/V7HE/+xrHC/H45tu6lZzzg==}
     peerDependencies:
@@ -2047,6 +2062,12 @@ packages:
       expo: '*'
       react: '*'
 
+  expo-linking@8.0.12:
+    resolution: {integrity: sha512-FpXeIpFgZuxihwT9lBo86YD3y6LphBuAhN680MMxm/Y7fmsc57vimn2d3vFu68VI0+Z9w457t494mu2wvlgWTQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   expo-modules-autolinking@3.0.23:
     resolution: {integrity: sha512-YZnaE0G+52xftjH5nsIRaWsoVBY38SQCECclpdgLisdbRY/6Mzo7ndokjauOv3mpFmzMZACHyJNu1YSAffQwTg==}
     hasBin: true
@@ -2065,6 +2086,12 @@ packages:
   expo-server@1.0.5:
     resolution: {integrity: sha512-IGR++flYH70rhLyeXF0Phle56/k4cee87WeQ4mamS+MkVAVP+dDlOHf2nN06Z9Y2KhU0Gp1k+y61KkghF7HdhA==}
     engines: {node: '>=20.16.0'}
+
+  expo-web-browser@15.0.11:
+    resolution: {integrity: sha512-r2LS4Ro6DgUPZkcaEfgt8mp9eJuoA93x11Jh7S6utFe0FEzvUNn2yFhxg8XVwESaaHGt2k5V8LuK36rsp0BeIw==}
+    peerDependencies:
+      expo: '*'
+      react-native: '*'
 
   expo@54.0.30:
     resolution: {integrity: sha512-6q+aFfKL0SpT8prfdpR3V8HcN51ov0mCGuwQTzyuk6eeO9rg7a7LWbgPv9rEVXGZEuyULstL8LGNwHqusand7Q==}
@@ -2549,24 +2576,28 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.30.2:
     resolution: {integrity: sha512-5Vh9dGeblpTxWHpOx8iauV02popZDsCYMPIgiuw97OJ5uaDsL86cnqSFs5LZkG3ghHoX5isLgWzMs+eD1YzrnA==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.30.2:
     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.30.2:
     resolution: {integrity: sha512-XJaLUUFXb6/QG2lGIW6aIk6jKdtjtcffUT0NKvIqhSBY3hh9Ch+1LCeH80dR9q9LBjG3ewbDjnumefsLsP6aiA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.30.2:
     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
@@ -3575,6 +3606,7 @@ packages:
 
   uuid@7.0.3:
     resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   validate-npm-package-name@5.0.1:
@@ -5075,18 +5107,6 @@ snapshots:
       react: 19.2.3
       react-redux: 9.2.0(@types/react@18.3.28)(react@19.2.3)(redux@5.0.1)
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@standard-schema/utils': 0.3.0
-      immer: 11.1.3
-      redux: 5.0.1
-      redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
-    optionalDependencies:
-      react: 19.2.3
-      react-redux: 9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1)
-
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
   '@rollup/pluginutils@5.3.0(rollup@3.29.5)':
@@ -5278,11 +5298,6 @@ snapshots:
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
-
-  '@types/react@19.2.7':
-    dependencies:
-      csstype: 3.2.3
-    optional: true
 
   '@types/semver@7.7.1': {}
 
@@ -6095,6 +6110,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  expo-constants@18.0.13(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)):
+    dependencies:
+      '@expo/config': 12.0.13
+      '@expo/env': 2.0.8
+      expo: 54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
+      react-native: 0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)
+    transitivePeerDependencies:
+      - supports-color
+
   expo-file-system@19.0.21(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)):
     dependencies:
       expo: 54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
@@ -6111,6 +6135,16 @@ snapshots:
     dependencies:
       expo: 54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
       react: 19.2.3
+
+  expo-linking@8.0.12(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3):
+    dependencies:
+      expo-constants: 18.0.13(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))
+      invariant: 2.2.4
+      react: 19.2.3
+      react-native: 0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   expo-modules-autolinking@3.0.23:
     dependencies:
@@ -6131,6 +6165,11 @@ snapshots:
       expo: 54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
 
   expo-server@1.0.5: {}
+
+  expo-web-browser@15.0.11(expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3))(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)):
+    dependencies:
+      expo: 54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3)
+      react-native: 0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3)
 
   expo@54.0.30(@babel/core@7.28.5)(react-native@0.79.7(@babel/core@7.28.5)(@types/react@18.3.28)(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -7471,15 +7510,6 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.2.3)
     optionalDependencies:
       '@types/react': 18.3.28
-      redux: 5.0.1
-
-  react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1):
-    dependencies:
-      '@types/use-sync-external-store': 0.0.6
-      react: 19.2.3
-      use-sync-external-store: 1.6.0(react@19.2.3)
-    optionalDependencies:
-      '@types/react': 19.2.7
       redux: 5.0.1
 
   react-refresh@0.14.2: {}

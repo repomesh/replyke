@@ -88,6 +88,16 @@ export {
   type UseOAuthIdentitiesReturn,
 } from "./hooks/auth";
 
+// -- authentication (OAuth shared helpers — consumed by platform hooks)
+export {
+  OAUTH_BASE_URL,
+  requestOAuthAuthorizationUrl,
+  parseOAuthRedirectUrl,
+  handleOAuthRedirect,
+  type OAuthRedirectParams,
+  type HandleOAuthRedirectResult,
+} from "./hooks/auth/oauthCore";
+
 // -- store internals (for platform-specific hooks in react-js / react-native)
 export { useSublayDispatch, useSublaySelector } from "./store/hooks";
 export {
