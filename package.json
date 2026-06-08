@@ -32,12 +32,12 @@
     "version:patch": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version patch --no-git-tag-version",
     "version:minor": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version minor --no-git-tag-version",
     "build-all": "pnpm --filter @sublay/core run build && pnpm --filter @sublay/react-js run build && pnpm --filter @sublay/react-native run build && pnpm --filter @sublay/expo run build",
-    "publish-prod": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish",
-    "publish-beta": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish --tag beta",
-    "publish-prod:patch": "pnpm version:patch && pnpm build-all && pnpm publish-prod",
-    "publish-prod:minor": "pnpm version:minor && pnpm build-all && pnpm publish-prod",
-    "publish-beta:patch": "pnpm version:patch && pnpm build-all && pnpm publish-beta",
-    "publish-beta:minor": "pnpm version:minor && pnpm build-all && pnpm publish-beta"
+    "publish-prod": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish",
+    "publish-beta": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish --tag beta",
+    "publish-prod:patch": "pnpm version:patch && pnpm publish-prod",
+    "publish-prod:minor": "pnpm version:minor && pnpm publish-prod",
+    "publish-beta:patch": "pnpm version:patch && pnpm publish-beta",
+    "publish-beta:minor": "pnpm version:minor && pnpm publish-beta"
   },
   "devDependencies": {
     "@types/node": "^20.14.5",
