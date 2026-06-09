@@ -1,6 +1,6 @@
 {
   "name": "@sublay/monorepo",
-  "version": "7.0.3",
+  "version": "7.1.1",
   "license": "Apache-2.0",
   "author": "Sublay, maintained by Yanay Tsabary",
   "description": "Sublay: Build interactive apps with social features like comments, votes, feeds, user lists, notifications, and more.",
@@ -29,11 +29,11 @@
   "private": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "version:patch": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version patch --no-git-tag-version",
-    "version:minor": "pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version minor --no-git-tag-version",
+    "version:patch": "pnpm --filter @sublay/monorepo --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version patch --no-git-tag-version --no-git-checks",
+    "version:minor": "pnpm --filter @sublay/monorepo --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native version minor --no-git-tag-version --no-git-checks",
     "build-all": "pnpm --filter @sublay/core run build && pnpm --filter @sublay/react-js run build && pnpm --filter @sublay/react-native run build && pnpm --filter @sublay/expo run build",
-    "publish-prod": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish",
-    "publish-beta": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish --tag beta",
+    "publish-prod": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish --no-git-checks",
+    "publish-beta": "pnpm build-all && pnpm --filter @sublay/core --filter @sublay/expo --filter @sublay/react-js --filter @sublay/react-native publish --tag beta --no-git-checks",
     "publish-prod:patch": "pnpm version:patch && pnpm publish-prod",
     "publish-prod:minor": "pnpm version:minor && pnpm publish-prod",
     "publish-beta:patch": "pnpm version:patch && pnpm publish-beta",
