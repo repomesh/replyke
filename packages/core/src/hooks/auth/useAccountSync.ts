@@ -150,7 +150,14 @@ export default function useAccountSync(
 
   // Phase D: Cross-tab sync (web only)
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    // React Native exposes a partial `window` global without the DOM event API,
+    // so `typeof window === "undefined"` passes there and then crashes on
+    // window.addEventListener. Require the listener API to actually exist.
+    if (
+      typeof window === "undefined" ||
+      typeof window.addEventListener !== "function"
+    )
+      return;
 
     const storageKey = `sublay-accounts:${projectId}`;
 
