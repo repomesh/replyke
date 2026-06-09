@@ -13,7 +13,7 @@ import {
   type AccountSummary,
   type AccountEntry,
 } from "../../store/slices/accountsSlice";
-import { selectRefreshToken, setRefreshToken, selectAccessToken } from "../../store/slices/authSlice";
+import { selectRefreshToken, setRefreshToken } from "../../store/slices/authSlice";
 import { selectUser } from "../../store/slices/userSlice";
 import { handleError } from "../../utils/handleError";
 import type { AccountStorage } from "../../interfaces/AccountStorage";
@@ -37,8 +37,8 @@ function extractExpFromJwt(jwt: string): number {
   }
 }
 
-// The access token's subject (the profile/user id it was minted for). Used to detect a transient
-// token/user desync before we persist an account entry.
+// A JWT's `sub` claim — the user id it was minted for. Used to detect a transient token/user
+// desync before we persist an account entry.
 function extractSubFromJwt(jwt: string | null | undefined): string | null {
   if (!jwt) return null;
   try {
@@ -55,7 +55,6 @@ export default function useAccountSync(
 ): void {
   const dispatch = useSublayDispatch();
   const refreshToken = useSublaySelector(selectRefreshToken);
-  const accessToken = useSublaySelector(selectAccessToken);
   const user = useSublaySelector(selectUser); // from userSlice (canonical)
   const accounts = useSublaySelector(selectAccounts);
   const activeAccountId = useSublaySelector(selectActiveAccountId);
@@ -101,15 +100,19 @@ export default function useAccountSync(
   useEffect(() => {
     if (!isReady || !refreshToken || !user?.id) return;
 
-    // Guard against a transient token/user desync. The accounts map keys by user.id but stores the
-    // CURRENT auth refresh token, so if these are momentarily mismatched (classically: an OAuth
-    // callback sets the new tokens via setTokens, but the new user only resolves a tick later, so
-    // this effect fires with the new token while `user` is still the previous account) we'd write
-    // the OLD user's entry against the NEW token — producing two account ids that share one refresh
-    // token (a corrupt map that breaks switching and sign-out). The access token is a JWT whose
-    // `sub` is the id it was minted for; only persist once it matches the current user. When they
-    // disagree we skip and wait — the effect re-runs when the user (or token) catches up.
-    const sub = extractSubFromJwt(accessToken);
+    // Guard against a transient token/user desync. The accounts map keys by user.id but the entry
+    // stores the CURRENT refresh token, so if the two are momentarily mismatched we'd persist the
+    // wrong pairing — two account ids sharing one refresh token, a corrupt map that breaks switching
+    // and sign-out. Two flows cause this: (1) an OAuth callback sets the new tokens via setTokens
+    // while `user` only resolves a tick later, and (2) cross-tab sync (Phase D) swaps in another
+    // account's refresh token while this tab's `user` is still the previous account.
+    //
+    // The refresh token is itself a JWT whose `sub` is the id it was minted for — and it's the
+    // credential we're about to store — so validate ITS sub against the current user (the access
+    // token can be staler than the refresh token, e.g. case 2, so it isn't a reliable signal here).
+    // Only persist once they agree; otherwise skip and wait — the effect re-runs (deps: refreshToken,
+    // user) when they catch up.
+    const sub = extractSubFromJwt(refreshToken);
     if (sub && sub !== user.id) return;
 
     const summary: AccountSummary = {
@@ -130,7 +133,7 @@ export default function useAccountSync(
     if (user.id !== activeAccountId) {
       dispatch(setActiveAccount(user.id));
     }
-  }, [refreshToken, accessToken, user, isReady]);
+  }, [refreshToken, user, isReady]);
 
   // Phase C: Persist map on changes
   useEffect(() => {
