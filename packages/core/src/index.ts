@@ -192,6 +192,13 @@ export {
   type EntityListFetchOptions,
 } from "./hooks/entity-lists";
 
+// -- custom tables
+export {
+  useTable,
+  type UseTableOptions,
+  type UseTableValues,
+} from "./hooks/tables";
+
 // -- spaces
 export {
   useSpace,
@@ -491,6 +498,12 @@ export type {
   EntityIncludeParam,
 } from "./interfaces/models/Entity";
 export type { Collection } from "./interfaces/models/Collection";
+export type {
+  TableRow,
+  TableQuery,
+  DbFilter,
+  DbFilterOperator,
+} from "./interfaces/models/Table";
 export type {
   Comment,
   GifData,
