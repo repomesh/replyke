@@ -45,6 +45,7 @@ export const baseApi = createApi({
     'Entity',
     'Space',
     'SpaceMember',
+    'TableRow',
     // Future tag types:
     // 'Comment',
   ],
