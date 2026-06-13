@@ -1,6 +1,7 @@
 import { File } from "./File";
 import { ChatMessage } from "./ChatMessage";
 import { ConversationMember } from "./ConversationMember";
+import { User } from "./User";
 
 export interface Conversation {
   id: string;
@@ -29,4 +30,10 @@ export interface ConversationPreview extends Conversation {
   unreadCount: number;
   // Truncated to 100 chars by the server for list performance
   lastMessage: ChatMessage | null;
+  // Up to 5 active members other than the requester, with public user fields
+  // (id, name, username, avatar). Populated for `direct` and `group`
+  // conversations only — a DM/group has no `name`, so the counterparty is how
+  // the list renders a title/avatar. Capped at 5 (use `memberCount` for the
+  // group total); empty array for `space` chats.
+  otherMembers?: Pick<User, "id" | "name" | "username" | "avatar">[];
 }
