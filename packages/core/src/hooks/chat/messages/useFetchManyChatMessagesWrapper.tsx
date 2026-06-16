@@ -20,6 +20,13 @@ export interface UseFetchManyChatMessagesWrapperProps {
   /** When `true`, the server populates the `files` field on each message. */
   includeFiles?: boolean;
   filters?: MessageFilters;
+  /**
+   * Opt into per-row `spaceReputation` on embedded message authors. Accepted
+   * forms: a space `<uuid>`, `"none"`, or `"context"`.
+   */
+  spaceReputationId?: string;
+  /** Only honored with an explicit `<uuid>` `spaceReputationId`. */
+  spaceReputationDescendants?: boolean;
 }
 
 export interface UseFetchManyChatMessagesWrapperValues {
@@ -48,6 +55,8 @@ function useFetchManyChatMessagesWrapper(
     sort = "desc",
     includeFiles,
     filters,
+    spaceReputationId,
+    spaceReputationDescendants,
   } = props;
 
   const fetchMany = useFetchManyChatMessages();
@@ -87,6 +96,8 @@ function useFetchManyChatMessagesWrapper(
         sort,
         includeFiles,
         filters,
+        spaceReputationId,
+        spaceReputationDescendants,
       });
       setMessages(res.messages);
       hasMoreRef.current = res.hasMore;
@@ -99,7 +110,7 @@ function useFetchManyChatMessagesWrapper(
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchMany, conversationId, parentId, limit, sort, includeFiles, filtersKey, advanceCursor]);
+  }, [fetchMany, conversationId, parentId, limit, sort, includeFiles, filtersKey, spaceReputationId, spaceReputationDescendants, advanceCursor]);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMoreRef.current || !cursorRef.current) return;
@@ -113,6 +124,8 @@ function useFetchManyChatMessagesWrapper(
         sort,
         includeFiles,
         filters,
+        spaceReputationId,
+        spaceReputationDescendants,
         ...(sort === "asc"
           ? { after: cursorRef.current }
           : { before: cursorRef.current }),
@@ -128,7 +141,7 @@ function useFetchManyChatMessagesWrapper(
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchMany, conversationId, parentId, limit, sort, includeFiles, filtersKey, advanceCursor]);
+  }, [fetchMany, conversationId, parentId, limit, sort, includeFiles, filtersKey, spaceReputationId, spaceReputationDescendants, advanceCursor]);
 
   useEffect(() => {
     refetch();

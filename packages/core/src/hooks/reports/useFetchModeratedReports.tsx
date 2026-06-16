@@ -13,6 +13,13 @@ export interface FetchModeratedReportsParams {
   sortBy?: "new" | "old";
   page?: number;
   limit?: number;
+  /**
+   * Opt into per-row `spaceReputation` on embedded users. Accepted forms: a
+   * space `<uuid>`, `"none"`, or `"context"`.
+   */
+  spaceReputationId?: string;
+  /** Only honored with an explicit `<uuid>` `spaceReputationId`. */
+  spaceReputationDescendants?: boolean;
 }
 
 export interface ReportUserReport {
@@ -75,14 +82,20 @@ function useFetchModeratedReports(): (params: FetchModeratedReportsParams) => Pr
       sortBy,
       page,
       limit,
+      spaceReputationId,
+      spaceReputationDescendants,
     }: FetchModeratedReportsParams) => {
       if (!projectId) {
         throw new Error("No projectId available.");
       }
 
+      const params: Record<string, any> = { spaceId, targetType, status, sortBy, page, limit };
+      if (spaceReputationId !== undefined) params.spaceReputationId = spaceReputationId;
+      if (spaceReputationDescendants !== undefined) params.spaceReputationDescendants = spaceReputationDescendants;
+
       const response = await axios.get<PaginatedResponse<Report>>(
         `/${projectId}/reports/moderated`,
-        { params: { spaceId, targetType, status, sortBy, page, limit } }
+        { params }
       );
 
       return response.data;
