@@ -26,6 +26,13 @@ export interface FetchManyChatMessagesProps {
   /** When `true`, the server populates the `files` field on each message. */
   includeFiles?: boolean;
   filters?: MessageFilters;
+  /**
+   * Opt into per-row `spaceReputation` on embedded users. Accepted forms: a
+   * space `<uuid>`, `"none"`, or `"context"`.
+   */
+  spaceReputationId?: string;
+  /** Only honored with an explicit `<uuid>` `spaceReputationId`. */
+  spaceReputationDescendants?: boolean;
 }
 
 export interface FetchManyChatMessagesResponse {
@@ -65,6 +72,8 @@ function useFetchManyChatMessages(): (
         sort,
         includeFiles,
         filters,
+        spaceReputationId,
+        spaceReputationDescendants,
       } = props;
 
       if (!projectId) throw new Error("No project specified");
@@ -77,6 +86,8 @@ function useFetchManyChatMessages(): (
       if (after) params.after = after;
       if (includeFiles) params.include = "files";
       if (filters) params.filters = filters;
+      if (spaceReputationId !== undefined) params.spaceReputationId = spaceReputationId;
+      if (spaceReputationDescendants !== undefined) params.spaceReputationDescendants = spaceReputationDescendants;
 
       const response = await axios.get<FetchManyChatMessagesResponse>(
         `/${projectId}/chat/conversations/${conversationId}/messages`,
