@@ -26,15 +26,15 @@ export interface ChatMessage {
   reactionCounts: Record<string, number>;
   // emojis the requesting user has reacted with on this message (computed server-side)
   userReactions: string[];
-  editedAt: Date | null;
-  userDeletedAt: Date | null;
+  editedAt: string | null;
+  userDeletedAt: string | null;
   moderationStatus: "approved" | "removed" | null;
-  moderatedAt: Date | null;
+  moderatedAt: string | null;
   moderatedById: string | null;
   moderatedByType: "client" | "user" | null;
   moderationReason: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 
   // Populated fields
   // null when userId is null (account deleted) — same pattern as Comment model
