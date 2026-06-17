@@ -73,7 +73,7 @@ function useSendMessage({
         reputationParams.spaceReputationDescendants = spaceReputationDescendants;
 
       const localId = crypto.randomUUID();
-      const now = new Date();
+      const now = new Date().toISOString();
 
       // Insert optimistic message immediately
       const optimisticMsg: ChatMessage = {

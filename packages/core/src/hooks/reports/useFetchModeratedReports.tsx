@@ -27,7 +27,7 @@ export interface ReportUserReport {
   userId: string;
   reason: string;
   details: string | null;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface Report {
@@ -42,9 +42,9 @@ export interface Report {
   actionTaken: string | null;
   target: Entity | Comment | null;
   space: Space | null;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
 /**
