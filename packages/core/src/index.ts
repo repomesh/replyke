@@ -20,6 +20,7 @@ export {
   SublayProvider,
   SublayIntegrationProvider,
   EntityProvider,
+  EventProvider,
   CommentSectionProvider,
   SpaceProvider,
   ChatProvider,
@@ -177,6 +178,48 @@ export {
   type UseFetchManyEntitiesWrapperValues,
   type UseIsEntitySavedValues,
 } from "./hooks/entities";
+
+// -- events
+export {
+  useEvent,
+  useEventData,
+  useCreateEvent,
+  useFetchEvent,
+  useFetchManyEvents,
+  useFetchManyEventsWrapper,
+  useUpdateEvent,
+  useDeleteEvent,
+  useCancelEvent,
+  useSetRsvp,
+  useWithdrawRsvp,
+  useAddHost,
+  useRemoveHost,
+  useAddInvite,
+  useRemoveInvite,
+  useFetchInvitees,
+  useFetchEventRsvps,
+  type UseEventDataProps,
+  type UseEventDataValues,
+  type CreateEventProps,
+  type FetchEventProps,
+  type FetchManyEventsProps,
+  type UseFetchManyEventsWrapperProps,
+  type UseFetchManyEventsWrapperValues,
+  type EventTitleFilters,
+  type EventDescriptionFilters,
+  type EventLocationFilters,
+  type UpdateEventProps,
+  type DeleteEventProps,
+  type CancelEventProps,
+  type SetRsvpProps,
+  type WithdrawRsvpProps,
+  type AddHostProps,
+  type RemoveHostProps,
+  type AddInviteProps,
+  type RemoveInviteProps,
+  type FetchInviteesProps,
+  type FetchEventRsvpsProps,
+} from "./hooks/events";
 
 // -- entity lists
 export {
@@ -499,6 +542,16 @@ export type {
   EntityIncludeArray,
   EntityIncludeParam,
 } from "./interfaces/models/Entity";
+export type {
+  Event,
+  EventRsvp,
+  EventInvite,
+  EventType,
+  EventVisibility,
+  EventStatus,
+  RsvpStatus,
+  RsvpCounts,
+} from "./interfaces/models/Event";
 export type { Collection } from "./interfaces/models/Collection";
 export type {
   TableRow,
