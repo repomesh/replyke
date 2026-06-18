@@ -13,20 +13,20 @@ interface RNFile {
   type?: string;
 }
 
-type UniversalFile = BrowserFile | RNFile;
+export type UniversalFile = BrowserFile | RNFile;
 
-function isBrowserFile(file: UniversalFile): file is BrowserFile {
+export function isBrowserFile(file: UniversalFile): file is BrowserFile {
   return typeof File !== "undefined" && file instanceof File;
 }
 
-// Single-image cover slot (Event.coverImageId).
-interface CoverUploadConfig {
+// Single-image cover slot (Event.coverImageId). Shared with useUpdateEvent.
+export interface CoverUploadConfig {
   file: UniversalFile;
   options?: UploadImageOptions;
 }
 
-// Multi-image gallery slot (Files with eventId + position).
-interface GalleryUploadConfig {
+// Multi-image gallery slot (Files with eventId + position). Shared with useUpdateEvent.
+export interface GalleryUploadConfig {
   files: UniversalFile[];
   options?: UploadImageOptions;
 }
