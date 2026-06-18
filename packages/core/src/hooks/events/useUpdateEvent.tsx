@@ -29,6 +29,12 @@ export interface UpdateEventProps {
     allowMaybe?: boolean;
     guestListVisible?: boolean;
     metadata?: Record<string, any>;
+    /**
+     * File IDs of existing event images to REMOVE (gallery photos and/or the
+     * current cover). Combine with `gallery` (append) + `cover` (replace) to
+     * fully curate the image set in one update.
+     */
+    removeImageIds?: string[];
   };
   /** New cover image (single) — REPLACES the existing cover. Sends multipart. */
   cover?: CoverUploadConfig;
@@ -71,6 +77,8 @@ function useUpdateEvent(): (props: UpdateEventProps) => Promise<Event> {
         if (u.guestListVisible !== undefined)
           formData.append("guestListVisible", u.guestListVisible.toString());
         if (u.metadata !== undefined) formData.append("metadata", JSON.stringify(u.metadata));
+        if (u.removeImageIds !== undefined)
+          formData.append("removeImageIds", JSON.stringify(u.removeImageIds));
 
         if (hasCover) {
           const file = cover!.file;
