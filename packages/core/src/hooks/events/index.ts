@@ -1,3 +1,10 @@
+export { default as useEvent } from "./useEvent";
+export { default as useEventData } from "./useEventData";
+export type {
+  UseEventDataProps,
+  UseEventDataValues,
+} from "./useEventData";
+
 export { default as useCreateEvent } from "./useCreateEvent";
 export type { CreateEventProps } from "./useCreateEvent";
 export { default as useFetchEvent } from "./useFetchEvent";
@@ -9,6 +16,11 @@ export type {
   EventDescriptionFilters,
   EventLocationFilters,
 } from "./useFetchManyEvents";
+export { default as useFetchManyEventsWrapper } from "./useFetchManyEventsWrapper";
+export type {
+  UseFetchManyEventsWrapperProps,
+  UseFetchManyEventsWrapperValues,
+} from "./useFetchManyEventsWrapper";
 export { default as useUpdateEvent } from "./useUpdateEvent";
 export type { UpdateEventProps } from "./useUpdateEvent";
 export { default as useDeleteEvent } from "./useDeleteEvent";

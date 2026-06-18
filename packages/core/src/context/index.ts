@@ -2,6 +2,7 @@ export { SublayProvider } from "./sublay-context";
 export { SublayStoreProvider } from "./sublay-store-context";
 export { SublayIntegrationProvider } from "./sublay-integration-context";
 export { EntityProvider } from "./entity-context";
+export { EventProvider } from "./event-context";
 export { CommentSectionProvider } from "./comment-section-context";
 export { SpaceProvider } from "./space-context";
 export {
