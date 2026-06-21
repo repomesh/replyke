@@ -160,6 +160,13 @@ export function resetAxiosMocks(): void {
   axiosPublic.defaults.adapter = DEFAULT_PUBLIC_ADAPTER;
 }
 
+/** A real store with just the `sublay` slice mounted — no RTK-Query `baseApi`. */
+export function makeSublayStore() {
+  return configureStore({ reducer: { sublay: sublayReducers } });
+}
+
+export type SublayStore = ReturnType<typeof makeSublayStore>;
+
 export interface RenderHookWithAxiosOptions<Props>
   extends Omit<RenderHookOptions<Props>, "wrapper"> {
   projectId?: string;
@@ -171,7 +178,7 @@ export interface RenderHookWithAxiosOptions<Props>
 
 export interface RenderHookWithAxiosResult<Result, Props>
   extends RenderHookResult<Result, Props> {
-  store: ReturnType<typeof configureStore>;
+  store: SublayStore;
   axiosPrivate: AxiosMockHandle;
   axiosPublic: AxiosMockHandle;
 }
@@ -195,7 +202,7 @@ export function renderHookWithAxios<Result, Props>(
     ...renderOptions
   } = options;
 
-  const store = configureStore({ reducer: { sublay: sublayReducers } });
+  const store = makeSublayStore();
   store.dispatch(setTokens({ accessToken, refreshToken }));
   store.dispatch(setUser(user));
   store.dispatch(setInitialized(true));
