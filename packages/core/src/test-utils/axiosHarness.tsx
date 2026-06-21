@@ -7,7 +7,12 @@ import {
 } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import type { AxiosInstance, AxiosError, AxiosResponse } from "axios";
+import type {
+  AxiosInstance,
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 import axiosPublic, { axiosPrivate } from "../config/axios";
 import { sublayReducers } from "../store/sublayReducers";
@@ -37,21 +42,29 @@ export interface AxiosMockHandle {
   calls: (method: AxiosMethod) => AxiosCallRecord[];
 }
 
-function toAxiosResponse<T>(data: T, status: number): AxiosResponse<T> {
+function toAxiosResponse<T>(
+  data: T,
+  status: number,
+  config: InternalAxiosRequestConfig = {} as never,
+): AxiosResponse<T> {
   return {
     data,
     status,
     statusText: status >= 200 && status < 300 ? "OK" : "Error",
     headers: {},
-    config: {} as never,
+    config,
   };
 }
 
-function toAxiosError(status: number, data?: unknown): AxiosError {
+function toAxiosError(
+  status: number,
+  data?: unknown,
+  config: InternalAxiosRequestConfig = {} as never,
+): AxiosError {
   const error = new Error(`Request failed with status code ${status}`) as AxiosError;
   error.isAxiosError = true;
-  error.response = toAxiosResponse(data, status);
-  error.config = {} as never;
+  error.response = toAxiosResponse(data, status, config);
+  error.config = config;
   error.toJSON = () => ({});
   return error;
 }
@@ -105,14 +118,46 @@ export function mockAxiosInstance(instance: AxiosInstance): AxiosMockHandle {
 export const mockAxiosPrivate = (): AxiosMockHandle => mockAxiosInstance(axiosPrivate);
 export const mockAxiosPublic = (): AxiosMockHandle => mockAxiosInstance(axiosPublic);
 
+export type AxiosAdapter = (
+  config: InternalAxiosRequestConfig,
+) => Promise<AxiosResponse>;
+
+const DEFAULT_PRIVATE_ADAPTER = axiosPrivate.defaults.adapter;
+const DEFAULT_PUBLIC_ADAPTER = axiosPublic.defaults.adapter;
+
+/**
+ * Installs a custom adapter on a real axios instance so its interceptors run
+ * for real while the actual network call is replaced. Use this (instead of
+ * `mockAxiosInstance`) when the test needs the interceptor behavior itself —
+ * e.g. `useAxiosPrivate`'s auth-header injection and 403-refresh retry. Build
+ * responses/errors with `okAxiosResponse`/`axiosErrorWithStatus` so the
+ * resolved/rejected value carries the real request `config` through (the
+ * refresh-retry interceptor reuses it to re-issue the original request).
+ */
+export function stubAxiosAdapter(instance: AxiosInstance, adapter: AxiosAdapter): void {
+  instance.defaults.adapter = adapter as never;
+}
+
+export const okAxiosResponse = toAxiosResponse;
+export const axiosErrorWithStatus = toAxiosError;
+
 /**
  * Restores every axios spy created via `mockAxiosPrivate`/`mockAxiosPublic`
- * (and any other `vi.spyOn`/`vi.fn` mock). Call from `afterEach` — the axios
- * instances in `config/axios.ts` are module-level singletons shared by every
- * hook in the package, so spies leak across test cases/files if not restored.
+ * (and any other `vi.spyOn`/`vi.fn` mock), clears any interceptors a hook
+ * test attached via `renderHook(() => useAxiosPrivate())`, and restores the
+ * default adapter after a `stubAxiosAdapter` call. Call from `afterEach` —
+ * the axios instances in `config/axios.ts` are module-level singletons
+ * shared by every hook in the package, so this state leaks across test
+ * cases/files if not reset.
  */
 export function resetAxiosMocks(): void {
   vi.restoreAllMocks();
+  axiosPrivate.interceptors.request.clear();
+  axiosPrivate.interceptors.response.clear();
+  axiosPublic.interceptors.request.clear();
+  axiosPublic.interceptors.response.clear();
+  axiosPrivate.defaults.adapter = DEFAULT_PRIVATE_ADAPTER;
+  axiosPublic.defaults.adapter = DEFAULT_PUBLIC_ADAPTER;
 }
 
 export interface RenderHookWithAxiosOptions<Props>
