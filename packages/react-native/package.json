@@ -32,7 +32,8 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "rimraf dist && pnpm run build:esm && pnpm run build:cjs",
-    "prepare": "pnpm run build"
+    "prepare": "pnpm run build",
+    "test": "vitest run"
   },
   "publishConfig": {
     "access": "public"
@@ -48,7 +49,8 @@
     "@sublay/core": "workspace:*"
   },
   "devDependencies": {
-    "react-native-keychain": "^9.2.2"
+    "react-native-keychain": "^9.2.2",
+    "vitest": "^1.6.1"
   },
   "peerDependencies": {
     "@reduxjs/toolkit": "^2.0.0",
