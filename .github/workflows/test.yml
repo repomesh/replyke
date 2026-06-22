@@ -24,5 +24,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build packages
+        # react-js/react-native/expo's tests import @sublay/core for real
+        # (mocked at the module level, but Vite still resolves the package
+        # entry first) — core has no `prepare` script, so its dist won't
+        # exist after a plain install without this.
+        run: pnpm build-all
+
       - name: Run package test suites
         run: pnpm test
