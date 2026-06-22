@@ -174,6 +174,17 @@ export interface RenderHookWithAxiosOptions<Props>
   user?: AuthUser | null;
   accessToken?: string | null;
   refreshToken?: string | null;
+  /**
+   * Called with the (already-installed) axios mock handles right before the
+   * hook is mounted. Use this to queue responses for hooks that fire a
+   * request from a mount-time `useEffect` — without it, the effect's request
+   * would race ahead of any `mockResponse`/`mockError` call made after this
+   * function returns and fall through to the real, un-mocked axios method.
+   */
+  beforeRender?: (handles: {
+    axiosPrivate: AxiosMockHandle;
+    axiosPublic: AxiosMockHandle;
+  }) => void;
 }
 
 export interface RenderHookWithAxiosResult<Result, Props>
@@ -199,6 +210,7 @@ export function renderHookWithAxios<Result, Props>(
     user = null,
     accessToken = null,
     refreshToken = null,
+    beforeRender,
     ...renderOptions
   } = options;
 
@@ -221,6 +233,8 @@ export function renderHookWithAxios<Result, Props>(
 
   const axiosPrivateHandle = mockAxiosPrivate();
   const axiosPublicHandle = mockAxiosPublic();
+
+  beforeRender?.({ axiosPrivate: axiosPrivateHandle, axiosPublic: axiosPublicHandle });
 
   const rendered = renderHook(callback, { wrapper: Wrapper, ...renderOptions });
 
