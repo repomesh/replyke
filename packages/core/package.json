@@ -37,7 +37,7 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "rimraf dist && pnpm run build:esm && pnpm run build:cjs",
-    "prepublish": "pnpm run build",
+    "prepare": "pnpm run build",
     "test": "vitest run"
   },
   "publishConfig": {
