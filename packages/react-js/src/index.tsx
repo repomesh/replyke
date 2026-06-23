@@ -8,6 +8,9 @@ export * from "@sublay/core";
 // Web-only OAuth hook (uses window.location for redirect-based flow)
 export { default as useOAuthSignIn, type UseOAuthSignInReturn } from "./hooks/useOAuthSignIn";
 
+// Web Push adapter (browser Notification + Push API, no native dependencies)
+export { webPushTokenAdapter } from "./PushTokenAdapter";
+
 // Override SublayProvider to inject AccountManager
 export const SublayProvider: React.FC<{
   projectId: string;

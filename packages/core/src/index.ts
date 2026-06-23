@@ -137,6 +137,19 @@ export {
   type UseAppNotificationsValues,
 } from "./hooks/app-notifications";
 
+// -- push notifications
+export {
+  usePushRegistration,
+  type UsePushRegistrationValues,
+} from "./hooks/push";
+export type {
+  PushTokenAdapter,
+  PushDeviceContext,
+  PushDeviceIdentifier,
+  PushDevicePlatform,
+  PushWebSubscriptionPayload,
+} from "./interfaces/PushTokenAdapter";
+
 // -- collections
 export {
   useCollections,
