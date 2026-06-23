@@ -5,6 +5,9 @@ import { SublayProvider as OriginalSublayProvider } from "@sublay/core";
 export * from "@sublay/core";
 import AccountManager from "./AccountManager";
 
+// React Native-specific PushTokenAdapter (@react-native-firebase/messaging)
+export { reactNativePushTokenAdapter } from "./PushTokenAdapter";
+
 // Override SublayProvider
 export const SublayProvider: React.FC<{
   projectId: string;
