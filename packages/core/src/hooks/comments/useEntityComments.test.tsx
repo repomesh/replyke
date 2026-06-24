@@ -30,7 +30,7 @@ describe("useEntityComments", () => {
     const secondComment = makeComment({ id: "comment-2" });
 
     const { result, axiosPrivate } = renderHookWithAxios(
-      () => useEntityComments({ entityId: "entity-1" }),
+      () => useEntityComments({ entityId: "entity-1", include: "user" }),
       {
         beforeRender: ({ axiosPrivate }) =>
           axiosPrivate.mockResponse("get", makePage([rootComment], true)),
@@ -55,6 +55,16 @@ describe("useEntityComments", () => {
       "comment-1",
       "comment-2",
     ]);
+
+    const calls = axiosPrivate.calls("get");
+    expect(calls[0].config?.params).toMatchObject({
+      include: "user",
+      page: 1,
+    });
+    expect(calls[1].config?.params).toMatchObject({
+      include: "user",
+      page: 2,
+    });
   });
 
   it("marks newly added root comments as new and sorts them most-recent-first", async () => {
