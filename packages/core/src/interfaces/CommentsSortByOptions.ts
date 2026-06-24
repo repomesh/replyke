@@ -9,4 +9,5 @@ export type DeprecatedCommentsSortBy = "new" | "old";
 export type CommentsSortByOptions =
   | "createdAt"
   | "top"
+  | "controversial"
   | DeprecatedCommentsSortBy;
