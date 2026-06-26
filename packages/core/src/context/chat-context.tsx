@@ -260,6 +260,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     [dispatch]
   );
 
+  // Remove a conversation from the inbox and reconcile the globals. If the row
+  // was loaded, removeConversationPreview adjusts the counters exactly from its
+  // known unreadCount; if it was NOT loaded we can't know its unread, so defer
+  // to the debounced authoritative refetch instead of guessing.
+  const removeAndReconcile = useCallback(
+    (conversationId: string): void => {
+      const wasLoaded = conversationListRef.current.some(
+        (c) => c.id === conversationId
+      );
+      dispatch(removeConversationPreview(conversationId));
+      if (!wasLoaded) scheduleUnreadSummaryRefetch();
+    },
+    [dispatch, scheduleUnreadSummaryRefetch]
+  );
+
   // ── Unread summary fetch on mount / auth change ──────────────────────────────
   // Fetch total unread counts once auth is ready so global badges (e.g. sidebar)
   // are accurate before the user ever loads the conversation list.
@@ -475,7 +490,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     // case for the conversation it's scoped to.)
     socket.on("member:left", ({ userId, conversationId }) => {
       if (userId === currentUserIdRef.current) {
-        dispatch(removeConversationPreview(conversationId));
+        removeAndReconcile(conversationId);
       }
     });
 
@@ -483,7 +498,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     // Remove the row from the inbox even when the user doesn't have it open.
     // ConversationProvider keeps its own handler for the open-chat teardown.
     socket.on("conversation:deleted", ({ conversationId }) => {
-      dispatch(removeConversationPreview(conversationId));
+      removeAndReconcile(conversationId);
     });
 
     // ── Cleanup ─────────────────────────────────────────────────────────────
