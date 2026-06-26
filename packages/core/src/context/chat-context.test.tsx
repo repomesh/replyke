@@ -1,9 +1,13 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { resetAxiosMocks, makeChatMessage } from "../test-utils";
+import { resetAxiosMocks, makeChatMessage, makeConversationPreview } from "../test-utils";
 import { makeProvidersWrapper, createFakeSocket, type FakeSocket } from "./testHelpers";
-import { selectMessages, selectTypingUsers } from "../store/slices/chatSlice";
+import {
+  selectMessages,
+  selectTypingUsers,
+  setConversationList,
+} from "../store/slices/chatSlice";
 
 const fakeSocket: FakeSocket = createFakeSocket();
 
@@ -69,10 +73,17 @@ describe("ChatProvider", () => {
     expect(io).not.toHaveBeenCalled();
   });
 
-  it("dispatches an incoming message and increments unread for an inactive conversation", async () => {
+  it("dispatches an incoming message and increments unread for a loaded, inactive conversation", async () => {
     const { store, axiosPrivate } = renderChatProvider("token-1");
     await waitFor(() => expect(axiosPrivate.calls("get")).toHaveLength(1));
     await waitFor(() => expect(store.getState().sublay.chat.totalUnreadCount).toBe(0));
+
+    // Seed the conversation into the loaded inbox list (loaded path).
+    act(() => {
+      store.dispatch(
+        setConversationList([makeConversationPreview({ id: "conversation-1" })]),
+      );
+    });
 
     const message = makeChatMessage({ id: "message-1", conversationId: "conversation-1" });
 
@@ -82,6 +93,7 @@ describe("ChatProvider", () => {
 
     expect(selectMessages("conversation-1")(store.getState())).toEqual([message]);
     expect(store.getState().sublay.chat.totalUnreadCount).toBe(1);
+    expect(store.getState().sublay.chat.unreadConversationCount).toBe(1);
   });
 
   it("does not bump unread for a conversation registered as active", async () => {
@@ -90,6 +102,9 @@ describe("ChatProvider", () => {
     await waitFor(() => expect(store.getState().sublay.chat.totalUnreadCount).toBe(0));
 
     act(() => {
+      store.dispatch(
+        setConversationList([makeConversationPreview({ id: "conversation-1" })]),
+      );
       result.current.registerActiveConversation("conversation-1");
     });
 
