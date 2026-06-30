@@ -9,6 +9,12 @@ export interface UseAskContentProps {
   query: string;
   sourceTypes?: ("entity" | "comment" | "message")[];
   spaceId?: string;
+  /**
+   * With a `spaceId`, also search every space nested under it (children,
+   * grandchildren — the whole subtree, any depth). Ignored without a `spaceId`.
+   * Defaults to false (exact-space search).
+   */
+  includeChildSpaces?: boolean;
   conversationId?: string;
   limit?: number;
   /**
@@ -98,7 +104,7 @@ export default function useAskContent(): UseAskContentReturn {
   }, []);
 
   const ask = useCallback(
-    ({ query, sourceTypes, spaceId, conversationId, limit, spaceReputationId, spaceReputationDescendants }: UseAskContentProps) => {
+    ({ query, sourceTypes, spaceId, includeChildSpaces, conversationId, limit, spaceReputationId, spaceReputationDescendants }: UseAskContentProps) => {
       if (!projectId) return;
       if (!query.trim()) return;
 
@@ -118,6 +124,7 @@ export default function useAskContent(): UseAskContentReturn {
         query,
         ...(sourceTypes && { sourceTypes }),
         ...(spaceId && { spaceId }),
+        ...(includeChildSpaces && { includeChildSpaces }),
         ...(conversationId && { conversationId }),
         ...(limit && { limit }),
       });

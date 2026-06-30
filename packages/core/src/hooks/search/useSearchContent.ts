@@ -16,6 +16,12 @@ export interface UseSearchContentProps {
   query: string;
   sourceTypes?: ("entity" | "comment" | "message")[];
   spaceId?: string;
+  /**
+   * With a `spaceId`, also search every space nested under it (children,
+   * grandchildren — the whole subtree, any depth). Ignored without a `spaceId`.
+   * Defaults to false (exact-space search).
+   */
+  includeChildSpaces?: boolean;
   conversationId?: string;
   limit?: number;
   /**
@@ -45,7 +51,7 @@ export default function useSearchContent(): UseSearchContentReturn {
   const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(
-    async ({ query, sourceTypes, spaceId, conversationId, limit, spaceReputationId, spaceReputationDescendants }: UseSearchContentProps) => {
+    async ({ query, sourceTypes, spaceId, includeChildSpaces, conversationId, limit, spaceReputationId, spaceReputationDescendants }: UseSearchContentProps) => {
       if (!projectId) return;
       if (!query.trim()) return;
 
@@ -57,7 +63,7 @@ export default function useSearchContent(): UseSearchContentReturn {
         if (spaceReputationDescendants !== undefined) params.spaceReputationDescendants = spaceReputationDescendants;
         const response = await axios.post<ContentSearchResult[]>(
           `/${projectId}/search/content`,
-          { query, sourceTypes, spaceId, conversationId, limit },
+          { query, sourceTypes, spaceId, includeChildSpaces, conversationId, limit },
           { params }
         );
         setResults(response.data);
