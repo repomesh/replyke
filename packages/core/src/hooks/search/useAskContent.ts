@@ -152,14 +152,22 @@ export default function useAskContent(): UseAskContentReturn {
         return s ? `?${s}` : "";
       })();
 
+      // `reactNative.textStreaming` opts react-native-fetch-api into incremental
+      // streaming, so `response.body` is a progressively-readable stream rather
+      // than a buffered blob resolved only at completion. It's an unknown key to
+      // standard/web `fetch`, which ignores extra RequestInit fields, so we send
+      // it unconditionally instead of branching on platform.
+      const init: RequestInit & { reactNative?: { textStreaming?: boolean } } = {
+        method: "POST",
+        headers,
+        body,
+        signal: controller.signal,
+        reactNative: { textStreaming: true },
+      };
+
       (async () => {
         try {
-          const response = await fetch(`${BASE_URL}/${projectId}/search/ask${queryString}`, {
-            method: "POST",
-            headers,
-            body,
-            signal: controller.signal,
-          });
+          const response = await fetch(`${BASE_URL}/${projectId}/search/ask${queryString}`, init);
 
           if (!response.ok) {
             const text = await response.text().catch(() => "");
@@ -178,8 +186,12 @@ export default function useAskContent(): UseAskContentReturn {
           if (!response.body) {
             setError(
               "Streaming is not supported in this environment. " +
-              "In React Native, install react-native-fetch-api, web-streams-polyfill, and react-native-polyfill-globals, " +
-              "then call polyfillGlobals() at app startup."
+              "In React Native, install react-native-fetch-api, web-streams-polyfill@^3, " +
+              "react-native-polyfill-globals, and text-encoding, then at app startup call the " +
+              "targeted sub-polyfills — polyfill() from react-native-polyfill-globals/src/encoding, " +
+              "/readable-stream, and /fetch (in that order). " +
+              "Prefer these over the all-in-one polyfillGlobals(), which also pulls the native " +
+              "react-native-get-random-values and forces a dev-client rebuild."
             );
             setLoading(false);
             return;
