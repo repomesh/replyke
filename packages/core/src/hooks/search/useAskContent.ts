@@ -4,8 +4,10 @@ import { useSublaySelector } from "../../store/hooks";
 import { selectAccessToken } from "../../store/slices/authSlice";
 import { BASE_URL } from "../../config/axios";
 import { ContentSearchResult } from "./useSearchContent";
+import { SpaceReputationContextParams } from "../../interfaces/SpaceReputation";
+import { buildSpaceReputationParams } from "../../utils/spaceReputationParams";
 
-export interface UseAskContentProps {
+export interface UseAskContentProps extends SpaceReputationContextParams {
   query: string;
   sourceTypes?: ("entity" | "comment" | "message")[];
   spaceId?: string;
@@ -17,14 +19,6 @@ export interface UseAskContentProps {
   includeChildSpaces?: boolean;
   conversationId?: string;
   limit?: number;
-  /**
-   * Opt into per-row `spaceReputation` on embedded users. Accepted forms: a
-   * space `<uuid>`, `"none"`, or `"context"`. Sent as a query param (the server
-   * reads it from the query string, not the request body).
-   */
-  spaceReputationId?: string;
-  /** Only honored with an explicit `<uuid>` `spaceReputationId`. */
-  spaceReputationDescendants?: boolean;
 }
 
 export interface UseAskContentReturn {
@@ -104,7 +98,7 @@ export default function useAskContent(): UseAskContentReturn {
   }, []);
 
   const ask = useCallback(
-    ({ query, sourceTypes, spaceId, includeChildSpaces, conversationId, limit, spaceReputationId, spaceReputationDescendants }: UseAskContentProps) => {
+    ({ query, sourceTypes, spaceId, includeChildSpaces, conversationId, limit, spaceReputation, spaceReputationId, spaceReputationDescendants }: UseAskContentProps) => {
       if (!projectId) return;
       if (!query.trim()) return;
 
@@ -141,10 +135,19 @@ export default function useAskContent(): UseAskContentReturn {
       // spaceReputation opt-in is read from the query string by the server,
       // not the request body — append it to the URL.
       const queryString = (() => {
+        const reputationParams = buildSpaceReputationParams({
+          spaceReputation,
+          spaceReputationId,
+          spaceReputationDescendants,
+        });
         const sp = new URLSearchParams();
-        if (spaceReputationId !== undefined) sp.set("spaceReputationId", spaceReputationId);
-        if (spaceReputationDescendants !== undefined)
-          sp.set("spaceReputationDescendants", String(spaceReputationDescendants));
+        if (reputationParams.spaceReputationId !== undefined)
+          sp.set("spaceReputationId", reputationParams.spaceReputationId);
+        if (reputationParams.spaceReputationDescendants !== undefined)
+          sp.set(
+            "spaceReputationDescendants",
+            String(reputationParams.spaceReputationDescendants)
+          );
         const s = sp.toString();
         return s ? `?${s}` : "";
       })();
