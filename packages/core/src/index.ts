@@ -10,6 +10,11 @@ export {
   getApiBaseUrl,
   getEnvVar,
 } from "./utils/env";
+export {
+  buildSpaceReputationParams,
+  type BuildSpaceReputationParamsInput,
+  type SpaceReputationFlatParams,
+} from "./utils/spaceReputationParams";
 
 // Constants
 export { reportReasons } from "./constants/reportReasons";
@@ -624,6 +629,12 @@ export type {
   SpaceListFilters,
 } from "./interfaces/SpaceListSortByOptions";
 export type { SpaceBreadcrumb } from "./interfaces/SpaceBreadcrumb";
+export type {
+  SpaceReputationContextParams,
+  SpaceReputationUserParams,
+  SpaceReputationContextObject,
+  SpaceReputationUserObject,
+} from "./interfaces/SpaceReputation";
 export type {
   Rule,
   FetchManyRulesResponse,
