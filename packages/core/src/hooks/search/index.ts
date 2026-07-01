@@ -29,4 +29,5 @@ export type {
   UserMatchResult,
   MatchedFacet,
   MatchFacetRef,
+  SampleContent,
 } from "./useMatchUsers";

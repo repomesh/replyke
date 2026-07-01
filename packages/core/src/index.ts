@@ -533,6 +533,7 @@ export {
   type UserMatchResult,
   type MatchedFacet,
   type MatchFacetRef,
+  type SampleContent,
 } from "./hooks/search";
 
 // -- storage
