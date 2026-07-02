@@ -642,6 +642,7 @@ export type {
   SpaceReputationContextObject,
   SpaceReputationUserObject,
 } from "./interfaces/SpaceReputation";
+export type { UserSearchParams } from "./interfaces/UserSearch";
 export type {
   Rule,
   FetchManyRulesResponse,
