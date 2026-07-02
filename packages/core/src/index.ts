@@ -516,6 +516,7 @@ export {
   useSearchUsers,
   useSearchSpaces,
   useAskContent,
+  useMatchUsers,
   type UseSearchContentProps,
   type UseSearchContentReturn,
   type ContentSearchResult,
@@ -527,6 +528,12 @@ export {
   type SpaceSearchResult,
   type UseAskContentProps,
   type UseAskContentReturn,
+  type UseMatchUsersProps,
+  type UseMatchUsersReturn,
+  type UserMatchResult,
+  type MatchedFacet,
+  type MatchFacetRef,
+  type SampleContent,
 } from "./hooks/search";
 
 // -- storage
