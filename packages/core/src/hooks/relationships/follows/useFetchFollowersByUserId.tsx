@@ -4,6 +4,7 @@ import type { User } from "../../../interfaces/models/User";
 import { PaginatedResponse } from "../../../interfaces/PaginatedResponse";
 import axios from "../../../config/axios";
 import { SpaceReputationUserParams } from "../../../interfaces/SpaceReputation";
+import { UserSearchParams } from "../../../interfaces/UserSearch";
 import { buildSpaceReputationParams } from "../../../utils/spaceReputationParams";
 
 export interface FollowerWithFollowInfo {
@@ -12,7 +13,9 @@ export interface FollowerWithFollowInfo {
   followedAt: string;
 }
 
-export interface FetchFollowersByUserIdParams extends SpaceReputationUserParams {
+export interface FetchFollowersByUserIdParams
+  extends SpaceReputationUserParams,
+    UserSearchParams {
   userId: string;
   page?: number;
   limit?: number;
@@ -22,7 +25,7 @@ function useFetchFollowersByUserId(): (params: FetchFollowersByUserIdParams) => 
   const { projectId } = useProject();
 
   const fetchFollowersByUserId = useCallback(
-    async ({ userId, page = 1, limit = 20, spaceReputation, spaceReputationId, spaceReputationDescendants }: FetchFollowersByUserIdParams) => {
+    async ({ userId, page = 1, limit = 20, query, searchFields, spaceReputation, spaceReputationId, spaceReputationDescendants }: FetchFollowersByUserIdParams) => {
       if (!userId) {
         throw new Error("No userId provided.");
       }
@@ -34,6 +37,8 @@ function useFetchFollowersByUserId(): (params: FetchFollowersByUserIdParams) => 
       const params: Record<string, any> = {
         page,
         limit,
+        query,
+        searchFields,
         ...buildSpaceReputationParams({
           spaceReputation,
           spaceReputationId,

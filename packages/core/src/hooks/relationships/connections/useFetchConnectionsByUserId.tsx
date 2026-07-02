@@ -4,9 +4,12 @@ import { EstablishedConnection } from "../../../interfaces/models/Connection";
 import { PaginatedResponse } from "../../../interfaces/PaginatedResponse";
 import axios from "../../../config/axios";
 import { SpaceReputationUserParams } from "../../../interfaces/SpaceReputation";
+import { UserSearchParams } from "../../../interfaces/UserSearch";
 import { buildSpaceReputationParams } from "../../../utils/spaceReputationParams";
 
-export interface FetchConnectionsByUserIdParams extends SpaceReputationUserParams {
+export interface FetchConnectionsByUserIdParams
+  extends SpaceReputationUserParams,
+    UserSearchParams {
   userId: string;
   page?: number;
   limit?: number;
@@ -19,7 +22,7 @@ function useFetchConnectionsByUserId(): (props: FetchConnectionsByUserIdParams) 
     async (
       props: FetchConnectionsByUserIdParams
     ): Promise<PaginatedResponse<EstablishedConnection>> => {
-      const { userId, page = 1, limit = 20, spaceReputation, spaceReputationId, spaceReputationDescendants } = props;
+      const { userId, page = 1, limit = 20, query, searchFields, spaceReputation, spaceReputationId, spaceReputationDescendants } = props;
       if (!projectId) {
         throw new Error("No project specified");
       }
@@ -31,6 +34,8 @@ function useFetchConnectionsByUserId(): (props: FetchConnectionsByUserIdParams) 
       const params: Record<string, any> = {
         page,
         limit,
+        query,
+        searchFields,
         ...buildSpaceReputationParams({
           spaceReputation,
           spaceReputationId,
