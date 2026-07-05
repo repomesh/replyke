@@ -145,7 +145,9 @@ export {
 // -- push notifications
 export {
   usePushRegistration,
+  useNotificationPreferences,
   type UsePushRegistrationValues,
+  type UseNotificationPreferencesValues,
 } from "./hooks/push";
 export type {
   PushTokenAdapter,
@@ -154,6 +156,12 @@ export type {
   PushDevicePlatform,
   PushWebSubscriptionPayload,
 } from "./interfaces/PushTokenAdapter";
+export { PUSH_EVENT_TYPES, type PushEventType } from "./interfaces/PushEventType";
+export { MUTE_DURATIONS, type MuteDuration } from "./interfaces/MuteDuration";
+export type {
+  NotificationPreferencesResponse,
+  MuteConversationResponse,
+} from "./store/api/notificationPreferencesApi";
 
 // -- collections
 export {
@@ -691,6 +699,7 @@ export {
   useCreateDirectConversation,
   useFetchSpaceConversation,
   useConversationMembers,
+  useMuteConversation,
   useLiveChatMessages,
   useChatMessages,
   useFetchManyChatMessages,
@@ -722,6 +731,8 @@ export type {
   UseFetchSpaceConversationValues,
   UseConversationMembersProps,
   UseConversationMembersValues,
+  MuteConversationProps,
+  UseMuteConversationValues,
   UseLiveChatMessagesProps,
   UseLiveChatMessagesValues,
   UseChatMessagesProps,
