@@ -46,6 +46,7 @@ export const baseApi = createApi({
     'Space',
     'SpaceMember',
     'TableRow',
+    'NotificationPreferences',
     // Future tag types:
     // 'Comment',
   ],
