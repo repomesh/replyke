@@ -184,6 +184,7 @@ function useEntityComments(
           sortBy,
           sortDir,
           limit,
+          include,
           ...reputation,
         });
 
