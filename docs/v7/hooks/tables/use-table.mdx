@@ -15,12 +15,12 @@ See [Custom Tables — Overview](/v7/sdk/tables/overview) for a guide, and [Cust
 ```tsx
 import { useTable } from "@sublay/react-js";
 
-interface EventRow {
+type EventRow = {
   id: string;
   name: string;
   capacity: number;
   createdAt: string;
-}
+};
 
 function Events() {
   const {
@@ -68,7 +68,9 @@ function Events() {
 </ResponseField>
 
 <ResponseField name="loading" type="boolean">
-  `true` while the current query is in flight.
+  `true` during the first load only. Changing page, sort or filters keeps the previous rows on screen with `loading: false` while the new query runs, so a table does not blank out between pages.
+
+  Note this differs from [`useTableRow`](/v7/hooks/tables/use-table-row), where a `rowId` change **does** report `loading: true` — a stale page of rows you are already looking at is reasonable, a stale single record under a new id is not.
 </ResponseField>
 
 <ResponseField name="error" type="unknown">
