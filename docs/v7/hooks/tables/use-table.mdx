@@ -27,6 +27,7 @@ function Events() {
     rows,
     pagination,
     loading,
+    view,
     setPage,
     setSort,
     setFilters,
@@ -41,7 +42,13 @@ function Events() {
       {rows.map((e) => (
         <Row key={e.id} event={e} onSave={(d) => updateRow(e.id, d)} onDelete={() => deleteRow(e.id)} />
       ))}
-      {pagination?.hasMore && <button onClick={() => setPage(pagination.page + 1)}>Next</button>}
+      {/* Both halves come off `view.page` (what you asked for) rather than
+          `pagination` (what is on screen) — see the note below. `totalPages`
+          is safe to read because it describes the whole result set, not the
+          page. */}
+      {pagination && view.page < pagination.totalPages && (
+        <button onClick={() => setPage(view.page + 1)}>Next</button>
+      )}
     </>
   );
 }
@@ -65,10 +72,19 @@ function Events() {
 
 <ResponseField name="pagination" type="PaginationMetadata | null">
   Pagination metadata (`page`, `pageSize`, `totalPages`, `totalItems`, `hasMore`), or `null` before the first load.
+
+  It describes the page **currently on screen**, which during a page change is still the previous one — the rows and their metadata stay in step.
+
+  So a pager needs its *target* and its *bound* from `view.page`, the page you last asked for, not from `pagination`:
+
+  - `setPage(pagination.page + 1)` computes the same target twice if clicked again before the first request lands, so the second click appears to do nothing.
+  - `pagination.hasMore` is likewise the previous page's answer, so a second click can run off the end — asking for page 3 when page 2 was the last.
+
+  `totalPages` and `totalItems` are safe to read mid-change: they describe the whole result set rather than a page, so `view.page < pagination.totalPages` is a correct bound either way.
 </ResponseField>
 
 <ResponseField name="loading" type="boolean">
-  `true` when there is no page to show and a request is in flight — the first load, and a `tableName` or project change. An empty table is a page, so it reports `false` with zero rows.
+  `true` when there is no page to show and a request is in flight — the first load, and a `tableName` change. An empty table is a page, so it reports `false` with zero rows.
 
   Changing page, sort or filters keeps the previous rows on screen with `loading: false` while the new query runs, so the table does not blank out between pages. Changing `tableName` does blank it: another table's rows under a new table's name would be wrong data, not stale data. Returning to a table this hook has already loaded shows that table's own rows again rather than blanking, for as long as they remain cached.
 
