@@ -12,15 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Publishing
 Scripts are grouped by publish group, and every group carries a `{group}:` prefix — no group is the unprefixed default. There are five groups: `react`, `ui-core`, `cli`, `node`, `js`.
 
-**Always use the `:patch` / `:minor` form.** The bare `{group}:publish-prod` / `{group}:publish-beta` scripts build (and, for `react`/`node`/`js`, run tests) and then publish — but they never bump the version, and `pnpm publish` silently skips any package whose current version is already on the registry, exiting 0. So running a bare form without having bumped the version separately first *looks* like a successful release and ships nothing. The `:patch` / `:minor` variants are just `{group}:version:{patch,minor} && {group}:publish-{prod,beta}` — the bump and the publish in one command — and are the normal way to release. Reach for a bare form only when you have deliberately bumped the version by hand (or via `{group}:version:patch`) as a separate step.
+**Always use a bump-and-publish form: `:patch` / `:minor` for production, `:prerelease` for beta.** The bare `{group}:publish-prod` / `{group}:publish-beta` scripts build (and, for `react`/`node`/`js`, run tests) and then publish — but they never bump the version, and `pnpm publish` silently skips any package whose current version is already on the registry, exiting 0. So running a bare form without having bumped the version separately first *looks* like a successful release and ships nothing. `{group}:publish-prod:{patch,minor}` is `{group}:version:{patch,minor} && {group}:publish-prod`; `{group}:publish-beta:prerelease` (react, node and js only, from the `v8` branch only) is `{group}:version:prerelease && {group}:publish-beta`. Beta has no `:patch` / `:minor` — on a beta version they would produce a full release. Reach for a bare form only when you have deliberately bumped the version by hand as a separate step.
 
 | Group | Packages | Publish |
 |---|---|---|
-| `react` | `@sublay/core`, `@sublay/react-js`, `@sublay/react-native`, `@sublay/expo` | `pnpm run react:publish-prod:patch` / `react:publish-prod:minor` (or `react:publish-beta:patch` / `:minor`) |
-| `ui-core` | `@sublay/ui-core-react-js`, `@sublay/ui-core-react-native` | `pnpm run ui-core:publish-prod:patch` / `:minor` (or `ui-core:publish-beta:patch` / `:minor`) |
-| `cli` | `@sublay/cli` | `pnpm run cli:publish-prod:patch` / `:minor` (or `cli:publish-beta:patch` / `:minor`) |
-| `node` | `@sublay/node` | `pnpm run node:publish-prod:patch` / `:minor` (or `node:publish-beta:patch` / `:minor`) |
-| `js` | `@sublay/js` | `pnpm run js:publish-prod:patch` / `:minor` (or `js:publish-beta:patch` / `:minor`) |
+| `react` | `@sublay/core`, `@sublay/react-js`, `@sublay/react-native`, `@sublay/expo` | `pnpm run react:publish-prod:patch` / `react:publish-prod:minor` (beta: `react:publish-beta:prerelease`, from the `v8` branch only) |
+| `ui-core` | `@sublay/ui-core-react-js`, `@sublay/ui-core-react-native` | `pnpm run ui-core:publish-prod:patch` / `:minor` (no beta channel) |
+| `cli` | `@sublay/cli` | `pnpm run cli:publish-prod:patch` / `:minor` (no beta channel) |
+| `node` | `@sublay/node` | `pnpm run node:publish-prod:patch` / `:minor` (beta: `node:publish-beta:prerelease`, from the `v8` branch only) |
+| `js` | `@sublay/js` | `pnpm run js:publish-prod:patch` / `:minor` (beta: `js:publish-beta:prerelease`, from the `v8` branch only) |
 
 Every group also exposes `{group}:version:patch` and `{group}:version:minor` for bumping without publishing.
 

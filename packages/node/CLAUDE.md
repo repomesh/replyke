@@ -25,7 +25,7 @@ pnpm build:types
 pnpm prepare
 
 # Publishing is done from the monorepo root, not this package directory
-# (run from /monorepo): pnpm node:publish-beta:patch / pnpm node:publish-prod:patch
+# (run from /monorepo): pnpm node:publish-prod:patch (main) / pnpm node:publish-beta:prerelease (v8 only)
 # Use the :patch (or :minor) form — see "Publishing to npm" below for why.
 ```
 
@@ -331,12 +331,12 @@ dist/
 ### Publishing to npm
 Run from the monorepo root, not this directory:
 ```bash
-pnpm node:publish-beta:patch   # beta release
+pnpm node:publish-beta:prerelease   # beta release (v8 branch only)
 pnpm node:publish-prod:patch   # production release
 # :minor variants exist too, e.g. pnpm node:publish-prod:minor
 ```
 
-Always use the `:patch` / `:minor` form. The bare `node:publish-beta` / `node:publish-prod` scripts build, test, and publish but never bump the version — and `pnpm publish` silently skips a package whose current version is already on the registry and exits 0, so a bare run without a separate version bump looks like a successful release and ships nothing. The `:patch` / `:minor` variants are just `node:version:{patch,minor} && node:publish-{beta,prod}`. Use a bare form only when the version was already bumped as a deliberate separate step (`pnpm node:version:patch`).
+Always use a bump-and-publish form (`:patch` / `:minor` for prod, `:prerelease` for beta). The bare `node:publish-prod` / `node:publish-beta` scripts build, test, and publish but never bump the version — and `pnpm publish` silently skips a package whose current version is already on the registry and exits 0, so a bare run without a separate version bump looks like a successful release and ships nothing. The `:patch` / `:minor` variants are just `node:version:{patch,minor} && node:publish-prod`, and beta's `:prerelease` is `node:version:prerelease && node:publish-beta` (from the `v8` branch only — beta has no `:patch`/`:minor`). Use a bare form only when the version was already bumped as a deliberate separate step (`pnpm node:version:patch`).
 
 **Package Exports**:
 - CommonJS: `dist/index.js`
